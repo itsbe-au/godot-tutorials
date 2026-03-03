@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A page about Godot 4.6 Top-Down RPG Tutorial Series">
+  <meta property="og:title" content="Godot 4.6 Top-Down RPG Tutorial Series">
+  <meta property="og:description" content="A page about Godot 4.6 Top-Down RPG Tutorial Series">
+  <meta property="og:image" content="/og_image.png">
+
+  <link rel="icon" href="/favicon.png">
+  <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
+  <link rel="stylesheet" href="/main.css">
+  <style>
+    /* 
+    To customize the default style, you should try to override the variables in SimpleCSS: 
+    https://github.com/kevquirk/simple.css/wiki/Getting-Started-With-Simple.css#customise-simplecss
+    Here are all the variables that's defined:
+    */
+
+    :root {
+      /* Set sans-serif & mono fonts */
+      --sans-font: -apple-system, BlinkMacSystemFont, "Avenir Next", Avenir,
+        "Nimbus Sans L", Roboto, "Noto Sans", "Segoe UI", Arial, Helvetica,
+        "Helvetica Neue", sans-serif;
+      --mono-font: Consolas, Menlo, Monaco, "Andale Mono", "Ubuntu Mono", monospace;
+      --standard-border-radius: 5px;
+      --border-width: 1px;
+
+      /* Default (light) theme */
+      --bg: #fff;
+      --accent-bg: #f5f7ff;
+      --text: #212121;
+      --text-light: #585858;
+      --border: #898EA4;
+      --accent: var(--text);
+      --accent-hover: var(--text);
+      --accent-text: var(--bg);
+      --code: #d81b60;
+      --preformatted: #444;
+      --marked: #e2e2e2;
+      --disabled: #efefef;
+      --content-width: 80rem;
+      --sidebar-width: 300px;
+      --sidenav-width: 220px;
+      --gap: 4rem;
+    }
+
+    /* Dark theme */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        color-scheme: dark;
+        --bg: #212121;
+        --accent-bg: #2b2b2b;
+        --text: #dcdcdc;
+        --text-light: #ababab;
+        --accent: var(--text);
+        --accent-hover: var(--text);
+        --accent-text: var(--bg);
+        --code: #f06292;
+        --preformatted: #ccc;
+        --disabled: #111;
+      }
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+  </style>
+  <title>Godot 4.6 Top-Down RPG Tutorial Series</title>
+</head>
+
+<body>
+  <button id="menu-toggle" class="menu-toggle" aria-label="Toggle navigation">
+    <span></span>
+    <span></span>
+  </button>
+  <div id="sidebar-overlay" class="sidebar-overlay"></div>
+  <div class="main-grid" id="main-grid">
+    <aside class="site-sidebar" id="site-sidebar">
+      <div class="site-nav-title" id="site-nav-title">Site</div>
+      <nav id="site-nav"></nav>
+    </aside>
+
+    <main class="article">
+      <h1 id="godot-46-top-down-rpg-tutorial-series">Godot 4.6 Top-Down RPG Tutorial Series<a aria-hidden="true" tabindex="-1" href="#godot-46-top-down-rpg-tutorial-series"><span class="icon icon-link"></span></a></h1>
+<p><strong>Build Your Own RPG from Scratch!</strong> 🎮</p>
+<p>Welcome to the comprehensive tutorial series where you'll build a complete 2D top-down RPG game using Godot 4.6. By the end of this series, you'll have a fully playable game with a controllable character, enemies to fight, treasures to collect, and multiple levels to explore!</p>
+<hr>
+<h2 id="what-youll-build">What You'll Build<a aria-hidden="true" tabindex="-1" href="#what-youll-build"><span class="icon icon-link"></span></a></h2>
+<p>In this series, you'll create a complete RPG game featuring:</p>
+<ul>
+<li>🎮 A controllable player character with smooth 8-directional movement</li>
+<li>🗺️ Beautiful game worlds built with tilemaps</li>
+<li>👾 Enemies that chase the player and deal damage</li>
+<li>❤️ Health system with invulnerability frames and knockback</li>
+<li>🪙 Collectible items (coins, potions) with visual effects</li>
+<li>📊 Heads-up display (HUD) showing health, mana, and score</li>
+<li>🎵 Sound effects and background music</li>
+<li>🔄 Multiple scenes with smooth transitions (menu, pause, game over)</li>
+<li>📦 Complete inventory system</li>
+</ul>
+<p><strong>Perfect for:</strong> Students aged 12-15, beginners to game development, and anyone wanting to learn Godot 4!</p>
+<hr>
+<h2 id="prerequisites">Prerequisites<a aria-hidden="true" tabindex="-1" href="#prerequisites"><span class="icon icon-link"></span></a></h2>
+<p>Before starting this tutorial series, make sure you have:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Requirement</th><th>Details</th></tr></thead><tbody><tr><td><strong>Godot Engine 4.6</strong></td><td>Download from <a href="https://godotengine.org">godotengine.org</a></td></tr><tr><td><strong>Basic Computer Skills</strong></td><td>File management, typing, using applications</td></tr><tr><td><strong>No Prior Coding Required</strong></td><td>We teach GDScript from scratch!</td></tr><tr><td><strong>Recommended Age</strong></td><td>12-15 years old (but suitable for all ages)</td></tr><tr><td><strong>Time Commitment</strong></td><td>Approximately 6-8 hours total (8 lessons × 45-60 min each)</td></tr></tbody></table>
+<hr>
+<h2 id="lesson-overview">Lesson Overview<a aria-hidden="true" tabindex="-1" href="#lesson-overview"><span class="icon icon-link"></span></a></h2>
+<h3 id="lesson-1-project-setup--godot-basics">Lesson 1: Project Setup &#x26; Godot Basics<a aria-hidden="true" tabindex="-1" href="#lesson-1-project-setup--godot-basics"><span class="icon icon-link"></span></a></h3>
+<p><strong>Time:</strong> 45-60 minutes | <strong>Prerequisites:</strong> None</p>
+<p>Learn the Godot editor interface, create your first project, and get a sprite on screen. This lesson covers:</p>
+<ul>
+<li>Installing and launching Godot 4.6</li>
+<li>Understanding the editor layout</li>
+<li>Creating nodes and scenes</li>
+<li>Importing and displaying sprites</li>
+</ul>
+<p><strong>First step on your game development journey!</strong></p>
+<hr>
+<h3 id="lesson-2-player-movement-with-characterbody2d">Lesson 2: Player Movement with CharacterBody2D<a aria-hidden="true" tabindex="-1" href="#lesson-2-player-movement-with-characterbody2d"><span class="icon icon-link"></span></a></h3>
+<p><strong>Time:</strong> 45-60 minutes | <strong>Prerequisites:</strong> Lesson 1</p>
+<p>Bring your character to life with smooth movement! You'll learn:</p>
+<ul>
+<li>Understanding Godot's physics system (CharacterBody2D, StaticBody2D)</li>
+<li>Writing your first GDScript</li>
+<li>Keyboard input handling</li>
+<li>Smooth acceleration and friction</li>
+<li>Collision detection and response</li>
+</ul>
+<p><strong>By the end:</strong> A character that moves with arrow keys or WASD!</p>
+<hr>
+<h3 id="lesson-3-tilemaps--world-building">Lesson 3: TileMaps &#x26; World Building<a aria-hidden="true" tabindex="-1" href="#lesson-3-tilemaps--world-building"><span class="icon icon-link"></span></a></h3>
+<p><strong>Time:</strong> 45-60 minutes | <strong>Prerequisites:</strong> Lessons 1-2</p>
+<p>Become a world architect! Build complete levels using:</p>
+<ul>
+<li>TileMap system for efficient level design</li>
+<li>Creating and configuring TileSets</li>
+<li>Painting terrain (grass, walls, paths)</li>
+<li>Physics layers for collision</li>
+<li>Auto-tiling for beautiful borders</li>
+</ul>
+<p><strong>By the end:</strong> A complete level your player can explore!</p>
+<hr>
+<h3 id="lesson-4-game-flow-management">Lesson 4: Game Flow Management<a aria-hidden="true" tabindex="-1" href="#lesson-4-game-flow-management"><span class="icon icon-link"></span></a></h3>
+<p><strong>Time:</strong> 45-60 minutes | <strong>Prerequisites:</strong> Lessons 1-3</p>
+<p>Learn to manage your game's state with a global manager:</p>
+<ul>
+<li>Autoload/Singletons in Godot</li>
+<li>Creating a GameFlow script</li>
+<li>Score tracking across scenes</li>
+<li>Pause functionality</li>
+<li>Managing game states (playing, paused, game_over)</li>
+</ul>
+<p><strong>By the end:</strong> A centralized system that coordinates your entire game!</p>
+<hr>
+<h3 id="lesson-5-ui--hud-labels-challenge">Lesson 5: UI &#x26; HUD Labels Challenge<a aria-hidden="true" tabindex="-1" href="#lesson-5-ui--hud-labels-challenge"><span class="icon icon-link"></span></a></h3>
+<p><strong>Time:</strong> 45-60 minutes | <strong>Prerequisites:</strong> Lessons 1-4</p>
+<p>Create a professional heads-up display:</p>
+<ul>
+<li>CanvasLayer for screen-fixed UI</li>
+<li>Labels for health, mana, and score</li>
+<li>Automatic UI updates using signals</li>
+<li>Positioning and styling UI elements</li>
+<li>Making UI visible and readable</li>
+</ul>
+<p><strong>By the end:</strong> A HUD that displays player stats in real-time!</p>
+<hr>
+<h3 id="lesson-6-enemies--basic-combat">Lesson 6: Enemies &#x26; Basic Combat<a aria-hidden="true" tabindex="-1" href="#lesson-6-enemies--basic-combat"><span class="icon icon-link"></span></a></h3>
+<p><strong>Time:</strong> 45-60 minutes | <strong>Prerequisites:</strong> Lessons 1-5</p>
+<p>Add danger to your game! Create enemies that:</p>
+<ul>
+<li>Chase the player using simple AI</li>
+<li>Deal damage on contact</li>
+<li>Implement health and damage systems</li>
+<li>Add invulnerability frames (i-frames)</li>
+<li>Create knockback effects</li>
+<li>Build an enemy spawner system</li>
+</ul>
+<p><strong>By the end:</strong> Enemies that make your game exciting and challenging!</p>
+<hr>
+<h3 id="lesson-7-collectibles--inventory">Lesson 7: Collectibles &#x26; Inventory<a aria-hidden="true" tabindex="-1" href="#lesson-7-collectibles--inventory"><span class="icon icon-link"></span></a></h3>
+<p><strong>Time:</strong> 45-60 minutes | <strong>Prerequisites:</strong> Lessons 1-6</p>
+<p>Make exploration rewarding with collectibles:</p>
+<ul>
+<li>Creating collectible items (coins, potions)</li>
+<li>Area2D for pickup detection</li>
+<li>Visual effects (animations, particles)</li>
+<li>Inventory management system</li>
+<li>Sound effects for pickups</li>
+<li>Score integration</li>
+</ul>
+<p><strong>By the end:</strong> Treasures scattered throughout your world!</p>
+<hr>
+<h3 id="lesson-8-scene-transitions--game-states">Lesson 8: Scene Transitions &#x26; Game States<a aria-hidden="true" tabindex="-1" href="#lesson-8-scene-transitions--game-states"><span class="icon icon-link"></span></a></h3>
+<p><strong>Time:</strong> 45-60 minutes | <strong>Prerequisites:</strong> Lessons 1-7</p>
+<p>Polish your game with professional features:</p>
+<ul>
+<li>Main Menu with Play/Quit buttons</li>
+<li>Pause menu functionality</li>
+<li>Game Over screen with score</li>
+<li>Multiple levels to progress through</li>
+<li>Smooth fade transitions between scenes</li>
+<li>Scene management best practices</li>
+</ul>
+<p><strong>By the end:</strong> A complete, polished game ready to share!</p>
+<hr>
+<h2 id="recommended-learning-path">Recommended Learning Path<a aria-hidden="true" tabindex="-1" href="#recommended-learning-path"><span class="icon icon-link"></span></a></h2>
+<pre><code>Week 1: Foundations
+├── Lesson 1: Project Setup (Day 1)
+├── Lesson 2: Player Movement (Day 2-3)
+└── Lesson 3: TileMaps &#x26; World Building (Day 4-5)
+
+Week 2: Game Logic
+├── Lesson 4: Game Flow Management (Day 1)
+├── Lesson 5: UI &#x26; HUD (Day 2)
+└── Lesson 6: Enemies &#x26; Combat (Day 3-4)
+
+Week 3: Polish &#x26; Completion
+├── Lesson 7: Collectibles (Day 1-2)
+└── Lesson 8: Scene Transitions (Day 3-4)
+    └── Playtest &#x26; Share! (Day 5)
+</code></pre>
+<h3 id="tips-for-success">Tips for Success:<a aria-hidden="true" tabindex="-1" href="#tips-for-success"><span class="icon icon-link"></span></a></h3>
+<ol>
+<li><strong>Don't skip lessons</strong> - Each builds on the previous</li>
+<li><strong>Save often</strong> - Use version control (Git) or frequent saves</li>
+<li><strong>Experiment</strong> - Try changing values to see what happens</li>
+<li><strong>Take breaks</strong> - Step away if stuck, then return with fresh eyes</li>
+<li><strong>Ask questions</strong> - No question is too small!</li>
+</ol>
+<hr>
+<h2 id="tips-for-teachersinstructors">Tips for Teachers/Instructors<a aria-hidden="true" tabindex="-1" href="#tips-for-teachersinstructors"><span class="icon icon-link"></span></a></h2>
+<h3 id="before-class">Before Class:<a aria-hidden="true" tabindex="-1" href="#before-class"><span class="icon icon-link"></span></a></h3>
+<ul>
+<li><strong>Pre-install Godot 4.6</strong> on all computers</li>
+<li><strong>Test the lessons yourself</strong> to understand timing</li>
+<li><strong>Prepare backup assets</strong> in case downloads fail</li>
+<li><strong>Set up a shared folder</strong> for student resources</li>
+</ul>
+<h3 id="during-class">During Class:<a aria-hidden="true" tabindex="-1" href="#during-class"><span class="icon icon-link"></span></a></h3>
+<ul>
+<li><strong>Pair students</strong> for peer learning and troubleshooting</li>
+<li><strong>Demonstrate first</strong>, then have students follow along</li>
+<li><strong>Check progress regularly</strong> - walk around the room</li>
+<li><strong>Encourage experimentation</strong> after completing core requirements</li>
+</ul>
+<h3 id="adjusting-for-skill-levels">Adjusting for Skill Levels:<a aria-hidden="true" tabindex="-1" href="#adjusting-for-skill-levels"><span class="icon icon-link"></span></a></h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Level</th><th>Adaptation</th></tr></thead><tbody><tr><td><strong>Beginner (ages 10-12)</strong></td><td>Spend 2 sessions per lesson, focus on visual results</td></tr><tr><td><strong>Standard (ages 12-15)</strong></td><td>Follow the 45-60 min timeline as written</td></tr><tr><td><strong>Advanced (ages 15+)</strong></td><td>Add challenges, encourage custom features</td></tr></tbody></table>
+<h3 id="assessment-ideas">Assessment Ideas:<a aria-hidden="true" tabindex="-1" href="#assessment-ideas"><span class="icon icon-link"></span></a></h3>
+<ul>
+<li><strong>Portfolio:</strong> Students keep a screenshot journal of progress</li>
+<li><strong>Peer Review:</strong> Students play each other's games</li>
+<li><strong>Extensions:</strong> Create custom levels, enemies, or power-ups</li>
+<li><strong>Reflection:</strong> Write about what was challenging and what was learned</li>
+</ul>
+<hr>
+<h2 id="common-troubleshooting">Common Troubleshooting<a aria-hidden="true" tabindex="-1" href="#common-troubleshooting"><span class="icon icon-link"></span></a></h2>
+<h3 id="godot-wont-open--crashes">Godot Won't Open / Crashes<a aria-hidden="true" tabindex="-1" href="#godot-wont-open--crashes"><span class="icon icon-link"></span></a></h3>
+<ul>
+<li><strong>Check version:</strong> Make sure you're using Godot 4.6, not 3.x</li>
+<li><strong>Update drivers:</strong> Update graphics drivers</li>
+<li><strong>Run as administrator:</strong> On Windows, right-click and select "Run as administrator"</li>
+</ul>
+<h3 id="player-not-moving">Player Not Moving<a aria-hidden="true" tabindex="-1" href="#player-not-moving"><span class="icon icon-link"></span></a></h3>
+<ul>
+<li><strong>Check script attachment:</strong> Make sure the script is attached to the player node</li>
+<li><strong>Verify input map:</strong> Go to Project → Project Settings → Input Map</li>
+<li><strong>Print debugging:</strong> Add <code>print("Moving!")</code> to your code to test if it's running</li>
+</ul>
+<h3 id="collisions-not-working">Collisions Not Working<a aria-hidden="true" tabindex="-1" href="#collisions-not-working"><span class="icon icon-link"></span></a></h3>
+<ul>
+<li><strong>Collision layers:</strong> Check that layers and masks are set correctly</li>
+<li><strong>Collision shapes:</strong> Ensure CollisionShape2D has a shape resource assigned</li>
+<li><strong>Physics body type:</strong> Use CharacterBody2D for player, StaticBody2D for walls</li>
+</ul>
+<h3 id="sprites-not-appearing">Sprites Not Appearing<a aria-hidden="true" tabindex="-1" href="#sprites-not-appearing"><span class="icon icon-link"></span></a></h3>
+<ul>
+<li><strong>Import settings:</strong> Select the image in FileSystem, check Import tab</li>
+<li><strong>Visibility:</strong> Check that the node is visible (eye icon in scene tree)</li>
+<li><strong>Z-index:</strong> Higher Z-index draws on top of lower Z-index</li>
+</ul>
+<h3 id="signals-not-connecting">Signals Not Connecting<a aria-hidden="true" tabindex="-1" href="#signals-not-connecting"><span class="icon icon-link"></span></a></h3>
+<ul>
+<li><strong>Verify signal exists:</strong> Check the node actually emits that signal</li>
+<li><strong>Method name:</strong> Ensure the connected method name is spelled exactly</li>
+<li><strong>Autoload issues:</strong> Make sure autoload scripts are enabled in Project Settings</li>
+</ul>
+<h3 id="node-not-found-errors">"Node not found" Errors<a aria-hidden="true" tabindex="-1" href="#node-not-found-errors"><span class="icon icon-link"></span></a></h3>
+<ul>
+<li><strong>Node paths:</strong> Use relative paths (<code>$"../NodeName"</code>) or unique names</li>
+<li><strong>Tree structure:</strong> Verify nodes are children of the expected parent</li>
+<li><strong>Loading order:</strong> Some nodes might not exist yet when script runs</li>
+</ul>
+<h3 id="performance-issues">Performance Issues<a aria-hidden="true" tabindex="-1" href="#performance-issues"><span class="icon icon-link"></span></a></h3>
+<ul>
+<li><strong>Too many nodes:</strong> Use TileMaps instead of individual sprites</li>
+<li><strong>Physics:</strong> Limit collision checks, use collision layers wisely</li>
+<li><strong>Particles:</strong> Reduce particle count or disable when off-screen</li>
+</ul>
+<hr>
+<h2 id="additional-resources">Additional Resources<a aria-hidden="true" tabindex="-1" href="#additional-resources"><span class="icon icon-link"></span></a></h2>
+<h3 id="official-godot-documentation">Official Godot Documentation<a aria-hidden="true" tabindex="-1" href="#official-godot-documentation"><span class="icon icon-link"></span></a></h3>
+<ul>
+<li><a href="https://docs.godotengine.org/en/4.6/">Godot 4.6 Documentation</a></li>
+<li><a href="https://docs.godotengine.org/en/4.6/tutorials/scripting/gdscript/index.html">GDScript Reference</a></li>
+<li><a href="https://docs.godotengine.org/en/4.6/tutorials/2d/index.html">2D Game Development</a></li>
+</ul>
+<h3 id="free-assets-for-expanding-your-game">Free Assets (for expanding your game)<a aria-hidden="true" tabindex="-1" href="#free-assets-for-expanding-your-game"><span class="icon icon-link"></span></a></h3>
+<ul>
+<li><a href="https://opengameart.org">OpenGameArt</a> - Free sprites, sounds, music</li>
+<li><a href="https://kenney.nl/assets">Kenney.nl</a> - High-quality free game assets</li>
+<li><a href="https://itch.io/game-assets">Itch.io</a> - Free and paid assets</li>
+<li><a href="https://godotengine.org/asset-library/asset">Godot Asset Library</a> - Official asset store</li>
+</ul>
+<h3 id="learning-communities">Learning Communities<a aria-hidden="true" tabindex="-1" href="#learning-communities"><span class="icon icon-link"></span></a></h3>
+<ul>
+<li><a href="https://discord.gg/godotengine">Godot Discord</a> - Active community help</li>
+<li><a href="https://reddit.com/r/godot">r/godot</a> - Reddit community</li>
+<li><a href="https://godotforums.org">Godot Forums</a> - Discussion and Q&#x26;A</li>
+<li><a href="https://youtube.com/c/GDQuest">GDQuest YouTube</a> - Video tutorials</li>
+</ul>
+<h3 id="next-steps-after-this-series">Next Steps After This Series<a aria-hidden="true" tabindex="-1" href="#next-steps-after-this-series"><span class="icon icon-link"></span></a></h3>
+<ul>
+<li><strong>Animation:</strong> Learn AnimationPlayer for cutscenes and complex animations</li>
+<li><strong>Shaders:</strong> Create visual effects with Godot's shader language</li>
+<li><strong>Networking:</strong> Add multiplayer to your game</li>
+<li><strong>Exporting:</strong> Build for Windows, Mac, Linux, Android, iOS, or Web</li>
+</ul>
+<hr>
+<h2 id="ready-to-start">Ready to Start?<a aria-hidden="true" tabindex="-1" href="#ready-to-start"><span class="icon icon-link"></span></a></h2>
+<p>Click on <strong>Lesson 1</strong> above or open <code>01_project_setup.md</code> to begin your game development journey!</p>
+<p><strong>Remember:</strong> Every professional game developer started exactly where you are right now. Take your time, have fun, and don't be afraid to make mistakes - that's how we learn! 🚀</p>
+<hr>
+<p><em>Happy Game Making!</em> 🎮✨</p>
+<p><em>This tutorial series was created for educational purposes. Feel free to use, modify, and share these lessons in your classroom or learning environment.</em></p>
+    </main>
+
+    <aside class="toc-sidebar" id="toc-sidebar">
+      <div class="toc-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <line x1="21" y1="10" x2="3" y2="10"></line>
+          <line x1="21" y1="6" x2="3" y2="6"></line>
+          <line x1="21" y1="14" x2="3" y2="14"></line>
+          <line x1="21" y1="18" x2="3" y2="18"></line>
+        </svg>
+        On this page
+      </div>
+      <nav id="toc-nav"></nav>
+    </aside>
+  </div>
+
+  <footer>
+    <p>Powered by <a href="https://www.npmjs.com/package/zenmd">ZenMD</a></p>
+  </footer>
+
+  <script src="/main.js" defer></script>
+</body>
+
+</html>

@@ -1,0 +1,91 @@
+{
+  "title": "root",
+  "relative_path": "/",
+  "order": null,
+  "createdAt": null,
+  "updatedAt": null,
+  "tags": [],
+  "children": [
+    {
+      "title": "Godot 4.6 Top-Down RPG Tutorial Series",
+      "relative_path": "/readme",
+      "order": null,
+      "createdAt": "2026-03-03T03:21:51.297Z",
+      "updatedAt": "2026-03-03T03:21:51.297Z",
+      "tags": [],
+      "children": []
+    },
+    {
+      "title": "Lesson 1: Project Setup & Godot Basics",
+      "relative_path": "/01_project_setup",
+      "order": null,
+      "createdAt": "2026-03-03T03:14:25.630Z",
+      "updatedAt": "2026-03-03T03:14:25.630Z",
+      "tags": [],
+      "children": []
+    },
+    {
+      "title": "Lesson 2: Player Movement with CharacterBody2D",
+      "relative_path": "/02_player_movement",
+      "order": null,
+      "createdAt": "2026-03-03T03:15:09.212Z",
+      "updatedAt": "2026-03-03T04:20:44.919Z",
+      "tags": [],
+      "children": []
+    },
+    {
+      "title": "Lesson 3: TileMaps & World Building",
+      "relative_path": "/03_tilemaps",
+      "order": null,
+      "createdAt": "2026-03-03T03:15:03.441Z",
+      "updatedAt": "2026-03-03T04:22:22.460Z",
+      "tags": [],
+      "children": []
+    },
+    {
+      "title": "Lesson 4: Game Flow Management with GameFlow",
+      "relative_path": "/04_game_flow",
+      "order": null,
+      "createdAt": "2026-03-03T03:15:57.811Z",
+      "updatedAt": "2026-03-03T04:22:33.103Z",
+      "tags": [],
+      "children": []
+    },
+    {
+      "title": "Lesson 5: UI & HUD Labels Challenge",
+      "relative_path": "/05_ui_labels_challenge",
+      "order": null,
+      "createdAt": "2026-03-03T03:14:30.191Z",
+      "updatedAt": "2026-03-03T03:14:30.191Z",
+      "tags": [],
+      "children": []
+    },
+    {
+      "title": "Lesson 6: Enemies & Basic Combat",
+      "relative_path": "/06_enemies_combat",
+      "order": null,
+      "createdAt": "2026-03-03T03:18:32.640Z",
+      "updatedAt": "2026-03-03T03:18:32.641Z",
+      "tags": [],
+      "children": []
+    },
+    {
+      "title": "Lesson 7: Collectibles & Inventory",
+      "relative_path": "/07_collectibles_inventory",
+      "order": null,
+      "createdAt": "2026-03-03T03:18:48.702Z",
+      "updatedAt": "2026-03-03T03:18:48.703Z",
+      "tags": [],
+      "children": []
+    },
+    {
+      "title": "Lesson 8: Scene Transitions & Game States",
+      "relative_path": "/08_scene_transitions",
+      "order": null,
+      "createdAt": "2026-03-03T03:19:58.808Z",
+      "updatedAt": "2026-03-03T03:19:58.809Z",
+      "tags": [],
+      "children": []
+    }
+  ]
+}

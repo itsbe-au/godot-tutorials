@@ -1,0 +1,731 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A page about Lesson 7: Collectibles &amp; Inventory">
+  <meta property="og:title" content="Lesson 7: Collectibles &amp; Inventory">
+  <meta property="og:description" content="A page about Lesson 7: Collectibles &amp; Inventory">
+  <meta property="og:image" content="/og_image.png">
+
+  <link rel="icon" href="/favicon.png">
+  <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
+  <link rel="stylesheet" href="/main.css">
+  <style>
+    /* 
+    To customize the default style, you should try to override the variables in SimpleCSS: 
+    https://github.com/kevquirk/simple.css/wiki/Getting-Started-With-Simple.css#customise-simplecss
+    Here are all the variables that's defined:
+    */
+
+    :root {
+      /* Set sans-serif & mono fonts */
+      --sans-font: -apple-system, BlinkMacSystemFont, "Avenir Next", Avenir,
+        "Nimbus Sans L", Roboto, "Noto Sans", "Segoe UI", Arial, Helvetica,
+        "Helvetica Neue", sans-serif;
+      --mono-font: Consolas, Menlo, Monaco, "Andale Mono", "Ubuntu Mono", monospace;
+      --standard-border-radius: 5px;
+      --border-width: 1px;
+
+      /* Default (light) theme */
+      --bg: #fff;
+      --accent-bg: #f5f7ff;
+      --text: #212121;
+      --text-light: #585858;
+      --border: #898EA4;
+      --accent: var(--text);
+      --accent-hover: var(--text);
+      --accent-text: var(--bg);
+      --code: #d81b60;
+      --preformatted: #444;
+      --marked: #e2e2e2;
+      --disabled: #efefef;
+      --content-width: 80rem;
+      --sidebar-width: 300px;
+      --sidenav-width: 220px;
+      --gap: 4rem;
+    }
+
+    /* Dark theme */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        color-scheme: dark;
+        --bg: #212121;
+        --accent-bg: #2b2b2b;
+        --text: #dcdcdc;
+        --text-light: #ababab;
+        --accent: var(--text);
+        --accent-hover: var(--text);
+        --accent-text: var(--bg);
+        --code: #f06292;
+        --preformatted: #ccc;
+        --disabled: #111;
+      }
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+  </style>
+  <title>Lesson 7: Collectibles &amp; Inventory</title>
+</head>
+
+<body>
+  <button id="menu-toggle" class="menu-toggle" aria-label="Toggle navigation">
+    <span></span>
+    <span></span>
+  </button>
+  <div id="sidebar-overlay" class="sidebar-overlay"></div>
+  <div class="main-grid" id="main-grid">
+    <aside class="site-sidebar" id="site-sidebar">
+      <div class="site-nav-title" id="site-nav-title">Site</div>
+      <nav id="site-nav"></nav>
+    </aside>
+
+    <main class="article">
+      <h1 id="lesson-7-collectibles--inventory">Lesson 7: Collectibles &#x26; Inventory<a aria-hidden="true" tabindex="-1" href="#lesson-7-collectibles--inventory"><span class="icon icon-link"></span></a></h1>
+<p><strong>Target Audience:</strong> Middle high school students (ages 12-15)<br>
+<strong>Time:</strong> 45-60 minutes<br>
+<strong>Prerequisites:</strong> Lessons 1-6 (Basic Godot, player movement, scenes, signals, UI basics)</p>
+<hr>
+<h2 id="what-well-build-today">What We'll Build Today<a aria-hidden="true" tabindex="-1" href="#what-well-build-today"><span class="icon icon-link"></span></a></h2>
+<p>Every great game has collectibles that make exploration rewarding! Today you'll create:</p>
+<ul>
+<li><strong>Coins</strong> - Increase your score</li>
+<li><strong>Health Potions</strong> - Restore lost health</li>
+<li><strong>Mana Potions</strong> - Restore magical energy</li>
+<li><strong>Inventory System</strong> - Track what you've collected</li>
+<li><strong>Juicy Effects</strong> - Make pickups feel AMAZING!</li>
+</ul>
+<p>By the end, your game world will be filled with treasures begging to be collected!</p>
+<hr>
+<h2 id="1-understanding-collectibles">1. Understanding Collectibles<a aria-hidden="true" tabindex="-1" href="#1-understanding-collectibles"><span class="icon icon-link"></span></a></h2>
+<h3 id="types-of-collectibles-well-create">Types of Collectibles We'll Create<a aria-hidden="true" tabindex="-1" href="#types-of-collectibles-well-create"><span class="icon icon-link"></span></a></h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Collectible</th><th>Effect</th><th>Visual Style</th></tr></thead><tbody><tr><td><strong>Coin</strong></td><td>+10 score</td><td>Golden, spinning</td></tr><tr><td><strong>Health Potion</strong></td><td>+25 HP</td><td>Red liquid in bottle</td></tr><tr><td><strong>Mana Potion</strong></td><td>+25 MP</td><td>Blue liquid in bottle</td></tr></tbody></table>
+<h3 id="why-collectibles-matter">Why Collectibles Matter<a aria-hidden="true" tabindex="-1" href="#why-collectibles-matter"><span class="icon icon-link"></span></a></h3>
+<p>Collectibles:</p>
+<ul>
+<li>Reward exploration</li>
+<li>Guide players through levels</li>
+<li>Create satisfying feedback loops</li>
+<li>Encourage replayability</li>
+</ul>
+<hr>
+<h2 id="2-creating-the-base-collectible-scene">2. Creating the Base Collectible Scene<a aria-hidden="true" tabindex="-1" href="#2-creating-the-base-collectible-scene"><span class="icon icon-link"></span></a></h2>
+<h3 id="step-1-set-up-the-scene">Step 1: Set Up the Scene<a aria-hidden="true" tabindex="-1" href="#step-1-set-up-the-scene"><span class="icon icon-link"></span></a></h3>
+<ol>
+<li>Create a new scene: <code>res://collectibles/collectible_base.tscn</code></li>
+<li>Set the root node as <strong>Area2D</strong> (name it <code>Collectible</code>)</li>
+<li>Add these child nodes:
+<ul>
+<li><strong>Sprite2D</strong> - for the visual</li>
+<li><strong>CollisionShape2D</strong> - for detection (CircleShape2D works great)</li>
+<li><strong>AnimationPlayer</strong> - for bobbing/spinning</li>
+</ul>
+</li>
+</ol>
+<h3 id="step-2-scene-structure">Step 2: Scene Structure<a aria-hidden="true" tabindex="-1" href="#step-2-scene-structure"><span class="icon icon-link"></span></a></h3>
+<pre><code>Collectible (Area2D)
+├── Sprite2D
+├── CollisionShape2D
+└── AnimationPlayer
+</code></pre>
+<h3 id="step-3-configure-the-area2d">Step 3: Configure the Area2D<a aria-hidden="true" tabindex="-1" href="#step-3-configure-the-area2d"><span class="icon icon-link"></span></a></h3>
+<ul>
+<li><strong>Collision Layer:</strong> Set to "Collectibles" (create this in Project Settings)</li>
+<li><strong>Collision Mask:</strong> Enable "Player" layer</li>
+<li>This ensures only the player can trigger collection</li>
+</ul>
+<hr>
+<h2 id="3-creating-the-collectible-script">3. Creating the Collectible Script<a aria-hidden="true" tabindex="-1" href="#3-creating-the-collectible-script"><span class="icon icon-link"></span></a></h2>
+<p>Create <code>res://collectibles/collectible.gd</code>:</p>
+<pre><code class="language-gdscript">extends Area2D
+
+@export var collectible_type: String = "coin"
+@export var value: int = 10
+
+@onready var sprite = $Sprite2D
+@onready var anim_player = $AnimationPlayer
+
+func _ready():
+    # Connect the body entered signal
+    body_entered.connect(_on_body_entered)
+    
+    # Start the idle animation
+    if anim_player.has_animation("idle"):
+        anim_player.play("idle")
+
+func _on_body_entered(body: Node2D):
+    # Check if it's the player
+    if body.is_in_group("player"):
+        collect(body)
+
+func collect(player: Node2D):
+    # Call GameFlow to update stats
+    match collectible_type:
+        "coin":
+            GameFlow.add_score(value)
+        "health_potion":
+            GameFlow.heal_player(value)
+        "mana_potion":
+            GameFlow.restore_mana(value)
+    
+    # Spawn effects
+    spawn_effects()
+    
+    # Remove from scene
+    queue_free()
+
+func spawn_effects():
+    # We'll add particles and floating text here!
+    pass
+</code></pre>
+<hr>
+<h2 id="4-creating-different-collectible-types">4. Creating Different Collectible Types<a aria-hidden="true" tabindex="-1" href="#4-creating-different-collectible-types"><span class="icon icon-link"></span></a></h2>
+<h3 id="using-export-for-flexibility">Using @export for Flexibility<a aria-hidden="true" tabindex="-1" href="#using-export-for-flexibility"><span class="icon icon-link"></span></a></h3>
+<p>Instead of creating separate scenes, use <strong>@export</strong> variables:</p>
+<pre><code class="language-gdscript">@export_enum("coin", "health_potion", "mana_potion") var collectible_type: String = "coin"
+@export var value: int = 10
+@export var floating_text: String = "+10"
+</code></pre>
+<h3 id="visual-differentiation">Visual Differentiation<a aria-hidden="true" tabindex="-1" href="#visual-differentiation"><span class="icon icon-link"></span></a></h3>
+<p>Add to your <code>_ready()</code> function:</p>
+<pre><code class="language-gdscript">func _ready():
+    body_entered.connect(_on_body_entered)
+    update_appearance()
+    
+    if anim_player.has_animation("idle"):
+        anim_player.play("idle")
+
+func update_appearance():
+    match collectible_type:
+        "coin":
+            sprite.modulate = Color.GOLD
+            floating_text = "+" + str(value)
+        "health_potion":
+            sprite.modulate = Color.RED
+            floating_text = "+" + str(value) + " HP"
+        "mana_potion":
+            sprite.modulate = Color.BLUE
+            floating_text = "+" + str(value) + " MP"
+</code></pre>
+<h3 id="creating-variants">Creating Variants<a aria-hidden="true" tabindex="-1" href="#creating-variants"><span class="icon icon-link"></span></a></h3>
+<p>Now you can create different instances:</p>
+<ol>
+<li><strong>Silver Coin:</strong> <code>collectible_type = "coin"</code>, <code>value = 5</code></li>
+<li><strong>Gold Coin:</strong> <code>collectible_type = "coin"</code>, <code>value = 10</code></li>
+<li><strong>Mega Coin:</strong> <code>collectible_type = "coin"</code>, <code>value = 50</code></li>
+<li><strong>Small Potion:</strong> <code>value = 25</code></li>
+<li><strong>Large Potion:</strong> <code>value = 50</code></li>
+</ol>
+<hr>
+<h2 id="5-creating-bobbing-animation">5. Creating Bobbing Animation<a aria-hidden="true" tabindex="-1" href="#5-creating-bobbing-animation"><span class="icon icon-link"></span></a></h2>
+<h3 id="simple-bobbing-effect">Simple Bobbing Effect<a aria-hidden="true" tabindex="-1" href="#simple-bobbing-effect"><span class="icon icon-link"></span></a></h3>
+<p>Open your <strong>AnimationPlayer</strong> and create an "idle" animation:</p>
+<ol>
+<li>Add a track for <code>Sprite2D:position</code></li>
+<li>Set keyframes:
+<ul>
+<li>Time 0.0s: position.y = -5</li>
+<li>Time 0.5s: position.y = 5</li>
+<li>Time 1.0s: position.y = -5</li>
+</ul>
+</li>
+<li>Set loop mode to <strong>Linear Loop</strong></li>
+</ol>
+<h3 id="add-a-spin-effect">Add a Spin Effect<a aria-hidden="true" tabindex="-1" href="#add-a-spin-effect"><span class="icon icon-link"></span></a></h3>
+<p>Add another track:</p>
+<ul>
+<li><code>Sprite2D:rotation</code></li>
+<li>Time 0.0s: rotation = 0</li>
+<li>Time 2.0s: rotation = 360 (or 6.28 radians)</li>
+</ul>
+<p>Your collectible now floats and spins - irresistible!</p>
+<hr>
+<h2 id="6-simple-inventory-system">6. Simple Inventory System<a aria-hidden="true" tabindex="-1" href="#6-simple-inventory-system"><span class="icon icon-link"></span></a></h2>
+<h3 id="step-1-update-gameflow">Step 1: Update GameFlow<a aria-hidden="true" tabindex="-1" href="#step-1-update-gameflow"><span class="icon icon-link"></span></a></h3>
+<p>Add to your <code>res://autoloads/game_flow.gd</code>:</p>
+<pre><code class="language-gdscript">extends Node
+
+# Existing stats
+var score: int = 0
+var player_health: int = 100
+var player_mana: int = 100
+
+# NEW: Inventory system
+var inventory: Dictionary = {
+    "coins": 0,
+    "health_potions": 0,
+    "mana_potions": 0,
+    "keys": 0
+}
+
+# Signals
+signal score_changed(new_score)
+signal health_changed(new_health)
+signal mana_changed(new_mana)
+signal inventory_changed(item_type, new_count)
+
+func add_to_inventory(item: String, amount: int = 1):
+    if inventory.has(item):
+        inventory[item] += amount
+    else:
+        inventory[item] = amount
+    
+    inventory_changed.emit(item, inventory[item])
+    print("Added ", amount, " ", item, " to inventory")
+
+func remove_from_inventory(item: String, amount: int = 1) -> bool:
+    if inventory.has(item) and inventory[item] >= amount:
+        inventory[item] -= amount
+        inventory_changed.emit(item, inventory[item])
+        return true
+    return false
+
+func has_item(item: String, amount: int = 1) -> bool:
+    return inventory.has(item) and inventory[item] >= amount
+
+func add_score(amount: int):
+    score += amount
+    score_changed.emit(score)
+    add_to_inventory("coins", amount)
+
+func heal_player(amount: int):
+    player_health = min(player_health + amount, 100)
+    health_changed.emit(player_health)
+    add_to_inventory("health_potions", 1)
+
+func restore_mana(amount: int):
+    player_mana = min(player_mana + amount, 100)
+    mana_changed.emit(player_mana)
+    add_to_inventory("mana_potions", 1)
+
+func use_health_potion() -> bool:
+    if remove_from_inventory("health_potions", 1):
+        heal_player(50)
+        return true
+    return false
+
+func use_mana_potion() -> bool:
+    if remove_from_inventory("mana_potions", 1):
+        restore_mana(50)
+        return true
+    return false
+</code></pre>
+<h3 id="step-2-display-inventory-in-ui">Step 2: Display Inventory in UI<a aria-hidden="true" tabindex="-1" href="#step-2-display-inventory-in-ui"><span class="icon icon-link"></span></a></h3>
+<p>Create a simple inventory display:</p>
+<pre><code class="language-gdscript"># In your UI script (res://ui/inventory_display.gd)
+extends Control
+
+@onready var coin_label = $CoinLabel
+@onready var health_potion_label = $HealthPotionLabel
+@onready var mana_potion_label = $ManaPotionLabel
+
+func _ready():
+    GameFlow.inventory_changed.connect(_on_inventory_changed)
+    update_display()
+
+func _on_inventory_changed(item_type, count):
+    update_display()
+
+func update_display():
+    coin_label.text = "Coins: " + str(GameFlow.inventory["coins"])
+    health_potion_label.text = "HP Potions: " + str(GameFlow.inventory["health_potions"])
+    mana_potion_label.text = "MP Potions: " + str(GameFlow.inventory["mana_potions"])
+</code></pre>
+<hr>
+<h2 id="7-creating-pickup-effects">7. Creating Pickup Effects<a aria-hidden="true" tabindex="-1" href="#7-creating-pickup-effects"><span class="icon icon-link"></span></a></h2>
+<h3 id="floating-text-effect">Floating Text Effect<a aria-hidden="true" tabindex="-1" href="#floating-text-effect"><span class="icon icon-link"></span></a></h3>
+<p>Create <code>res://effects/floating_text.tscn</code>:</p>
+<pre><code class="language-gdscript"># res://effects/floating_text.gd
+extends Label
+
+@export var float_speed: float = 50.0
+@export var fade_speed: float = 1.0
+
+func _ready():
+    # Start slightly above
+    position.y -= 20
+    
+    # Create tween for floating and fading
+    var tween = create_tween()
+    tween.set_parallel(true)
+    
+    # Float up
+    tween.tween_property(self, "position:y", position.y - 30, 1.0)
+    
+    # Fade out
+    tween.tween_property(self, "modulate:a", 0.0, 1.0)
+    
+    # Remove when done
+    tween.tween_callback(queue_free).set_delay(1.0)
+</code></pre>
+<h3 id="update-collectible-script">Update Collectible Script<a aria-hidden="true" tabindex="-1" href="#update-collectible-script"><span class="icon icon-link"></span></a></h3>
+<pre><code class="language-gdscript">func spawn_effects():
+    # Spawn floating text
+    var text = preload("res://effects/floating_text.tscn").instantiate()
+    text.text = floating_text
+    text.position = global_position
+    get_tree().current_scene.add_child(text)
+    
+    # Play sound (if you have AudioManager)
+    # AudioManager.play_sfx("collect")
+</code></pre>
+<h3 id="particle-effects">Particle Effects<a aria-hidden="true" tabindex="-1" href="#particle-effects"><span class="icon icon-link"></span></a></h3>
+<p>Add <strong>CPUParticles2D</strong> to your collectible:</p>
+<ol>
+<li>Add CPUParticles2D as child of Collectible</li>
+<li>Configure:
+<ul>
+<li><strong>Emitting:</strong> OFF (we'll trigger it)</li>
+<li><strong>Amount:</strong> 10</li>
+<li><strong>Lifetime:</strong> 0.5</li>
+<li><strong>Explosiveness:</strong> 0.8</li>
+<li><strong>Direction:</strong> (0, -1) - upward</li>
+<li><strong>Spread:</strong> 45</li>
+<li><strong>Gravity:</strong> (0, 200)</li>
+<li><strong>Initial Velocity:</strong> 100-200</li>
+<li><strong>Scale:</strong> 2-4</li>
+<li><strong>Color:</strong> Match collectible type</li>
+</ul>
+</li>
+</ol>
+<p>Update your <code>spawn_effects()</code>:</p>
+<pre><code class="language-gdscript">@onready var particles = $CPUParticles2D
+
+func spawn_effects():
+    # Detach particles so they stay after collectible is freed
+    var pos = global_position
+    remove_child(particles)
+    get_tree().current_scene.add_child(particles)
+    particles.global_position = pos
+    particles.emitting = true
+    
+    # Spawn floating text
+    var text = preload("res://effects/floating_text.tscn").instantiate()
+    text.text = floating_text
+    text.position = global_position
+    get_tree().current_scene.add_child(text)
+    
+    # Remove particles after they finish
+    await get_tree().create_timer(1.0).timeout
+    particles.queue_free()
+</code></pre>
+<hr>
+<h2 id="8-placing-collectibles-in-the-world">8. Placing Collectibles in the World<a aria-hidden="true" tabindex="-1" href="#8-placing-collectibles-in-the-world"><span class="icon icon-link"></span></a></h2>
+<h3 id="method-1-manual-placement">Method 1: Manual Placement<a aria-hidden="true" tabindex="-1" href="#method-1-manual-placement"><span class="icon icon-link"></span></a></h3>
+<ol>
+<li>Drag your <code>collectible_base.tscn</code> into the level</li>
+<li>Select it in the scene tree</li>
+<li>In the Inspector, set:
+<ul>
+<li>Collectible Type: "coin" (or potion type)</li>
+<li>Value: Your desired amount</li>
+</ul>
+</li>
+<li>Position where desired</li>
+</ol>
+<h3 id="method-2-random-spawning-optional">Method 2: Random Spawning (Optional)<a aria-hidden="true" tabindex="-1" href="#method-2-random-spawning-optional"><span class="icon icon-link"></span></a></h3>
+<p>Create a spawner:</p>
+<pre><code class="language-gdscript"># res://collectibles/coin_spawner.gd
+extends Node2D
+
+@export var spawn_radius: float = 200.0
+@export var coin_count: int = 5
+@export var collectible_scene: PackedScene
+
+func _ready():
+    spawn_coins()
+
+func spawn_coins():
+    for i in coin_count:
+        var coin = collectible_scene.instantiate()
+        
+        # Random position within radius
+        var angle = randf() * TAU  # TAU = 2 * PI
+        var distance = randf() * spawn_radius
+        var offset = Vector2(cos(angle), sin(angle)) * distance
+        
+        coin.position = position + offset
+        add_child(coin)
+</code></pre>
+<hr>
+<h2 id="9-practice-activities">9. Practice Activities<a aria-hidden="true" tabindex="-1" href="#9-practice-activities"><span class="icon icon-link"></span></a></h2>
+<h3 id="activity-1-create-a-treasure-chest">Activity 1: Create a Treasure Chest<a aria-hidden="true" tabindex="-1" href="#activity-1-create-a-treasure-chest"><span class="icon icon-link"></span></a></h3>
+<p><strong>Challenge:</strong> Create a chest that gives multiple items when opened!</p>
+<pre><code class="language-gdscript"># res://collectibles/treasure_chest.gd
+extends Area2D
+
+@export var rewards: Dictionary = {
+    "coins": 50,
+    "health_potions": 2,
+    "mana_potions": 1
+}
+
+var opened: bool = false
+
+func _on_body_entered(body):
+    if body.is_in_group("player") and not opened:
+        open_chest()
+
+func open_chest():
+    opened = true
+    
+    # Give rewards
+    for item in rewards:
+        GameFlow.add_to_inventory(item, rewards[item])
+    
+    # Change sprite to open chest
+    $Sprite2D.texture = preload("res://assets/chest_open.png")
+    
+    # Spawn confetti particles!
+    spawn_confetti()
+    
+    # Show "Treasure Found!" text
+    show_treasure_text()
+</code></pre>
+<h3 id="activity-2-add-key-items">Activity 2: Add Key Items<a aria-hidden="true" tabindex="-1" href="#activity-2-add-key-items"><span class="icon icon-link"></span></a></h3>
+<p>Create a key that unlocks doors:</p>
+<pre><code class="language-gdscript"># res://objects/locked_door.gd
+extends StaticBody2D
+
+@export var required_key: String = "dungeon_key"
+@export var unlock_message: String = "Door Unlocked!"
+
+func interact(player):
+    if GameFlow.has_item(required_key):
+        GameFlow.remove_from_inventory(required_key, 1)
+        unlock()
+    else:
+        show_message("Locked! Need: " + required_key)
+
+func unlock():
+    # Open door animation
+    $AnimationPlayer.play("open")
+    await $AnimationPlayer.animation_finished
+    queue_free()
+</code></pre>
+<h3 id="activity-3-inventory-ui-display">Activity 3: Inventory UI Display<a aria-hidden="true" tabindex="-1" href="#activity-3-inventory-ui-display"><span class="icon icon-link"></span></a></h3>
+<p><strong>Challenge:</strong> Create a visual inventory grid:</p>
+<ol>
+<li>
+<p>Create a new scene: <code>res://ui/inventory_slot.tscn</code></p>
+<ul>
+<li>TextureRect for item icon</li>
+<li>Label for count</li>
+</ul>
+</li>
+<li>
+<p>Create <code>res://ui/inventory_grid.gd</code>:</p>
+</li>
+</ol>
+<pre><code class="language-gdscript">extends GridContainer
+
+@export var slot_scene: PackedScene
+@export var columns: int = 4
+
+var slots = []
+
+func _ready():
+    GameFlow.inventory_changed.connect(update_inventory)
+    create_slots()
+
+func create_slots():
+    for i in range(12):  # 12 inventory slots
+        var slot = slot_scene.instantiate()
+        add_child(slot)
+        slots.append(slot)
+
+func update_inventory(item_type, count):
+    # Find slot for this item or empty slot
+    for slot in slots:
+        if slot.item_type == item_type or slot.item_type == "":
+            slot.set_item(item_type, count)
+            break
+</code></pre>
+<h3 id="activity-4-item-rarity-system">Activity 4: Item Rarity System<a aria-hidden="true" tabindex="-1" href="#activity-4-item-rarity-system"><span class="icon icon-link"></span></a></h3>
+<p>Add rarity colors to your collectibles:</p>
+<pre><code class="language-gdscript">enum Rarity { COMMON, UNCOMMON, RARE, EPIC, LEGENDARY }
+
+@export var rarity: Rarity = Rarity.COMMON
+
+var rarity_colors = {
+    Rarity.COMMON: Color.WHITE,
+    Rarity.UNCOMMON: Color.GREEN,
+    Rarity.RARE: Color.BLUE,
+    Rarity.EPIC: Color.PURPLE,
+    Rarity.LEGENDARY: Color.ORANGE
+}
+
+func _ready():
+    sprite.modulate = rarity_colors[rarity]
+    
+    # Legendary items get a special glow!
+    if rarity == Rarity.LEGENDARY:
+        add_glow_effect()
+</code></pre>
+<hr>
+<h2 id="10-troubleshooting">10. Troubleshooting<a aria-hidden="true" tabindex="-1" href="#10-troubleshooting"><span class="icon icon-link"></span></a></h2>
+<h3 id="common-issues--solutions">Common Issues &#x26; Solutions<a aria-hidden="true" tabindex="-1" href="#common-issues--solutions"><span class="icon icon-link"></span></a></h3>
+<p><strong>Problem:</strong> Collectible doesn't disappear when collected</p>
+<p><strong>Solution:</strong></p>
+<ul>
+<li>Check if collision layers/masks are set correctly</li>
+<li>Verify the player is in the "player" group</li>
+<li>Add print statements to debug:</li>
+</ul>
+<pre><code class="language-gdscript">func _on_body_entered(body):
+    print("Body entered: ", body.name)
+    if body.is_in_group("player"):
+        print("It's the player! Collecting...")
+        collect(body)
+</code></pre>
+<p><strong>Problem:</strong> Particles disappear immediately</p>
+<p><strong>Solution:</strong> Detach particles from collectible before freeing it:</p>
+<pre><code class="language-gdscript">func spawn_effects():
+    remove_child(particles)
+    get_parent().add_child(particles)
+    particles.global_position = global_position
+    particles.emitting = true
+</code></pre>
+<p><strong>Problem:</strong> Inventory not updating in UI</p>
+<p><strong>Solution:</strong></p>
+<ul>
+<li>Verify the signal is connected:</li>
+</ul>
+<pre><code class="language-gdscript">func _ready():
+    if not GameFlow.inventory_changed.is_connected(_on_inventory_changed):
+        GameFlow.inventory_changed.connect(_on_inventory_changed)
+</code></pre>
+<ul>
+<li>Check if GameFlow is an autoload in Project Settings</li>
+</ul>
+<p><strong>Problem:</strong> Floating text doesn't appear</p>
+<p><strong>Solution:</strong></p>
+<ul>
+<li>Ensure text is added to current_scene, not the collectible</li>
+<li>Check that the floating_text scene path is correct</li>
+<li>Verify the label has visible text and color</li>
+</ul>
+<p><strong>Problem:</strong> Collectibles spawn in walls</p>
+<p><strong>Solution:</strong> Use raycasting to check for valid spawn positions:</p>
+<pre><code class="language-gdscript">func get_valid_spawn_position():
+    var space_state = get_world_2d().direct_space_state
+    for attempt in 10:
+        var pos = get_random_position()
+        var query = PhysicsPointQueryParameters2D.new()
+        query.position = pos
+        var result = space_state.intersect_point(query)
+        if result.is_empty():
+            return pos
+    return position  # Fallback to spawner position
+</code></pre>
+<hr>
+<h2 id="11-preview-of-next-lesson">11. Preview of Next Lesson<a aria-hidden="true" tabindex="-1" href="#11-preview-of-next-lesson"><span class="icon icon-link"></span></a></h2>
+<p><strong>Lesson 8: Enemies &#x26; Combat</strong></p>
+<p>In the next lesson, you'll:</p>
+<ul>
+<li>Create enemy AI that chases the player</li>
+<li>Implement a simple combat system</li>
+<li>Add health mechanics and damage</li>
+<li>Create different enemy types</li>
+<li>Design combat encounters</li>
+</ul>
+<p>Get ready to defend your treasure!</p>
+<hr>
+<h2 id="quick-reference">Quick Reference<a aria-hidden="true" tabindex="-1" href="#quick-reference"><span class="icon icon-link"></span></a></h2>
+<h3 id="essential-functions">Essential Functions<a aria-hidden="true" tabindex="-1" href="#essential-functions"><span class="icon icon-link"></span></a></h3>
+<pre><code class="language-gdscript"># Check if player has item
+if GameFlow.has_item("key"):
+    open_door()
+
+# Add item to inventory
+GameFlow.add_to_inventory("coins", 10)
+
+# Remove item from inventory
+if GameFlow.remove_from_inventory("health_potions", 1):
+    heal_player()
+
+# Connect to inventory changes
+GameFlow.inventory_changed.connect(func(item, count):
+    print(item, " count is now ", count)
+)
+</code></pre>
+<h3 id="visual-polish-checklist">Visual Polish Checklist<a aria-hidden="true" tabindex="-1" href="#visual-polish-checklist"><span class="icon icon-link"></span></a></h3>
+<ul class="contains-task-list">
+<li class="task-list-item"><input type="checkbox" disabled> Bobbing/floating animation</li>
+<li class="task-list-item"><input type="checkbox" disabled> Spinning or pulsing effect</li>
+<li class="task-list-item"><input type="checkbox" disabled> Particle burst on collect</li>
+<li class="task-list-item"><input type="checkbox" disabled> Floating text showing value</li>
+<li class="task-list-item"><input type="checkbox" disabled> Sound effect (optional)</li>
+<li class="task-list-item"><input type="checkbox" disabled> Different colors for different types</li>
+<li class="task-list-item"><input type="checkbox" disabled> Glow effect for rare items</li>
+</ul>
+<hr>
+<h2 id="congratulations">Congratulations!<a aria-hidden="true" tabindex="-1" href="#congratulations"><span class="icon icon-link"></span></a></h2>
+<p>Your game world is now filled with treasures! Players will love exploring every corner to find coins, potions, and special items.</p>
+<p><strong>Next Steps:</strong></p>
+<ol>
+<li>Place collectibles throughout your level</li>
+<li>Balance the economy (how many coins feel right?)</li>
+<li>Add visual variety with different sprites</li>
+<li>Consider adding secret/hidden collectibles</li>
+<li>Test that everything feels fun to collect!</li>
+</ol>
+<p>Happy collecting! 🎮✨</p>
+    </main>
+
+    <aside class="toc-sidebar" id="toc-sidebar">
+      <div class="toc-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <line x1="21" y1="10" x2="3" y2="10"></line>
+          <line x1="21" y1="6" x2="3" y2="6"></line>
+          <line x1="21" y1="14" x2="3" y2="14"></line>
+          <line x1="21" y1="18" x2="3" y2="18"></line>
+        </svg>
+        On this page
+      </div>
+      <nav id="toc-nav"></nav>
+    </aside>
+  </div>
+
+  <footer>
+    <p>Powered by <a href="https://www.npmjs.com/package/zenmd">ZenMD</a></p>
+  </footer>
+
+  <script src="/main.js" defer></script>
+</body>
+
+</html>

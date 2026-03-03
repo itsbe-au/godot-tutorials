@@ -1,0 +1,855 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A page about Lesson 2: Player Movement with CharacterBody2D">
+  <meta property="og:title" content="Lesson 2: Player Movement with CharacterBody2D">
+  <meta property="og:description" content="A page about Lesson 2: Player Movement with CharacterBody2D">
+  <meta property="og:image" content="/og_image.png">
+
+  <link rel="icon" href="/favicon.png">
+  <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
+  <link rel="stylesheet" href="/main.css">
+  <style>
+    /* 
+    To customize the default style, you should try to override the variables in SimpleCSS: 
+    https://github.com/kevquirk/simple.css/wiki/Getting-Started-With-Simple.css#customise-simplecss
+    Here are all the variables that's defined:
+    */
+
+    :root {
+      /* Set sans-serif & mono fonts */
+      --sans-font: -apple-system, BlinkMacSystemFont, "Avenir Next", Avenir,
+        "Nimbus Sans L", Roboto, "Noto Sans", "Segoe UI", Arial, Helvetica,
+        "Helvetica Neue", sans-serif;
+      --mono-font: Consolas, Menlo, Monaco, "Andale Mono", "Ubuntu Mono", monospace;
+      --standard-border-radius: 5px;
+      --border-width: 1px;
+
+      /* Default (light) theme */
+      --bg: #fff;
+      --accent-bg: #f5f7ff;
+      --text: #212121;
+      --text-light: #585858;
+      --border: #898EA4;
+      --accent: var(--text);
+      --accent-hover: var(--text);
+      --accent-text: var(--bg);
+      --code: #d81b60;
+      --preformatted: #444;
+      --marked: #e2e2e2;
+      --disabled: #efefef;
+      --content-width: 80rem;
+      --sidebar-width: 300px;
+      --sidenav-width: 220px;
+      --gap: 4rem;
+    }
+
+    /* Dark theme */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        color-scheme: dark;
+        --bg: #212121;
+        --accent-bg: #2b2b2b;
+        --text: #dcdcdc;
+        --text-light: #ababab;
+        --accent: var(--text);
+        --accent-hover: var(--text);
+        --accent-text: var(--bg);
+        --code: #f06292;
+        --preformatted: #ccc;
+        --disabled: #111;
+      }
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+  </style>
+  <title>Lesson 2: Player Movement with CharacterBody2D</title>
+</head>
+
+<body>
+  <button id="menu-toggle" class="menu-toggle" aria-label="Toggle navigation">
+    <span></span>
+    <span></span>
+  </button>
+  <div id="sidebar-overlay" class="sidebar-overlay"></div>
+  <div class="main-grid" id="main-grid">
+    <aside class="site-sidebar" id="site-sidebar">
+      <div class="site-nav-title" id="site-nav-title">Site</div>
+      <nav id="site-nav"></nav>
+    </aside>
+
+    <main class="article">
+      <h1 id="lesson-2-player-movement-with-characterbody2d">Lesson 2: Player Movement with CharacterBody2D<a aria-hidden="true" tabindex="-1" href="#lesson-2-player-movement-with-characterbody2d"><span class="icon icon-link"></span></a></h1>
+<p><strong>Goal:</strong> Create a controllable player character with smooth 8-directional movement</p>
+<h2 id="overview">Overview<a aria-hidden="true" tabindex="-1" href="#overview"><span class="icon icon-link"></span></a></h2>
+<p>In this lesson, you'll bring your game world to life by creating a controllable player character. We'll learn about Godot's physics system, write our first script, and create smooth 8-directional movement that feels great to play.</p>
+<p>By the end of this lesson, you'll have:</p>
+<ul>
+<li>A player character that responds to keyboard input</li>
+<li>Smooth movement with acceleration and friction</li>
+<li>A walled area to test collisions</li>
+<li>Understanding of how game physics work in Godot</li>
+</ul>
+<hr>
+<h2 id="part-1-understanding-characterbody2d">Part 1: Understanding CharacterBody2D<a aria-hidden="true" tabindex="-1" href="#part-1-understanding-characterbody2d"><span class="icon icon-link"></span></a></h2>
+<h3 id="what-are-physics-bodies">What Are Physics Bodies?<a aria-hidden="true" tabindex="-1" href="#what-are-physics-bodies"><span class="icon icon-link"></span></a></h3>
+<p>Godot provides three main types of physics bodies for 2D games:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Body Type</th><th>Use Case</th><th>Key Feature</th></tr></thead><tbody><tr><td><strong>StaticBody2D</strong></td><td>Walls, floors, obstacles</td><td>Never moves, just blocks</td></tr><tr><td><strong>RigidBody2D</strong></td><td>Falling rocks, pushed crates</td><td>Realistic physics simulation</td></tr><tr><td><strong>CharacterBody2D</strong></td><td>Player characters, NPCs</td><td>Controlled movement with collision</td></tr></tbody></table>
+<h3 id="why-characterbody2d">Why CharacterBody2D?<a aria-hidden="true" tabindex="-1" href="#why-characterbody2d"><span class="icon icon-link"></span></a></h3>
+<p>For player characters, we want <strong>responsive control</strong> rather than realistic physics. We want the player to stop immediately when we release a key, not slide around like they're on ice!</p>
+<p><strong>Key features of CharacterBody2D:</strong></p>
+<ul>
+<li>🎮 Full control over movement logic</li>
+<li>🚫 Won't be pushed around by other objects</li>
+<li>⚡ Perfect for platformers, top-down games, and RPGs</li>
+<li>🔧 Easy to implement custom movement styles</li>
+</ul>
+<hr>
+<h2 id="part-2-creating-the-player-scene">Part 2: Creating the Player Scene<a aria-hidden="true" tabindex="-1" href="#part-2-creating-the-player-scene"><span class="icon icon-link"></span></a></h2>
+<h3 id="step-1-create-the-player-scene-file">Step 1: Create the Player Scene File<a aria-hidden="true" tabindex="-1" href="#step-1-create-the-player-scene-file"><span class="icon icon-link"></span></a></h3>
+<ol>
+<li>In the <strong>FileSystem</strong> dock, right-click on your project folder</li>
+<li>Select <strong>Create Folder</strong> and name it <code>player</code></li>
+<li>Right-click on the <code>player</code> folder</li>
+<li>Select <strong>New Scene</strong> (or press <code>Ctrl+N</code>)</li>
+<li>Click <strong>Other Node</strong> and search for <code>CharacterBody2D</code></li>
+<li>Name the root node <code>Player</code></li>
+<li>Save the scene: <strong>Scene → Save Scene</strong> (or <code>Ctrl+S</code>)</li>
+<li>Save as <code>res://player/player.tscn</code></li>
+</ol>
+<h3 id="step-2-add-child-nodes">Step 2: Add Child Nodes<a aria-hidden="true" tabindex="-1" href="#step-2-add-child-nodes"><span class="icon icon-link"></span></a></h3>
+<p>Your player needs two children:</p>
+<p><strong>Sprite2D</strong> - Displays the player image
+<strong>CollisionShape2D</strong> - Defines the hitbox for collisions</p>
+<p>Let's add them:</p>
+<ol>
+<li>
+<p><strong>Add Sprite2D:</strong>
+2. With <code>Player</code> selected, click the <strong>+</strong> button (Add Child Node)
+3. Search for <code>Sprite2D</code> and add it
+4. Rename it to <code>Sprite2D</code> (keep default name)</p>
+</li>
+<li>
+<p><strong>Add a texture:</strong>
+2. In the Inspector, click the <code>[empty]</code> next to <strong>Texture</strong>
+3. Select <strong>Load</strong> and choose an image, OR
+4. Select <strong>Quick Load</strong> and type a built-in icon path
+5. Try: <code>res://icon.svg</code> (Godot's default icon)</p>
+</li>
+<li>
+<p><strong>Add CollisionShape2D:</strong>
+2. With <code>Player</code> selected, add another child node
+3. Search for <code>CollisionShape2D</code> and add it
+4. In the Inspector, click <code>[empty]</code> next to <strong>Shape</strong>
+5. Choose <strong>New RectangleShape2D</strong> (or CircleShape2D)
+6. Use the orange handles to resize the shape to match your sprite</p>
+</li>
+</ol>
+<h3 id="your-scene-structure-should-look-like">Your Scene Structure Should Look Like:<a aria-hidden="true" tabindex="-1" href="#your-scene-structure-should-look-like"><span class="icon icon-link"></span></a></h3>
+<pre><code>Player (CharacterBody2D)
+├── Sprite2D
+└── CollisionShape2D
+</code></pre>
+<h3 id="organizing-in-the-editor">Organizing in the Editor<a aria-hidden="true" tabindex="-1" href="#organizing-in-the-editor"><span class="icon icon-link"></span></a></h3>
+<p>Make sure the CollisionShape2D outline is the same size as your sprite. This ensures collisions feel accurate to what players see!</p>
+<h2 id="part-3-writing-your-first-gdscript">Part 3: Writing Your First GDScript<a aria-hidden="true" tabindex="-1" href="#part-3-writing-your-first-gdscript"><span class="icon icon-link"></span></a></h2>
+<h3 id="what-is-gdscript">What is GDScript?<a aria-hidden="true" tabindex="-1" href="#what-is-gdscript"><span class="icon icon-link"></span></a></h3>
+<p>GDScript is Godot's built-in programming language. It's designed to be:</p>
+<ul>
+<li><strong>Easy to learn</strong> - Similar to Python</li>
+<li><strong>Fast to write</strong> - Minimal boilerplate code</li>
+<li><strong>Integrated</strong> - Built specifically for Godot</li>
+</ul>
+<h3 id="creating-the-script">Creating the Script<a aria-hidden="true" tabindex="-1" href="#creating-the-script"><span class="icon icon-link"></span></a></h3>
+<ol>
+<li>Click on the <code>Player</code> node (the root CharacterBody2D)</li>
+<li>In the Inspector, click the script icon (paper with green +) next to <strong>Script</strong></li>
+<li>Click <strong>Create</strong></li>
+<li>In the dialog:
+5. <strong>Template:</strong> Node: Default (keep default)
+6. <strong>Path:</strong> Should already show <code>res://player/player.gd</code>
+7. <strong>Class Name:</strong> Leave empty
+8. Click <strong>Create</strong></li>
+</ol>
+<p>The script editor opens automatically!</p>
+<h3 id="understanding-the-default-script">Understanding the Default Script<a aria-hidden="true" tabindex="-1" href="#understanding-the-default-script"><span class="icon icon-link"></span></a></h3>
+<p>You'll see this code:</p>
+<pre><code class="language-gdscript">extends CharacterBody2D
+
+
+const SPEED = 300.0
+const JUMP_VELOCITY = -400.0
+
+
+func _physics_process(delta: float) -> void:
+    # Add the gravity.
+    if not is_on_floor():
+        velocity += get_gravity() * delta
+
+    # Handle jump.
+    if Input.is_action_just_pressed("ui_accept") and is_on_floor():
+        velocity.y = JUMP_VELOCITY
+
+    # Get the input direction and handle the movement/deceleration.
+    # As good practice, you should replace UI actions with custom gameplay actions.
+    var direction := Input.get_axis("ui_left", "ui_right")
+    if direction:
+        velocity.x = direction * SPEED
+    else:
+        velocity.x = move_toward(velocity.x, 0, SPEED)
+
+    move_and_slide()
+</code></pre>
+<p>This is for a <strong>platformer</strong> (side-view with jumping). We'll modify it for <strong>top-down</strong> movement!</p>
+<h2 id="part-4-basic-movement-code">Part 4: Basic Movement Code<a aria-hidden="true" tabindex="-1" href="#part-4-basic-movement-code"><span class="icon icon-link"></span></a></h2>
+<h3 id="modifying-for-top-down-movement">Modifying for Top-Down Movement<a aria-hidden="true" tabindex="-1" href="#modifying-for-top-down-movement"><span class="icon icon-link"></span></a></h3>
+<p>Replace the entire script with this:</p>
+<pre><code class="language-gdscript">extends CharacterBody2D
+
+@export var speed: float = 200.0
+
+func _physics_process(delta: float) -> void:
+    # Get input vector from arrow keys or WASD
+    var input_vector = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
+    
+    # Set velocity based on input
+    velocity = input_vector * speed
+    
+    # Move the character
+    move_and_slide()
+</code></pre>
+<h3 id="breaking-down-the-code">Breaking Down the Code<a aria-hidden="true" tabindex="-1" href="#breaking-down-the-code"><span class="icon icon-link"></span></a></h3>
+<p><strong>Line 1: <code>extends CharacterBody2D</code></strong></p>
+<ul>
+<li>Declares that this script extends (is based on) CharacterBody2D</li>
+<li>Gives us access to all CharacterBody2D features</li>
+</ul>
+<p><strong>Line 3: <code>@export var speed: float = 200.0</code></strong></p>
+<ul>
+<li><code>@export</code> makes this variable editable in the Inspector</li>
+<li><code>var</code> creates a variable</li>
+<li><code>speed</code> is the variable name</li>
+<li><code>: float</code> specifies the type (a decimal number)</li>
+<li><code>= 200.0</code> sets the default value</li>
+</ul>
+<p><strong>Line 5: <code>func _physics_process(delta: float) -> void:</code></strong></p>
+<ul>
+<li><code>func</code> defines a function</li>
+<li><code>_physics_process</code> is a built-in Godot function that runs 60 times per second</li>
+<li><code>delta</code> is the time between frames (useful for smooth movement)</li>
+<li><code>-> void</code> means this function doesn't return anything</li>
+</ul>
+<p><strong>Line 6: <code>var input_vector = Input.get_vector(...)</code></strong></p>
+<ul>
+<li>Gets input as a 2D vector</li>
+<li>Returns values between -1 and 1 for X and Y axes</li>
+<li>Example: Holding right arrow returns (1, 0)</li>
+</ul>
+<p><strong>Line 9: <code>velocity = input_vector * speed</code></strong></p>
+<ul>
+<li><code>velocity</code> is a built-in property of CharacterBody2D</li>
+<li>Multiplies direction by speed to get movement velocity</li>
+</ul>
+<p><strong>Line 12: <code>move_and_slide()</code></strong></p>
+<ul>
+<li>Built-in method that moves the character</li>
+<li>Handles collision detection automatically</li>
+<li>Slides along walls when hitting them</li>
+</ul>
+<h3 id="testing-your-movement">Testing Your Movement<a aria-hidden="true" tabindex="-1" href="#testing-your-movement"><span class="icon icon-link"></span></a></h3>
+<ol>
+<li>Click the <strong>2D</strong> tab to return to the scene editor</li>
+<li>Open your MainScene (File → Open Recent, or double-click <code>main_scene.tscn</code>)</li>
+<li>Drag your <code>player.tscn</code> from the FileSystem into the scene</li>
+<li>Press <strong>F6</strong> (or click the play button) to run!</li>
+</ol>
+<p>Try the arrow keys - your player should move!</p>
+<h2 id="part-5-understanding-vectors-and-process-functions">Part 5: Understanding Vectors and Process Functions<a aria-hidden="true" tabindex="-1" href="#part-5-understanding-vectors-and-process-functions"><span class="icon icon-link"></span></a></h2>
+<h3 id="what-is-a-vector">What is a Vector?<a aria-hidden="true" tabindex="-1" href="#what-is-a-vector"><span class="icon icon-link"></span></a></h3>
+<p>A <strong>vector</strong> is like an arrow that has:</p>
+<ul>
+<li><strong>Direction</strong> - Which way it points</li>
+<li><strong>Magnitude</strong> - How long it is (strength)</li>
+</ul>
+<p>In 2D games, we use <strong>Vector2</strong> which has X and Y components:</p>
+<pre><code>        (-1, -1)  (0, -1)  (1, -1)
+              ↖    ↑    ↗
+                \   |   /
+        (-1, 0) ← (0, 0) → (1, 0)
+                /   |   \
+              ↙    ↓    ↘
+        (-1, 1)   (0, 1)   (1, 1)
+</code></pre>
+<p><strong>Examples:</strong></p>
+<ul>
+<li>Moving right: Vector2(1, 0)</li>
+<li>Moving left: Vector2(-1, 0)</li>
+<li>Moving up: Vector2(0, -1) <em>(Y is negative UP in Godot)</em></li>
+<li>Moving diagonally: Vector2(0.707, -0.707) <em>(normalized)</em></li>
+</ul>
+<h3 id="_process-vs-_physics_process">_process vs _physics_process<a aria-hidden="true" tabindex="-1" href="#_process-vs-_physics_process"><span class="icon icon-link"></span></a></h3>
+<p>Godot has two main update loops:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Function</th><th>When It Runs</th><th>Use For</th></tr></thead><tbody><tr><td><code>_process(delta)</code></td><td>Every frame (varies by monitor)</td><td>Animations, UI updates, visual effects</td></tr><tr><td><code>_physics_process(delta)</code></td><td>Fixed 60 times/second</td><td>Movement, collisions, physics</td></tr></tbody></table>
+<p><strong>Why separate them?</strong></p>
+<ul>
+<li>Physics needs to be consistent and predictable</li>
+<li>Frame rate varies (60Hz, 144Hz, 30Hz)</li>
+<li>Mixing them causes jittery movement or missed collisions</li>
+</ul>
+<p><strong>Rule of thumb:</strong></p>
+<ul>
+<li>✓ Movement, collisions → <code>_physics_process</code></li>
+<li>✓ Animations, particle effects → <code>_process</code></li>
+</ul>
+<h2 id="part-6-adding-acceleration-and-friction">Part 6: Adding Acceleration and Friction<a aria-hidden="true" tabindex="-1" href="#part-6-adding-acceleration-and-friction"><span class="icon icon-link"></span></a></h2>
+<h3 id="why-smooth-movement">Why Smooth Movement?<a aria-hidden="true" tabindex="-1" href="#why-smooth-movement"><span class="icon icon-link"></span></a></h3>
+<p>The basic code makes the player start and stop instantly. Real characters have:</p>
+<ul>
+<li><strong>Acceleration</strong> - Time to reach full speed</li>
+<li><strong>Friction</strong> - Time to slow down and stop</li>
+</ul>
+<p>This makes movement feel more natural and satisfying!</p>
+<h3 id="updated-movement-code">Updated Movement Code<a aria-hidden="true" tabindex="-1" href="#updated-movement-code"><span class="icon icon-link"></span></a></h3>
+<p>Replace your script with this improved version:</p>
+<pre><code class="language-gdscript">extends CharacterBody2D
+
+@export var max_speed: float = 200.0
+@export var acceleration: float = 800.0
+@export var friction: float = 1000.0
+
+func _physics_process(delta: float) -> void:
+    # Get input vector
+    var input_vector = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
+    
+    if input_vector != Vector2.ZERO:
+        # Accelerating - moving toward target speed
+        velocity = velocity.move_toward(input_vector * max_speed, acceleration * delta)
+    else:
+        # Decelerating - moving toward zero
+        velocity = velocity.move_toward(Vector2.ZERO, friction * delta)
+    
+    # Move with collision
+    move_and_slide()
+</code></pre>
+<h3 id="breaking-down-the-changes">Breaking Down the Changes<a aria-hidden="true" tabindex="-1" href="#breaking-down-the-changes"><span class="icon icon-link"></span></a></h3>
+<p><strong>New Variables:</strong></p>
+<ul>
+<li><code>max_speed</code> - Top speed the player can reach</li>
+<li><code>acceleration</code> - How quickly we speed up (higher = snappier)</li>
+<li><code>friction</code> - How quickly we slow down (higher = stops faster)</li>
+</ul>
+<p><strong>The <code>move_toward</code> Method:</strong></p>
+<pre><code class="language-gdscript">velocity.move_toward(target, max_delta)
+</code></pre>
+<ul>
+<li>Moves <code>velocity</code> toward <code>target</code> value</li>
+<li>Won't exceed <code>max_delta</code> change per call</li>
+<li>Creates smooth transitions!</li>
+</ul>
+<p><strong>The Logic:</strong></p>
+<ol>
+<li><strong>If moving:</strong> Gradually increase velocity toward max speed</li>
+<li><strong>If stopped:</strong> Gradually decrease velocity toward zero</li>
+<li><strong>Delta multiplication:</strong> Makes timing frame-rate independent</li>
+</ol>
+<h3 id="tuning-the-feel">Tuning the Feel<a aria-hidden="true" tabindex="-1" href="#tuning-the-feel"><span class="icon icon-link"></span></a></h3>
+<p>Try these values in the Inspector:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Style</th><th>Max Speed</th><th>Acceleration</th><th>Friction</th></tr></thead><tbody><tr><td>Tight/Responsive</td><td>300</td><td>2000</td><td>2000</td></tr><tr><td>Floaty/Ice</td><td>200</td><td>400</td><td>400</td></tr><tr><td>Heavy</td><td>150</td><td>800</td><td>600</td></tr><tr><td>Default</td><td>200</td><td>800</td><td>1000</td></tr></tbody></table>
+<p>Experiment! Good game feel takes tweaking.</p>
+<h2 id="part-7-making-the-player-face-movement-direction-optional">Part 7: Making the Player Face Movement Direction (Optional)<a aria-hidden="true" tabindex="-1" href="#part-7-making-the-player-face-movement-direction-optional"><span class="icon icon-link"></span></a></h2>
+<h3 id="why-rotate-the-sprite">Why Rotate the Sprite?<a aria-hidden="true" tabindex="-1" href="#why-rotate-the-sprite"><span class="icon icon-link"></span></a></h3>
+<p>In many games, the player sprite should face the direction they're moving. This adds polish and helps players understand where they're going.</p>
+<h3 id="adding-sprite-rotation">Adding Sprite Rotation<a aria-hidden="true" tabindex="-1" href="#adding-sprite-rotation"><span class="icon icon-link"></span></a></h3>
+<p>Update your script:</p>
+<pre><code class="language-gdscript">extends CharacterBody2D
+
+@export var max_speed: float = 200.0
+@export var acceleration: float = 800.0
+@export var friction: float = 1000.0
+
+@onready var sprite = $Sprite2D
+
+func _physics_process(delta: float) -> void:
+    var input_vector = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
+    
+    if input_vector != Vector2.ZERO:
+        velocity = velocity.move_toward(input_vector * max_speed, acceleration * delta)
+        
+        # Rotate sprite to face movement direction
+        sprite.rotation = input_vector.angle()
+    else:
+        velocity = velocity.move_toward(Vector2.ZERO, friction * delta)
+    
+    move_and_slide()
+</code></pre>
+<h3 id="how-it-works">How It Works<a aria-hidden="true" tabindex="-1" href="#how-it-works"><span class="icon icon-link"></span></a></h3>
+<p><strong><code>@onready var sprite = $Sprite2D</code></strong></p>
+<ul>
+<li><code>@onready</code> runs when the node enters the scene</li>
+<li><code>$Sprite2D</code> gets the child node named "Sprite2D"</li>
+<li>Now we can reference the sprite easily</li>
+</ul>
+<p><strong><code>sprite.rotation = input_vector.angle()</code></strong></p>
+<ul>
+<li><code>angle()</code> returns the direction of the vector in radians</li>
+<li>Rotates the sprite to face that direction</li>
+<li>0 radians = right, PI/2 = down, PI = left, -PI/2 = up</li>
+</ul>
+<p><strong>Note:</strong> If your sprite faces the wrong direction initially, you can add an offset:</p>
+<pre><code class="language-gdscript">sprite.rotation = input_vector.angle() + PI/2  # Adjust as needed
+</code></pre>
+<h2 id="part-8-creating-walls-with-staticbody2d">Part 8: Creating Walls with StaticBody2D<a aria-hidden="true" tabindex="-1" href="#part-8-creating-walls-with-staticbody2d"><span class="icon icon-link"></span></a></h2>
+<h3 id="why-we-need-walls">Why We Need Walls<a aria-hidden="true" tabindex="-1" href="#why-we-need-walls"><span class="icon icon-link"></span></a></h3>
+<p>Right now, your player can walk off into the void! Let's create boundaries.</p>
+<h3 id="creating-a-wall-scene">Creating a Wall Scene<a aria-hidden="true" tabindex="-1" href="#creating-a-wall-scene"><span class="icon icon-link"></span></a></h3>
+<ol>
+<li>Right-click in FileSystem, create folder <code>environment</code></li>
+<li>Right-click <code>environment</code> folder → <strong>New Scene</strong></li>
+<li>Add root node: <strong>StaticBody2D</strong></li>
+<li>Rename to <code>Wall</code></li>
+<li>Add child: <strong>Sprite2D</strong>
+6. Add a texture or color rect
+7. Set <strong>Modulate</strong> color to gray/brown in Inspector</li>
+<li>Add child: <strong>CollisionShape2D</strong>
+9. Add RectangleShape2D
+10. Match size to sprite</li>
+<li>Save as <code>res://environment/wall.tscn</code></li>
+</ol>
+<h3 id="placing-walls-in-mainscene">Placing Walls in MainScene<a aria-hidden="true" tabindex="-1" href="#placing-walls-in-mainscene"><span class="icon icon-link"></span></a></h3>
+<ol>
+<li>Open <code>main_scene.tscn</code></li>
+<li>Drag <code>wall.tscn</code> into the scene multiple times</li>
+<li>Arrange walls to create boundaries:
+4. Top and bottom walls
+5. Left and right walls
+6. Maybe some obstacles in the middle</li>
+</ol>
+<h3 id="wall-tips">Wall Tips<a aria-hidden="true" tabindex="-1" href="#wall-tips"><span class="icon icon-link"></span></a></h3>
+<ul>
+<li><strong>Snap to grid:</strong> Enable snap (toolbar button) for easier placement</li>
+<li><strong>Duplicate:</strong> Select a wall, press <code>Ctrl+D</code> to duplicate</li>
+<li><strong>Resize:</strong> Scale walls in the Inspector for different sizes</li>
+<li><strong>Organize:</strong> Group walls under a "Walls" node for organization</li>
+</ul>
+<h3 id="testing-collisions">Testing Collisions<a aria-hidden="true" tabindex="-1" href="#testing-collisions"><span class="icon icon-link"></span></a></h3>
+<p>Run the game (F6) and try walking into walls. Your player should stop or slide along them!</p>
+<h2 id="part-9-practice-activities">Part 9: Practice Activities<a aria-hidden="true" tabindex="-1" href="#part-9-practice-activities"><span class="icon icon-link"></span></a></h2>
+<h3 id="activity-1-adjust-the-movement-feel">Activity 1: Adjust the Movement Feel<a aria-hidden="true" tabindex="-1" href="#activity-1-adjust-the-movement-feel"><span class="icon icon-link"></span></a></h3>
+<p>Experiment with different movement values:</p>
+<ol>
+<li>Select your Player in MainScene</li>
+<li>In the Inspector, find the exported variables</li>
+<li>Try these combinations:
+4. <strong>Speed demon:</strong> Speed 400, Acceleration 1500
+5. <strong>Slippery:</strong> Speed 200, Friction 300
+6. <strong>Tank:</strong> Speed 100, Acceleration 500, Friction 2000</li>
+</ol>
+<p><strong>Questions:</strong></p>
+<ul>
+<li>Which feels best for your game?</li>
+<li>How does changing just acceleration affect gameplay?</li>
+<li>What happens if friction is higher than acceleration?</li>
+</ul>
+<h3 id="activity-2-add-sprinting">Activity 2: Add Sprinting<a aria-hidden="true" tabindex="-1" href="#activity-2-add-sprinting"><span class="icon icon-link"></span></a></h3>
+<p>Let's add a sprint button (Shift key):</p>
+<pre><code class="language-gdscript">extends CharacterBody2D
+
+@export var max_speed: float = 200.0
+@export var sprint_speed: float = 350.0
+@export var acceleration: float = 800.0
+@export var friction: float = 1000.0
+
+@onready var sprite = $Sprite2D
+
+func _physics_process(delta: float) -> void:
+    var input_vector = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
+    
+    # Check if sprinting
+    var current_speed = max_speed
+    if Input.is_action_pressed("ui_shift"):  # We'll set this up below
+        current_speed = sprint_speed
+    
+    if input_vector != Vector2.ZERO:
+        velocity = velocity.move_toward(input_vector * current_speed, acceleration * delta)
+        sprite.rotation = input_vector.angle()
+    else:
+        velocity = velocity.move_toward(Vector2.ZERO, friction * delta)
+    
+    move_and_slide()
+</code></pre>
+<p><strong>Setting up the Sprint Input:</strong></p>
+<ol>
+<li>Go to <strong>Project → Project Settings</strong></li>
+<li>Click the <strong>Input Map</strong> tab</li>
+<li>Type "sprint" in the action name box</li>
+<li>Click <strong>Add</strong></li>
+<li>Find "sprint" in the list, click the <strong>+</strong></li>
+<li>Press <strong>Shift</strong> key, click <strong>OK</strong></li>
+<li>Change your code to use <code>"sprint"</code> instead of <code>"ui_shift"</code></li>
+</ol>
+<h3 id="activity-3-add-a-sprint-bar-ui">Activity 3: Add a Sprint Bar (UI)<a aria-hidden="true" tabindex="-1" href="#activity-3-add-a-sprint-bar-ui"><span class="icon icon-link"></span></a></h3>
+<p>Create a stamina system:</p>
+<pre><code class="language-gdscript">extends CharacterBody2D
+
+@export var max_speed: float = 200.0
+@export var sprint_speed: float = 350.0
+@export var acceleration: float = 800.0
+@export var friction: float = 1000.0
+
+var stamina: float = 100.0
+var max_stamina: float = 100.0
+var is_sprinting: bool = false
+
+@onready var sprite = $Sprite2D
+
+func _physics_process(delta: float) -> void:
+    var input_vector = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
+    
+    # Sprint logic
+    is_sprinting = Input.is_action_pressed("sprint") and stamina > 0 and input_vector != Vector2.ZERO
+    
+    var current_speed = max_speed
+    if is_sprinting:
+        current_speed = sprint_speed
+        stamina -= 30 * delta  # Drain stamina while sprinting
+    else:
+        stamina += 15 * delta  # Regenerate when not sprinting
+    
+    stamina = clamp(stamina, 0, max_stamina)  # Keep between 0 and 100
+    
+    if input_vector != Vector2.ZERO:
+        velocity = velocity.move_toward(input_vector * current_speed, acceleration * delta)
+        sprite.rotation = input_vector.angle()
+    else:
+        velocity = velocity.move_toward(Vector2.ZERO, friction * delta)
+    
+    move_and_slide()
+</code></pre>
+<p><strong>Challenge:</strong> Add a visual stamina bar using a ProgressBar node!</p>
+<h2 id="part-10-complete-code-reference">Part 10: Complete Code Reference<a aria-hidden="true" tabindex="-1" href="#part-10-complete-code-reference"><span class="icon icon-link"></span></a></h2>
+<h3 id="basic-movement">Basic Movement<a aria-hidden="true" tabindex="-1" href="#basic-movement"><span class="icon icon-link"></span></a></h3>
+<pre><code class="language-gdscript">extends CharacterBody2D
+
+@export var speed: float = 200.0
+
+func _physics_process(delta: float) -> void:
+    var input_vector = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
+    velocity = input_vector * speed
+    move_and_slide()
+</code></pre>
+<h3 id="smooth-movement-with-acceleration">Smooth Movement with Acceleration<a aria-hidden="true" tabindex="-1" href="#smooth-movement-with-acceleration"><span class="icon icon-link"></span></a></h3>
+<pre><code class="language-gdscript">extends CharacterBody2D
+
+@export var max_speed: float = 200.0
+@export var acceleration: float = 800.0
+@export var friction: float = 1000.0
+
+func _physics_process(delta: float) -> void:
+    var input_vector = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
+    
+    if input_vector != Vector2.ZERO:
+        velocity = velocity.move_toward(input_vector * max_speed, acceleration * delta)
+    else:
+        velocity = velocity.move_toward(Vector2.ZERO, friction * delta)
+    
+    move_and_slide()
+</code></pre>
+<h3 id="full-movement-with-rotation">Full Movement with Rotation<a aria-hidden="true" tabindex="-1" href="#full-movement-with-rotation"><span class="icon icon-link"></span></a></h3>
+<pre><code class="language-gdscript">extends CharacterBody2D
+
+@export var max_speed: float = 200.0
+@export var acceleration: float = 800.0
+@export var friction: float = 1000.0
+
+@onready var sprite = $Sprite2D
+
+func _physics_process(delta: float) -> void:
+    var input_vector = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
+    
+    if input_vector != Vector2.ZERO:
+        velocity = velocity.move_toward(input_vector * max_speed, acceleration * delta)
+        sprite.rotation = input_vector.angle()
+    else:
+        velocity = velocity.move_toward(Vector2.ZERO, friction * delta)
+    
+    move_and_slide()
+</code></pre>
+<h3 id="movement-with-sprint">Movement with Sprint<a aria-hidden="true" tabindex="-1" href="#movement-with-sprint"><span class="icon icon-link"></span></a></h3>
+<pre><code class="language-gdscript">extends CharacterBody2D
+
+@export var max_speed: float = 200.0
+@export var sprint_speed: float = 350.0
+@export var acceleration: float = 800.0
+@export var friction: float = 1000.0
+
+@onready var sprite = $Sprite2D
+
+func _physics_process(delta: float) -> void:
+    var input_vector = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
+    
+    var current_speed = max_speed
+    if Input.is_action_pressed("sprint"):
+        current_speed = sprint_speed
+    
+    if input_vector != Vector2.ZERO:
+        velocity = velocity.move_toward(input_vector * current_speed, acceleration * delta)
+        sprite.rotation = input_vector.angle()
+    else:
+        velocity = velocity.move_toward(Vector2.ZERO, friction * delta)
+    
+    move_and_slide()
+</code></pre>
+<h2 id="part-11-troubleshooting">Part 11: Troubleshooting<a aria-hidden="true" tabindex="-1" href="#part-11-troubleshooting"><span class="icon icon-link"></span></a></h2>
+<h3 id="problem-player-doesnt-move-at-all">Problem: Player doesn't move at all<a aria-hidden="true" tabindex="-1" href="#problem-player-doesnt-move-at-all"><span class="icon icon-link"></span></a></h3>
+<p><strong>Possible causes:</strong></p>
+<ol>
+<li><strong>Script not attached</strong> - Check that <code>player.gd</code> appears in the Script property of Player node</li>
+<li><strong>Wrong node type</strong> - Ensure root node is CharacterBody2D, not Node2D</li>
+<li><strong>No collision shape</strong> - Player needs CollisionShape2D to work with physics</li>
+<li><strong>Running wrong scene</strong> - Make sure MainScene is set as main scene (Project → Project Settings → Run → Main Scene)</li>
+</ol>
+<p><strong>Solutions:</strong></p>
+<ul>
+<li>Verify script attachment in Inspector</li>
+<li>Check node type in scene tree</li>
+<li>Add CollisionShape2D if missing</li>
+<li>Set MainScene in Project Settings</li>
+</ul>
+<h3 id="problem-player-moves-but-no-collision-with-walls">Problem: Player moves but no collision with walls<a aria-hidden="true" tabindex="-1" href="#problem-player-moves-but-no-collision-with-walls"><span class="icon icon-link"></span></a></h3>
+<p><strong>Possible causes:</strong></p>
+<ol>
+<li><strong>Walls don't have collision</strong> - StaticBody2D needs CollisionShape2D</li>
+<li><strong>Collision shapes disabled</strong> - Check if shapes are visible (orange outline)</li>
+<li><strong>Wrong collision layers</strong> - Both need to be on same physics layer</li>
+</ol>
+<p><strong>Solutions:</strong></p>
+<ul>
+<li>Add CollisionShape2D to walls</li>
+<li>Ensure shapes are sized properly</li>
+<li>Check collision layers in Inspector (usually both on layer 1 is fine)</li>
+</ul>
+<h3 id="problem-movement-is-jerky-or-stuttering">Problem: Movement is jerky or stuttering<a aria-hidden="true" tabindex="-1" href="#problem-movement-is-jerky-or-stuttering"><span class="icon icon-link"></span></a></h3>
+<p><strong>Possible causes:</strong></p>
+<ol>
+<li><strong>Using _process instead of _physics_process</strong> - Movement must be in _physics_process</li>
+<li><strong>Missing delta multiplication</strong> - Always multiply speeds by delta</li>
+<li><strong>Sprite origin not centered</strong> - Can cause visual jitter</li>
+</ol>
+<p><strong>Solutions:</strong></p>
+<ul>
+<li>Move code to <code>_physics_process(delta)</code></li>
+<li>Multiply acceleration and friction by delta</li>
+<li>Center sprite texture in image editor or offset in Godot</li>
+</ul>
+<h3 id="problem-diagonal-movement-is-faster">Problem: Diagonal movement is faster<a aria-hidden="true" tabindex="-1" href="#problem-diagonal-movement-is-faster"><span class="icon icon-link"></span></a></h3>
+<p><strong>This is actually expected!</strong> When moving diagonally, input_vector becomes (0.707, 0.707), which has a length of 1.0 (normalized).</p>
+<p>If using basic movement, diagonal speed equals single-axis speed. This is correct!</p>
+<p>If you WANT diagonal to be faster ( arcade-style), use unnormalized vectors.</p>
+<h3 id="problem-player-drifts-after-releasing-keys">Problem: Player drifts after releasing keys<a aria-hidden="true" tabindex="-1" href="#problem-player-drifts-after-releasing-keys"><span class="icon icon-link"></span></a></h3>
+<p><strong>Cause:</strong> Friction too low</p>
+<p><strong>Solution:</strong> Increase friction value, or use this instant-stop code:</p>
+<pre><code class="language-gdscript">if input_vector != Vector2.ZERO:
+    velocity = velocity.move_toward(input_vector * max_speed, acceleration * delta)
+else:
+    velocity = Vector2.ZERO  # Instant stop
+</code></pre>
+<h3 id="problem-sprite-rotates-wrong-direction">Problem: Sprite rotates wrong direction<a aria-hidden="true" tabindex="-1" href="#problem-sprite-rotates-wrong-direction"><span class="icon icon-link"></span></a></h3>
+<p><strong>Cause:</strong> Your sprite image faces a different default direction than Godot expects</p>
+<p><strong>Solution:</strong> Add rotation offset:</p>
+<pre><code class="language-gdscript">sprite.rotation = input_vector.angle() + deg_to_rad(90)  # Adjust 90 as needed
+</code></pre>
+<p>Or in the sprite's Inspector, set <strong>Offset</strong> or rotate the Sprite2D node itself 90 degrees in the editor.</p>
+<h2 id="part-12-lesson-summary">Part 12: Lesson Summary<a aria-hidden="true" tabindex="-1" href="#part-12-lesson-summary"><span class="icon icon-link"></span></a></h2>
+<h3 id="what-you-learned">What You Learned<a aria-hidden="true" tabindex="-1" href="#what-you-learned"><span class="icon icon-link"></span></a></h3>
+<p>✅ <strong>Physics Bodies</strong> - When to use CharacterBody2D vs other types<br>
+✅ <strong>Scene Structure</strong> - Creating nodes and building hierarchy<br>
+✅ <strong>GDScript Basics</strong> - Variables, functions, and game logic<br>
+✅ <strong>Input Handling</strong> - Reading keyboard input with Input.get_vector()<br>
+✅ <strong>Movement</strong> - Using velocity and move_and_slide()<br>
+✅ <strong>Smooth Movement</strong> - Acceleration and friction for game feel<br>
+✅ <strong>Vectors</strong> - Understanding 2D direction and magnitude<br>
+✅ <strong>Process Functions</strong> - When to use _process vs _physics_process<br>
+✅ <strong>Collisions</strong> - Creating walls with StaticBody2D</p>
+<h3 id="key-concepts-to-remember">Key Concepts to Remember<a aria-hidden="true" tabindex="-1" href="#key-concepts-to-remember"><span class="icon icon-link"></span></a></h3>
+<ol>
+<li><strong>CharacterBody2D</strong> is for player-controlled characters</li>
+<li><strong>Always use _physics_process</strong> for movement and collision</li>
+<li><strong>Velocity</strong> determines movement direction and speed</li>
+<li><strong>move_toward</strong> creates smooth acceleration/deceleration</li>
+<li><strong>Input.get_vector</strong> handles 8-directional input easily</li>
+<li><strong>move_and_slide()</strong> handles collision detection automatically</li>
+</ol>
+<h3 id="vocabulary">Vocabulary<a aria-hidden="true" tabindex="-1" href="#vocabulary"><span class="icon icon-link"></span></a></h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Term</th><th>Definition</th></tr></thead><tbody><tr><td><strong>Vector2</strong></td><td>A 2D direction with X and Y components</td></tr><tr><td><strong>Velocity</strong></td><td>Speed and direction of movement</td></tr><tr><td><strong>Acceleration</strong></td><td>Rate of speed increase</td></tr><tr><td><strong>Friction</strong></td><td>Rate of speed decrease</td></tr><tr><td><strong>Delta</strong></td><td>Time between frames (makes movement smooth)</td></tr><tr><td><strong>Collision</strong></td><td>Detection when two objects touch</td></tr><tr><td><strong>Physics Body</strong></td><td>Node type that interacts with physics</td></tr></tbody></table>
+<h2 id="quick-reference-card">Quick Reference Card<a aria-hidden="true" tabindex="-1" href="#quick-reference-card"><span class="icon icon-link"></span></a></h2>
+<pre><code class="language-gdscript"># Get 8-directional input
+var input = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
+
+# Smooth movement
+if input != Vector2.ZERO:
+    velocity = velocity.move_toward(input * max_speed, acceleration * delta)
+else:
+    velocity = velocity.move_toward(Vector2.ZERO, friction * delta)
+
+# Apply movement
+move_and_slide()
+</code></pre>
+<p><strong>Keyboard Shortcuts:</strong></p>
+<ul>
+<li><code>F6</code> - Run current scene</li>
+<li><code>Ctrl+S</code> - Save scene/script</li>
+<li><code>Ctrl+D</code> - Duplicate selected node</li>
+<li><code>F1</code> - Help/Documentation</li>
+</ul>
+    </main>
+
+    <aside class="toc-sidebar" id="toc-sidebar">
+      <div class="toc-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <line x1="21" y1="10" x2="3" y2="10"></line>
+          <line x1="21" y1="6" x2="3" y2="6"></line>
+          <line x1="21" y1="14" x2="3" y2="14"></line>
+          <line x1="21" y1="18" x2="3" y2="18"></line>
+        </svg>
+        On this page
+      </div>
+      <nav id="toc-nav"></nav>
+    </aside>
+  </div>
+
+  <footer>
+    <p>Powered by <a href="https://www.npmjs.com/package/zenmd">ZenMD</a></p>
+  </footer>
+
+  <script src="/main.js" defer></script>
+</body>
+
+</html>

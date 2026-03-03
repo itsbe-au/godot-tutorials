@@ -1,0 +1,1052 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A page about Lesson 4: Game Flow Management with GameFlow">
+  <meta property="og:title" content="Lesson 4: Game Flow Management with GameFlow">
+  <meta property="og:description" content="A page about Lesson 4: Game Flow Management with GameFlow">
+  <meta property="og:image" content="/og_image.png">
+
+  <link rel="icon" href="/favicon.png">
+  <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
+  <link rel="stylesheet" href="/main.css">
+  <style>
+    /* 
+    To customize the default style, you should try to override the variables in SimpleCSS: 
+    https://github.com/kevquirk/simple.css/wiki/Getting-Started-With-Simple.css#customise-simplecss
+    Here are all the variables that's defined:
+    */
+
+    :root {
+      /* Set sans-serif & mono fonts */
+      --sans-font: -apple-system, BlinkMacSystemFont, "Avenir Next", Avenir,
+        "Nimbus Sans L", Roboto, "Noto Sans", "Segoe UI", Arial, Helvetica,
+        "Helvetica Neue", sans-serif;
+      --mono-font: Consolas, Menlo, Monaco, "Andale Mono", "Ubuntu Mono", monospace;
+      --standard-border-radius: 5px;
+      --border-width: 1px;
+
+      /* Default (light) theme */
+      --bg: #fff;
+      --accent-bg: #f5f7ff;
+      --text: #212121;
+      --text-light: #585858;
+      --border: #898EA4;
+      --accent: var(--text);
+      --accent-hover: var(--text);
+      --accent-text: var(--bg);
+      --code: #d81b60;
+      --preformatted: #444;
+      --marked: #e2e2e2;
+      --disabled: #efefef;
+      --content-width: 80rem;
+      --sidebar-width: 300px;
+      --sidenav-width: 220px;
+      --gap: 4rem;
+    }
+
+    /* Dark theme */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        color-scheme: dark;
+        --bg: #212121;
+        --accent-bg: #2b2b2b;
+        --text: #dcdcdc;
+        --text-light: #ababab;
+        --accent: var(--text);
+        --accent-hover: var(--text);
+        --accent-text: var(--bg);
+        --code: #f06292;
+        --preformatted: #ccc;
+        --disabled: #111;
+      }
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+  </style>
+  <title>Lesson 4: Game Flow Management with GameFlow</title>
+</head>
+
+<body>
+  <button id="menu-toggle" class="menu-toggle" aria-label="Toggle navigation">
+    <span></span>
+    <span></span>
+  </button>
+  <div id="sidebar-overlay" class="sidebar-overlay"></div>
+  <div class="main-grid" id="main-grid">
+    <aside class="site-sidebar" id="site-sidebar">
+      <div class="site-nav-title" id="site-nav-title">Site</div>
+      <nav id="site-nav"></nav>
+    </aside>
+
+    <main class="article">
+      <h1 id="lesson-4-game-flow-management-with-gameflow">Lesson 4: Game Flow Management with GameFlow<a aria-hidden="true" tabindex="-1" href="#lesson-4-game-flow-management-with-gameflow"><span class="icon icon-link"></span></a></h1>
+<p><strong>Prerequisites:</strong> Lessons 1-3 (Godot basics, scripting fundamentals, player movement)</p>
+<h2 id="-learning-objectives">🎯 Learning Objectives<a aria-hidden="true" tabindex="-1" href="#-learning-objectives"><span class="icon icon-link"></span></a></h2>
+<p>By the end of this lesson, you will:</p>
+<ul>
+<li>Understand what Autoload/Singletons are and why we need them</li>
+<li>Create a <code>game_flow.gd</code> script to manage global game state</li>
+<li>Implement score tracking, pause functionality, and level management</li>
+<li>Connect your player to the global game manager</li>
+<li>Create game states (playing, paused, game_over)</li>
+</ul>
+<h2 id="-why-do-we-need-game-flow-management">🤔 Why Do We Need Game Flow Management?<a aria-hidden="true" tabindex="-1" href="#-why-do-we-need-game-flow-management"><span class="icon icon-link"></span></a></h2>
+<p>Imagine you're building a game with multiple scenes: a main menu, several levels, and a game over screen. Each scene needs to know:</p>
+<ul>
+<li>What's the current score?</li>
+<li>How much health does the player have?</li>
+<li>Is the game paused?</li>
+<li>Which level are we on?</li>
+</ul>
+<p><strong>The Problem:</strong> Without a central manager, you'd have to pass this data between every scene manually. If the player dies in Level 3, how does the Game Over screen know what score to display?</p>
+<p><strong>The Solution:</strong> A <strong>Game Manager</strong> (or Game Flow Controller) - a special script that exists across ALL scenes and keeps track of everything!</p>
+<h2 id="-understanding-autoloadsingletons-in-godot">📦 Understanding Autoload/Singletons in Godot<a aria-hidden="true" tabindex="-1" href="#-understanding-autoloadsingletons-in-godot"><span class="icon icon-link"></span></a></h2>
+<h3 id="what-is-a-singleton">What is a Singleton?<a aria-hidden="true" tabindex="-1" href="#what-is-a-singleton"><span class="icon icon-link"></span></a></h3>
+<p>A <strong>Singleton</strong> is like the "command center" of your game. It's a script that:</p>
+<ul>
+<li>Loads automatically when your game starts</li>
+<li>Never gets deleted when you change scenes</li>
+<li>Can be accessed from ANY other script</li>
+<li>Stores data that needs to persist (like score, health, settings)</li>
+</ul>
+<h3 id="visual-diagram-without-vs-with-singleton">Visual Diagram: Without vs. With Singleton<a aria-hidden="true" tabindex="-1" href="#visual-diagram-without-vs-with-singleton"><span class="icon icon-link"></span></a></h3>
+<pre><code>WITHOUT SINGLETON (Data gets lost between scenes):
+┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+│   Level 1   │────→│   Level 2   │────→│  Game Over  │
+│  Score: 100 │     │  Score: ??? │     │  Score: ??? │
+└─────────────┘     └─────────────┘     └─────────────┘
+    (Score is lost!)
+
+WITH SINGLETON (Data persists everywhere):
+                    ┌─────────────┐
+                    │   GameFlow  │
+                    │  Score: 100 │
+                    │  Health: 3  │
+                    └──────┬──────┘
+                           │
+           ┌───────────────┼───────────────┐
+           │               │               │
+    ┌──────▼──────┐ ┌──────▼──────┐ ┌──────▼──────┐
+    │   Level 1   │ │   Level 2   │ │  Game Over  │
+    │  Score: 100 │ │  Score: 100 │ │  Score: 100 │
+    └─────────────┘ └─────────────┘ └─────────────┘
+    
+    All scenes access the SAME GameFlow!
+</code></pre>
+<h3 id="godots-autoload-system">Godot's Autoload System<a aria-hidden="true" tabindex="-1" href="#godots-autoload-system"><span class="icon icon-link"></span></a></h3>
+<p>Godot has a built-in way to create singletons called <strong>Autoload</strong>. When you add a script to Autoload:</p>
+<ol>
+<li>It automatically creates a node when your game starts</li>
+<li>It stays alive even when you change scenes</li>
+<li>You can access it from any script using its name</li>
+</ol>
+<p>Think of it like your backpack in a video game - you carry it everywhere, and everything inside stays with you!</p>
+<h2 id="-creating-game_flowgd">📝 Creating game_flow.gd<a aria-hidden="true" tabindex="-1" href="#-creating-game_flowgd"><span class="icon icon-link"></span></a></h2>
+<h3 id="step-1-create-the-script-file">Step 1: Create the Script File<a aria-hidden="true" tabindex="-1" href="#step-1-create-the-script-file"><span class="icon icon-link"></span></a></h3>
+<ol>
+<li>In the <strong>FileSystem</strong> panel, right-click on your project folder</li>
+<li>Select <strong>New Script</strong></li>
+<li>Name it: <code>game_flow.gd</code></li>
+<li>Click <strong>Create</strong></li>
+</ol>
+<h3 id="step-2-write-the-gameflow-script">Step 2: Write the GameFlow Script<a aria-hidden="true" tabindex="-1" href="#step-2-write-the-gameflow-script"><span class="icon icon-link"></span></a></h3>
+<p>Open <code>game_flow.gd</code> and add this code:</p>
+<pre><code class="language-gdscript">extends Node
+
+# ============================================
+# GAME STATE MANAGEMENT
+# ============================================
+
+# Game states - these control what the player can do
+enum GameState {
+	PLAYING,      # Normal gameplay
+	PAUSED,       # Game is paused
+	GAME_OVER,    # Player died
+	VICTORY       # Player won!
+}
+
+# Current state of the game
+var current_state: GameState = GameState.PLAYING
+
+# Track if game is paused (convenience variable)
+var is_paused: bool = false
+
+# ============================================
+# LEVEL MANAGEMENT
+# ============================================
+
+# Current level number
+var current_level: int = 1
+
+# Total number of levels in your game
+var total_levels: int = 3
+
+# Path to level scenes (you'll add your actual level paths here)
+var level_paths: Dictionary = {
+	1: "res://levels/level_01.tscn",
+	2: "res://levels/level_02.tscn",
+	3: "res://levels/level_03.tscn"
+}
+
+# ============================================
+# PLAYER STATS
+# ============================================
+
+# Health system
+var max_health: int = 3
+var current_health: int = 3
+
+# Score tracking
+var score: int = 0
+var high_score: int = 0
+
+# Player progression
+var lives: int = 3
+
+# ============================================
+# GAME SETTINGS
+# ============================================
+
+# Game speed modifier (useful for slow-motion effects)
+var game_speed: float = 1.0
+
+# Debug mode (show extra info while developing)
+var debug_mode: bool = true
+
+# ============================================
+# INITIALIZATION
+# ============================================
+
+func _ready():
+	print("GameFlow initialized! Welcome to the game!")
+	reset_game()
+
+# Reset everything to starting values
+func reset_game():
+	current_state = GameState.PLAYING
+	is_paused = false
+	current_level = 1
+	current_health = max_health
+	score = 0
+	lives = 3
+	game_speed = 1.0
+	print("Game reset! Fresh start!")
+
+# ============================================
+# GAME STATE FUNCTIONS
+# ============================================
+
+# Pause the game
+func pause_game():
+	if current_state == GameState.PLAYING:
+		current_state = GameState.PAUSED
+		is_paused = true
+		get_tree().paused = true
+		print("Game paused!")
+
+# Resume the game
+func resume_game():
+	if current_state == GameState.PAUSED:
+		current_state = GameState.PLAYING
+		is_paused = false
+		get_tree().paused = false
+		print("Game resumed!")
+
+# Toggle pause on/off
+func toggle_pause():
+	if is_paused:
+		resume_game()
+	else:
+		pause_game()
+
+# Game over - player ran out of health or lives
+func game_over():
+	current_state = GameState.GAME_OVER
+	is_paused = false
+	get_tree().paused = false  # Don't pause so UI still works
+	
+	# Check for high score
+	if score > high_score:
+		high_score = score
+		print("NEW HIGH SCORE: " + str(high_score) + "!")
+	
+	print("Game Over! Final score: " + str(score))
+
+# Victory - player completed all levels!
+func victory():
+	current_state = GameState.VICTORY
+	is_paused = false
+	get_tree().paused = false
+	
+	if score > high_score:
+		high_score = score
+	
+	print("VICTORY! You beat the game! Score: " + str(score))
+
+# ============================================
+# SCORE FUNCTIONS
+# ============================================
+
+# Add points to the score
+func add_score(points: int):
+	score += points
+	print("Score: " + str(score) + " (" + str(points) + " points)")
+
+# Get current score
+func get_score() -> int:
+	return score
+
+# Get high score
+func get_high_score() -> int:
+	return high_score
+
+# ============================================
+# HEALTH FUNCTIONS
+# ============================================
+
+# Player takes damage
+func take_damage(amount: int = 1):
+	current_health -= amount
+	print("Ouch! Health: " + str(current_health) + "/" + str(max_health))
+	
+	if current_health &#x3C;= 0:
+		lives -= 1
+		print("Life lost! Lives remaining: " + str(lives))
+		
+		if lives &#x3C;= 0:
+			game_over()
+		else:
+			# Respawn with full health
+			current_health = max_health
+			respawn_player()
+
+# Heal the player
+func heal(amount: int = 1):
+	current_health += amount
+	if current_health > max_health:
+		current_health = max_health
+	print("Healed! Health: " + str(current_health) + "/" + str(max_health))
+
+# Reset health to max
+func reset_health():
+	current_health = max_health
+
+# Get current health
+func get_health() -> int:
+	return current_health
+
+# Get max health
+func get_max_health() -> int:
+	return max_health
+
+# ============================================
+# LEVEL MANAGEMENT
+# ============================================
+
+# Load a specific level
+func load_level(level_number: int):
+	if level_paths.has(level_number):
+		current_level = level_number
+		print("Loading Level " + str(level_number) + "...")
+		
+		# Change to the level scene
+		get_tree().change_scene_to_file(level_paths[level_number])
+	else:
+		print("ERROR: Level " + str(level_number) + " not found!")
+
+# Go to next level
+func next_level():
+	var next = current_level + 1
+	
+	if next > total_levels:
+		# Completed all levels!
+		victory()
+	else:
+		load_level(next)
+
+# Restart current level
+func restart_level():
+	load_level(current_level)
+
+# Go back to main menu
+func return_to_menu():
+	print("Returning to main menu...")
+	get_tree().change_scene_to_file("res://scenes/main_menu.tscn")
+
+# ============================================
+# PLAYER RESPAWN
+# ============================================
+
+func respawn_player():
+	print("Respawning player...")
+	# You can emit a signal here to notify the level to reset player position
+	# Or restart the current level
+	restart_level()
+
+# ============================================
+# UTILITY FUNCTIONS
+# ============================================
+
+# Check if game is currently playing
+func is_playing() -> bool:
+	return current_state == GameState.PLAYING
+
+# Check if game is paused
+func is_game_paused() -> bool:
+	return is_paused
+
+# Check if game is over
+func is_game_over() -> bool:
+	return current_state == GameState.GAME_OVER
+
+# Get current level number
+func get_current_level() -> int:
+	return current_level
+
+# Get total levels
+func get_total_levels() -> int:
+	return total_levels
+</code></pre>
+<h2 id="️-setting-up-the-autoload">⚙️ Setting Up the Autoload<a aria-hidden="true" tabindex="-1" href="#️-setting-up-the-autoload"><span class="icon icon-link"></span></a></h2>
+<p>Now we need to tell Godot to automatically load this script when the game starts.</p>
+<h3 id="step-by-step-instructions">Step-by-Step Instructions:<a aria-hidden="true" tabindex="-1" href="#step-by-step-instructions"><span class="icon icon-link"></span></a></h3>
+<ol>
+<li>Click on <strong>Project</strong> in the top menu bar</li>
+<li>Select <strong>Project Settings</strong> (or press <code>Cmd/Ctrl + Shift + S</code>)</li>
+<li>Click on the <strong>Autoload</strong> tab</li>
+<li>Click the folder icon next to the Path field</li>
+<li>Navigate to and select your <code>game_flow.gd</code> file</li>
+<li>In the <strong>Node Name</strong> field, type: <code>GameFlow</code> (this is how you'll access it!)</li>
+<li>Click <strong>Add</strong></li>
+<li>Click <strong>Close</strong></li>
+</ol>
+<h3 id="visual-guide">Visual Guide:<a aria-hidden="true" tabindex="-1" href="#visual-guide"><span class="icon icon-link"></span></a></h3>
+<pre><code>Project Settings Window:
+┌─────────────────────────────────────────────┐
+│  General  │  Input Map  │  Autoload  │     │  ← Click "Autoload"
+├─────────────────────────────────────────────┤
+│                                             │
+│  Path: [res://game_flow.gd]  [📁]           │  ← Select your script
+│                                             │
+│  Node Name: [GameFlow        ]              │  ← Name it "GameFlow"
+│                                             │
+│           [      Add      ]                 │  ← Click Add
+│                                             │
+│  ┌───────────────────────────────────────┐  │
+│  │  ✓ GameFlow  res://game_flow.gd  [X]  │  │  ← Should appear here
+│  └───────────────────────────────────────┘  │
+│                                             │
+└─────────────────────────────────────────────┘
+</code></pre>
+<h3 id="-success-check">🎉 Success Check<a aria-hidden="true" tabindex="-1" href="#-success-check"><span class="icon icon-link"></span></a></h3>
+<p>Run your game and check the <strong>Output</strong> panel at the bottom. You should see:</p>
+<pre><code>GameFlow initialized! Welcome to the game!
+Game reset! Fresh start!
+</code></pre>
+<p>If you see this, your Autoload is working!</p>
+<h2 id="-using-gameflow-from-other-scripts">🔗 Using GameFlow from Other Scripts<a aria-hidden="true" tabindex="-1" href="#-using-gameflow-from-other-scripts"><span class="icon icon-link"></span></a></h2>
+<p>Now that GameFlow is set up, you can access it from ANY script in your game!</p>
+<h3 id="basic-access-pattern">Basic Access Pattern<a aria-hidden="true" tabindex="-1" href="#basic-access-pattern"><span class="icon icon-link"></span></a></h3>
+<pre><code class="language-gdscript"># Access GameFlow using its name
+GameFlow.variable_name
+GameFlow.function_name()
+</code></pre>
+<h3 id="example-1-updating-score-from-player-script">Example 1: Updating Score from Player Script<a aria-hidden="true" tabindex="-1" href="#example-1-updating-score-from-player-script"><span class="icon icon-link"></span></a></h3>
+<p>Add this to your player's script when they collect a coin:</p>
+<pre><code class="language-gdscript"># In your player script (player.gd)
+
+func _on_coin_collected():
+	# Add 10 points to the global score
+	GameFlow.add_score(10)
+	
+	# Play a sound
+	$CoinSound.play()
+</code></pre>
+<h3 id="example-2-taking-damage">Example 2: Taking Damage<a aria-hidden="true" tabindex="-1" href="#example-2-taking-damage"><span class="icon icon-link"></span></a></h3>
+<p>When the player hits an enemy:</p>
+<pre><code class="language-gdscript"># In your player script
+
+func _on_body_entered(body):
+	if body.is_in_group("enemies"):
+		# Player takes damage through GameFlow
+		GameFlow.take_damage(1)
+		
+		# Knockback effect
+		velocity = (global_position - body.global_position).normalized() * 200
+		
+		# Flash the player sprite red
+		$Sprite2D.modulate = Color.RED
+		await get_tree().create_timer(0.2).timeout
+		$Sprite2D.modulate = Color.WHITE
+</code></pre>
+<h3 id="example-3-checking-game-state">Example 3: Checking Game State<a aria-hidden="true" tabindex="-1" href="#example-3-checking-game-state"><span class="icon icon-link"></span></a></h3>
+<p>In your enemy script, only chase player if game is active:</p>
+<pre><code class="language-gdscript"># In your enemy script (enemy.gd)
+
+func _process(delta):
+	# Only move if game is being played (not paused or game over)
+	if GameFlow.is_playing():
+		chase_player()
+	else:
+		# Stop moving when paused
+		velocity = Vector2.ZERO
+</code></pre>
+<h3 id="example-4-pause-input">Example 4: Pause Input<a aria-hidden="true" tabindex="-1" href="#example-4-pause-input"><span class="icon icon-link"></span></a></h3>
+<p>Add pause functionality to any script:</p>
+<pre><code class="language-gdscript"># Can be in player script, UI script, or anywhere!
+
+func _input(event):
+	# Press ESC or P to pause/unpause
+	if event.is_action_pressed("ui_cancel") or event.is_action_pressed("pause"):
+		GameFlow.toggle_pause()
+		
+		# Show/hide pause menu (if you have one)
+		$PauseMenu.visible = GameFlow.is_paused
+</code></pre>
+<h2 id="-creating-game-states">🎮 Creating Game States<a aria-hidden="true" tabindex="-1" href="#-creating-game-states"><span class="icon icon-link"></span></a></h2>
+<p>Our GameFlow uses an <strong>enum</strong> to track the current state. Here's how to use each state:</p>
+<h3 id="state-diagram">State Diagram<a aria-hidden="true" tabindex="-1" href="#state-diagram"><span class="icon icon-link"></span></a></h3>
+<pre><code>                    ┌───────────┐
+         ┌─────────│  PLAYING  │──────────┐
+         │         └─────┬─────┘          │
+    Player dies          │          All levels
+    or ESC pressed       │          completed
+         │               │               │
+         ▼               ▼               ▼
+   ┌───────────┐   ┌───────────┐   ┌───────────┐
+   │ GAME_OVER │   │  PAUSED   │   │  VICTORY  │
+   └─────┬─────┘   └─────┬─────┘   └─────┬─────┘
+         │               │               │
+    Restart or      Resume or       Return to
+    Main Menu       Main Menu       Main Menu
+         │               │               │
+         └───────────────┴───────────────┘
+                         │
+                         ▼
+                  ┌───────────┐
+                  │  RESTART  │
+                  └───────────┘
+</code></pre>
+<h3 id="using-states-in-your-code">Using States in Your Code<a aria-hidden="true" tabindex="-1" href="#using-states-in-your-code"><span class="icon icon-link"></span></a></h3>
+<pre><code class="language-gdscript"># Check specific states
+if GameFlow.current_state == GameFlow.GameState.PLAYING:
+	# Do something only when playing
+	pass
+
+# Use the helper functions (recommended)
+if GameFlow.is_playing():
+	# Only run game logic when playing
+	update_enemies()
+	move_player()
+	check_collisions()
+</code></pre>
+<h2 id="️-implementing-pause-functionality">⏸️ Implementing Pause Functionality<a aria-hidden="true" tabindex="-1" href="#️-implementing-pause-functionality"><span class="icon icon-link"></span></a></h2>
+<h3 id="how-pausing-works-in-godot">How Pausing Works in Godot<a aria-hidden="true" tabindex="-1" href="#how-pausing-works-in-godot"><span class="icon icon-link"></span></a></h3>
+<p>Godot has a built-in pause system. When you set <code>get_tree().paused = true</code>:</p>
+<ul>
+<li><code>_process()</code> and <code>_physics_process()</code> stop running</li>
+<li>Input events still work</li>
+<li>Animation stops</li>
+<li>Physics stops</li>
+</ul>
+<p>But we want our pause menu UI to still work! Here's how to handle it:</p>
+<h3 id="creating-a-pause-menu">Creating a Pause Menu<a aria-hidden="true" tabindex="-1" href="#creating-a-pause-menu"><span class="icon icon-link"></span></a></h3>
+<p>Create a new scene called <code>pause_menu.tscn</code>:</p>
+<ol>
+<li>Create a <strong>CanvasLayer</strong> (so it stays on top)</li>
+<li>Add a <strong>ColorRect</strong> as a child (for dark background)
+3. Color: Black with alpha 0.5 (semi-transparent)</li>
+<li>Add a <strong>VBoxContainer</strong> for buttons</li>
+<li>Add <strong>Button</strong> nodes for:
+6. Resume
+7. Restart Level
+8. Main Menu
+9. Quit</li>
+</ol>
+<h3 id="pause-menu-script">Pause Menu Script<a aria-hidden="true" tabindex="-1" href="#pause-menu-script"><span class="icon icon-link"></span></a></h3>
+<pre><code class="language-gdscript">extends CanvasLayer
+
+@onready var resume_button = $VBoxContainer/ResumeButton
+@onready var restart_button = $VBoxContainer/RestartButton
+@onready var menu_button = $VBoxContainer/MenuButton
+@onready var quit_button = $VBoxContainer/QuitButton
+
+func _ready():
+	# Connect button signals
+	resume_button.pressed.connect(_on_resume_pressed)
+	restart_button.pressed.connect(_on_restart_pressed)
+	menu_button.pressed.connect(_on_menu_pressed)
+	quit_button.pressed.connect(_on_quit_pressed)
+	
+	# Hide by default
+	visible = false
+
+func _input(event):
+	if event.is_action_pressed("pause"):
+		toggle_pause_menu()
+
+func toggle_pause_menu():
+	GameFlow.toggle_pause()
+	visible = GameFlow.is_paused
+
+func _on_resume_pressed():
+	GameFlow.resume_game()
+	visible = false
+
+func _on_restart_pressed():
+	GameFlow.resume_game()
+	visible = false
+	GameFlow.restart_level()
+
+func _on_menu_pressed():
+	GameFlow.resume_game()
+	visible = false
+	GameFlow.return_to_menu()
+
+func _on_quit_pressed():
+	get_tree().quit()
+</code></pre>
+<h3 id="important-process-mode-for-ui">Important: Process Mode for UI<a aria-hidden="true" tabindex="-1" href="#important-process-mode-for-ui"><span class="icon icon-link"></span></a></h3>
+<p>Make sure your pause menu keeps working when paused:</p>
+<ol>
+<li>Select your PauseMenu root node</li>
+<li>In the Inspector, find <strong>Process → Mode</strong></li>
+<li>Set it to: <strong>When Paused</strong></li>
+</ol>
+<pre><code>Inspector Panel:
+┌─────────────────────────────┐
+│ Process                     │
+│   Mode: [When Paused ▼]     │  ← Change this!
+└─────────────────────────────┘
+</code></pre>
+<p>This tells Godot: "Keep running this node even when the game is paused!"</p>
+<h2 id="-connecting-player-health-to-gameflow">💖 Connecting Player Health to GameFlow<a aria-hidden="true" tabindex="-1" href="#-connecting-player-health-to-gameflow"><span class="icon icon-link"></span></a></h2>
+<h3 id="health-system-overview">Health System Overview<a aria-hidden="true" tabindex="-1" href="#health-system-overview"><span class="icon icon-link"></span></a></h3>
+<pre><code>Player collides with enemy
+         │
+         ▼
+  ┌─────────────┐
+  │ Enemy calls │
+  │  GameFlow.  │
+  │ take_damage │
+  └──────┬──────┘
+         │
+         ▼
+  ┌─────────────┐
+  │  GameFlow   │
+  │   reduces   │
+  │   health    │
+  └──────┬──────┘
+         │
+    ┌────┴────┐
+    │         │
+ Health>0?  Health&#x3C;=0?
+    │         │
+    ▼         ▼
+Keep    Lose a life
+Playing    │
+           ▼
+      Lives>0?
+      ┌────┴────┐
+      │         │
+  Respawn   Game Over
+</code></pre>
+<h3 id="visual-health-bar-ui">Visual Health Bar (UI)<a aria-hidden="true" tabindex="-1" href="#visual-health-bar-ui"><span class="icon icon-link"></span></a></h3>
+<p>Create a health bar that displays GameFlow's health:</p>
+<pre><code class="language-gdscript"># health_bar.gd - Attach to a CanvasLayer
+
+extends CanvasLayer
+
+@onready var health_label = $HealthLabel
+@onready var lives_label = $LivesLabel
+
+func _ready():
+	update_health_display()
+
+func _process(delta):
+	# Update every frame to stay in sync
+	update_health_display()
+
+func update_health_display():
+	var health = GameFlow.get_health()
+	var max_health = GameFlow.get_max_health()
+	var lives = GameFlow.lives
+	
+	health_label.text = "Health: " + str(health) + "/" + str(max_health)
+	lives_label.text = "Lives: " + str(lives)
+	
+	# Change color when low on health
+	if health == 1:
+		health_label.modulate = Color.RED
+	else:
+		health_label.modulate = Color.WHITE
+</code></pre>
+<h3 id="making-player-invulnerable-after-hit">Making Player Invulnerable After Hit<a aria-hidden="true" tabindex="-1" href="#making-player-invulnerable-after-hit"><span class="icon icon-link"></span></a></h3>
+<p>Add invulnerability frames so the player doesn't take damage every frame:</p>
+<pre><code class="language-gdscript"># In your player script
+
+var is_invulnerable: bool = false
+@export var invulnerability_time: float = 1.0
+
+func take_damage(amount: int = 1):
+	if is_invulnerable:
+		return  # Can't take damage right now
+	
+	# Tell GameFlow to handle the damage
+	GameFlow.take_damage(amount)
+	
+	# Become invulnerable temporarily
+	is_invulnerable = true
+	$Sprite2D.modulate = Color(1, 1, 1, 0.5)  # Semi-transparent
+	
+	# Wait before becoming vulnerable again
+	await get_tree().create_timer(invulnerability_time).timeout
+	
+	is_invulnerable = false
+	$Sprite2D.modulate = Color(1, 1, 1, 1)  # Back to normal
+</code></pre>
+<h2 id="-practice-activities">🏆 Practice Activities<a aria-hidden="true" tabindex="-1" href="#-practice-activities"><span class="icon icon-link"></span></a></h2>
+<p>Now it's your turn! Complete these challenges to master GameFlow:</p>
+<h3 id="activity-1-add-level-progression-15-minutes">Activity 1: Add Level Progression (15 minutes)<a aria-hidden="true" tabindex="-1" href="#activity-1-add-level-progression-15-minutes"><span class="icon icon-link"></span></a></h3>
+<p><strong>Goal:</strong> Create a system to move between levels when the player reaches the end.</p>
+<p><strong>Steps:</strong></p>
+<ol>
+<li>Create a new Area2D node called "LevelExit" at the end of your level</li>
+<li>Add a CollisionShape2D (make it a rectangle at the exit)</li>
+<li>Attach this script:</li>
+</ol>
+<pre><code class="language-gdscript"># level_exit.gd
+
+extends Area2D
+
+@export var next_level_number: int = 2
+
+func _on_body_entered(body):
+	if body.name == "Player":
+		print("Level complete!")
+		GameFlow.next_level()
+</code></pre>
+<ol start="4">
+<li>Create at least 2 different level scenes</li>
+<li>Update the <code>level_paths</code> dictionary in GameFlow with your actual level paths</li>
+<li>Test: Can you walk to the exit and load the next level?</li>
+</ol>
+<p><strong>Bonus:</strong> Add a "Level Complete!" popup that shows before loading the next level.</p>
+<h3 id="activity-2-create-a-win-condition-15-minutes">Activity 2: Create a Win Condition (15 minutes)<a aria-hidden="true" tabindex="-1" href="#activity-2-create-a-win-condition-15-minutes"><span class="icon icon-link"></span></a></h3>
+<p><strong>Goal:</strong> Show a victory screen when the player beats all levels.</p>
+<p><strong>Steps:</strong></p>
+<ol>
+<li>
+<p>Create a new scene called <code>victory_screen.tscn</code>:
+2. Add a CanvasLayer
+3. Add a Label with text "YOU WIN!"
+4. Add a Label showing the final score
+5. Add buttons: "Play Again" and "Main Menu"</p>
+</li>
+<li>
+<p>Create <code>victory_screen.gd</code>:</p>
+</li>
+</ol>
+<pre><code class="language-gdscript">extends CanvasLayer
+
+@onready var score_label = $ScoreLabel
+
+func _ready():
+	# Show final score
+	score_label.text = "Final Score: " + str(GameFlow.get_score())
+	
+	# Check for high score
+	if GameFlow.get_score() >= GameFlow.get_high_score():
+		$HighScoreLabel.visible = true
+
+func _on_play_again_pressed():
+	GameFlow.reset_game()
+	GameFlow.load_level(1)
+
+func _on_main_menu_pressed():
+	GameFlow.reset_game()
+	GameFlow.return_to_menu()
+</code></pre>
+<ol start="3">
+<li>In GameFlow, modify the <code>victory()</code> function to load your victory screen:</li>
+</ol>
+<pre><code class="language-gdscript">func victory():
+	current_state = GameState.VICTORY
+	is_paused = false
+	get_tree().paused = false
+	
+	if score > high_score:
+		high_score = score
+	
+	print("VICTORY! You beat the game!")
+	
+	# Load victory screen
+	get_tree().change_scene_to_file("res://scenes/victory_screen.tscn")
+</code></pre>
+<ol start="4">
+<li>Test: Beat all levels and see your victory screen!</li>
+</ol>
+<p><strong>Bonus:</strong> Add confetti particles to the victory screen!</p>
+<h3 id="activity-3-collectibles--score-multiplier-15-minutes">Activity 3: Collectibles &#x26; Score Multiplier (15 minutes)<a aria-hidden="true" tabindex="-1" href="#activity-3-collectibles--score-multiplier-15-minutes"><span class="icon icon-link"></span></a></h3>
+<p><strong>Goal:</strong> Create different types of collectibles with different point values.</p>
+<p><strong>Steps:</strong></p>
+<ol>
+<li>Create an enum in GameFlow for collectible types:</li>
+</ol>
+<pre><code class="language-gdscript"># Add this to GameFlow
+enum CollectibleType {
+	COIN = 10,
+	GEM = 50,
+	STAR = 100,
+	HEART = 0  # Gives health instead
+}
+
+var score_multiplier: float = 1.0
+</code></pre>
+<ol start="2">
+<li>Create a collectible script:</li>
+</ol>
+<pre><code class="language-gdscript"># collectible.gd
+
+extends Area2D
+
+@export var type: GameFlow.CollectibleType = GameFlow.CollectibleType.COIN
+@export var value: int = 10
+
+func _on_body_entered(body):
+	if body.name == "Player":
+		collect()
+
+func collect():
+	if type == GameFlow.CollectibleType.HEART:
+		GameFlow.heal(1)
+	else:
+		var points = int(value * GameFlow.score_multiplier)
+		GameFlow.add_score(points)
+	
+	# Animation and destroy
+	$AnimationPlayer.play("collect")
+	await $AnimationPlayer.animation_finished
+	queue_free()
+</code></pre>
+<ol start="3">
+<li>Create 4 different collectible sprites (coin, gem, star, heart)</li>
+<li>Place them in your level and test!</li>
+</ol>
+<p><strong>Bonus:</strong> Add a combo system - collect 5 items in a row for a 2x multiplier!</p>
+<h3 id="activity-4-create-a-high-score-system-advanced-15-minutes">Activity 4: Create a High Score System (Advanced, 15 minutes)<a aria-hidden="true" tabindex="-1" href="#activity-4-create-a-high-score-system-advanced-15-minutes"><span class="icon icon-link"></span></a></h3>
+<p><strong>Goal:</strong> Save the high score so it persists even when you close the game.</p>
+<p><strong>Steps:</strong></p>
+<ol>
+<li>Learn about Godot's <code>FileAccess</code> class for saving data</li>
+<li>Modify GameFlow to save/load high score:</li>
+</ol>
+<pre><code class="language-gdscript"># Add to GameFlow
+
+const SAVE_PATH = "user://highscore.save"
+
+func save_high_score():
+	var file = FileAccess.open(SAVE_PATH, FileAccess.WRITE)
+	file.store_var(high_score)
+	file.close()
+	print("High score saved!")
+
+func load_high_score():
+	if FileAccess.file_exists(SAVE_PATH):
+		var file = FileAccess.open(SAVE_PATH, FileAccess.READ)
+		high_score = file.get_var()
+		file.close()
+		print("High score loaded: " + str(high_score))
+
+# Call load_high_score() in _ready()
+# Call save_high_score() when setting a new high score
+</code></pre>
+<p><strong>Challenge:</strong> Can you also save the player's name with their high score?</p>
+<h2 id="-common-patterns-for-game-managers">🧩 Common Patterns for Game Managers<a aria-hidden="true" tabindex="-1" href="#-common-patterns-for-game-managers"><span class="icon icon-link"></span></a></h2>
+<p>Here are some patterns professional game developers use:</p>
+<h3 id="pattern-1-signal-based-communication">Pattern 1: Signal-Based Communication<a aria-hidden="true" tabindex="-1" href="#pattern-1-signal-based-communication"><span class="icon icon-link"></span></a></h3>
+<p>Instead of directly calling GameFlow functions, use signals for loose coupling:</p>
+<pre><code class="language-gdscript"># In GameFlow
+signal score_changed(new_score)
+signal health_changed(new_health)
+signal game_over_triggered()
+
+func add_score(points: int):
+	score += points
+	score_changed.emit(score)  # Notify everyone listening!
+</code></pre>
+<pre><code class="language-gdscript"># In UI script
+func _ready():
+	GameFlow.score_changed.connect(_on_score_changed)
+
+func _on_score_changed(new_score):
+	score_label.text = "Score: " + str(new_score)
+</code></pre>
+<h3 id="pattern-2-multiple-autoloads">Pattern 2: Multiple Autoloads<a aria-hidden="true" tabindex="-1" href="#pattern-2-multiple-autoloads"><span class="icon icon-link"></span></a></h3>
+<p>For larger games, split responsibilities:</p>
+<pre><code>GameFlow (main manager)
+├── GameState (playing, paused, etc.)
+└── Level management
+
+PlayerData (player-specific)
+├── Health, lives, upgrades
+└── Inventory
+
+AudioManager (sound)
+├── Music volume
+├── Sound effects
+└── Ambient sounds
+
+SaveManager (data persistence)
+├── Save game
+├── Load game
+└── Settings
+</code></pre>
+<h3 id="pattern-3-state-machine-pattern">Pattern 3: State Machine Pattern<a aria-hidden="true" tabindex="-1" href="#pattern-3-state-machine-pattern"><span class="icon icon-link"></span></a></h3>
+<p>For complex games, use a proper state machine:</p>
+<pre><code class="language-gdscript"># More advanced state management
+var states = {
+	"menu": MenuState.new(),
+	"playing": PlayingState.new(),
+	"paused": PausedState.new(),
+	"game_over": GameOverState.new()
+}
+
+var current_state_obj = null
+
+func change_state(state_name: String):
+	if current_state_obj:
+		current_state_obj.exit()
+	
+	current_state_obj = states[state_name]
+	current_state_obj.enter()
+</code></pre>
+<h2 id="-troubleshooting">🐛 Troubleshooting<a aria-hidden="true" tabindex="-1" href="#-troubleshooting"><span class="icon icon-link"></span></a></h2>
+<h3 id="problem-gameflow-is-not-defined-error">Problem: "GameFlow is not defined" error<a aria-hidden="true" tabindex="-1" href="#problem-gameflow-is-not-defined-error"><span class="icon icon-link"></span></a></h3>
+<p><strong>Solution:</strong></p>
+<ul>
+<li>Make sure you added <code>game_flow.gd</code> to Project Settings → Autoload</li>
+<li>Check that the Node Name is exactly "GameFlow" (case-sensitive!)</li>
+<li>Restart Godot after adding Autoload</li>
+</ul>
+<h3 id="problem-scorehealth-resets-when-changing-levels">Problem: Score/health resets when changing levels<a aria-hidden="true" tabindex="-1" href="#problem-scorehealth-resets-when-changing-levels"><span class="icon icon-link"></span></a></h3>
+<p><strong>Solution:</strong></p>
+<ul>
+<li>Make sure you're accessing <code>GameFlow.score</code> not a local variable</li>
+<li>Don't create a new GameFlow node in your scene - Godot does this automatically</li>
+<li>Check that you're not calling <code>reset_game()</code> when you don't mean to</li>
+</ul>
+<h3 id="problem-pause-menu-doesnt-work-when-paused">Problem: Pause menu doesn't work when paused<a aria-hidden="true" tabindex="-1" href="#problem-pause-menu-doesnt-work-when-paused"><span class="icon icon-link"></span></a></h3>
+<p><strong>Solution:</strong></p>
+<ul>
+<li>Set the pause menu's Process Mode to "When Paused"</li>
+<li>Make sure pause menu is a CanvasLayer or Control node</li>
+<li>Check that <code>get_tree().paused = true</code> is being called</li>
+</ul>
+<h3 id="problem-cant-access-gameflow-from-other-scripts">Problem: Can't access GameFlow from other scripts<a aria-hidden="true" tabindex="-1" href="#problem-cant-access-gameflow-from-other-scripts"><span class="icon icon-link"></span></a></h3>
+<p><strong>Solution:</strong></p>
+<ul>
+<li>Autoload singletons are available immediately when the game starts</li>
+<li>If getting errors, add a small delay:</li>
+</ul>
+<pre><code class="language-gdscript">func _ready():
+	await get_tree().create_timer(0.1).timeout
+	# Now access GameFlow
+	print(GameFlow.score)
+</code></pre>
+<h3 id="problem-game-freezes-completely-when-paused">Problem: Game freezes completely when paused<a aria-hidden="true" tabindex="-1" href="#problem-game-freezes-completely-when-paused"><span class="icon icon-link"></span></a></h3>
+<p><strong>Solution:</strong></p>
+<ul>
+<li>Some nodes might be processing when they shouldn't</li>
+<li>Check Process Mode on:
+<ul>
+<li>UI elements (should be "When Paused")</li>
+<li>Game world (should be "Pausable" or "Inherit")</li>
+</ul>
+</li>
+<li>Make sure to unpause before changing scenes</li>
+</ul>
+<h2 id="-key-takeaways">🎓 Key Takeaways<a aria-hidden="true" tabindex="-1" href="#-key-takeaways"><span class="icon icon-link"></span></a></h2>
+<ol>
+<li><strong>Autoload/Singletons</strong> stay alive across all scenes and store global data</li>
+<li><strong>GameFlow</strong> is your command center for game state, score, and level management</li>
+<li>Use <strong>enums</strong> for game states to make your code readable and organized</li>
+<li><strong>get_tree().paused</strong> is Godot's built-in pause system</li>
+<li>Set Process Mode to <strong>"When Paused"</strong> for UI that needs to work while paused</li>
+<li>Always access game data through <strong>GameFlow</strong> to keep everything synchronized</li>
+</ol>
+<h2 id="-preview-of-next-lesson">🔮 Preview of Next Lesson<a aria-hidden="true" tabindex="-1" href="#-preview-of-next-lesson"><span class="icon icon-link"></span></a></h2>
+<p>In <strong>Lesson 5: UI &#x26; HUD Design</strong>, you'll learn to:</p>
+<ul>
+<li>Create professional health bars, score displays, and progress meters</li>
+<li>Design responsive UI that works on different screen sizes</li>
+<li>Add animated UI elements (damage numbers, combo counters)</li>
+<li>Build a complete in-game HUD using Godot's Control nodes</li>
+<li>Create main menus and settings screens</li>
+</ul>
+<p>Your GameFlow will work hand-in-hand with the UI system to display all that game data!</p>
+<h2 id="-additional-resources">📚 Additional Resources<a aria-hidden="true" tabindex="-1" href="#-additional-resources"><span class="icon icon-link"></span></a></h2>
+<ul>
+<li><strong>Godot Documentation:</strong> <a href="https://docs.godotengine.org/en/stable/tutorials/scripting/singletons_autoload.html">Singletons (AutoLoad)</a></li>
+<li><strong>Godot Documentation:</strong> <a href="https://docs.godotengine.org/en/stable/tutorials/scripting/pausing_games.html">Pausing Games</a></li>
+<li><strong>Practice:</strong> Try creating additional managers: AudioManager, SettingsManager, AchievementManager</li>
+</ul>
+<h2 id="-lesson-checklist">✅ Lesson Checklist<a aria-hidden="true" tabindex="-1" href="#-lesson-checklist"><span class="icon icon-link"></span></a></h2>
+<p>Before moving to Lesson 5, make sure you can:</p>
+<ul>
+<li><a href=""> </a> Explain what an Autoload/Singleton is</li>
+<li><a href=""> </a> Created <code>game_flow.gd</code> with game states, score, and health</li>
+<li><a href=""> </a> Added GameFlow to Project Settings → Autoload</li>
+<li><a href=""> </a> Accessed GameFlow from player and enemy scripts</li>
+<li><a href=""> </a> Implemented pause functionality with a working pause menu</li>
+<li><a href=""> </a> Connected player health to GameFlow's health system</li>
+<li><a href=""> </a> Created level progression (can move between levels)</li>
+<li><a href=""> </a> Implemented at least one win/lose condition</li>
+<li><a href=""> </a> Completed at least 2 practice activities</li>
+</ul>
+<p><strong>Congratulations!</strong> You now have a solid game management system. Your games can now track score, manage health, pause, and move between levels like professional games!</p>
+<h2 id="-glossary">📝 Glossary<a aria-hidden="true" tabindex="-1" href="#-glossary"><span class="icon icon-link"></span></a></h2>
+<ul>
+<li><strong>Autoload:</strong> Godot's system for automatically loading scripts as singletons</li>
+<li><strong>Singleton:</strong> A design pattern where only one instance of a class exists</li>
+<li><strong>Global Variable:</strong> A variable accessible from anywhere in the program</li>
+<li><strong>Enum:</strong> A data type with a fixed set of named values (like PLAYING, PAUSED)</li>
+<li><strong>State Machine:</strong> A system that manages different states and transitions between them</li>
+<li><strong>Process Mode:</strong> Godot setting that controls if a node runs when paused</li>
+</ul>
+<p><em>Happy Coding! Your games are getting more professional with every lesson! 🎮✨</em></p>
+    </main>
+
+    <aside class="toc-sidebar" id="toc-sidebar">
+      <div class="toc-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <line x1="21" y1="10" x2="3" y2="10"></line>
+          <line x1="21" y1="6" x2="3" y2="6"></line>
+          <line x1="21" y1="14" x2="3" y2="14"></line>
+          <line x1="21" y1="18" x2="3" y2="18"></line>
+        </svg>
+        On this page
+      </div>
+      <nav id="toc-nav"></nav>
+    </aside>
+  </div>
+
+  <footer>
+    <p>Powered by <a href="https://www.npmjs.com/package/zenmd">ZenMD</a></p>
+  </footer>
+
+  <script src="/main.js" defer></script>
+</body>
+
+</html>

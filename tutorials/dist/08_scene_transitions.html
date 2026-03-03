@@ -1,0 +1,1060 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A page about Lesson 8: Scene Transitions &amp; Game States">
+  <meta property="og:title" content="Lesson 8: Scene Transitions &amp; Game States">
+  <meta property="og:description" content="A page about Lesson 8: Scene Transitions &amp; Game States">
+  <meta property="og:image" content="/og_image.png">
+
+  <link rel="icon" href="/favicon.png">
+  <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
+  <link rel="stylesheet" href="/main.css">
+  <style>
+    /* 
+    To customize the default style, you should try to override the variables in SimpleCSS: 
+    https://github.com/kevquirk/simple.css/wiki/Getting-Started-With-Simple.css#customise-simplecss
+    Here are all the variables that's defined:
+    */
+
+    :root {
+      /* Set sans-serif & mono fonts */
+      --sans-font: -apple-system, BlinkMacSystemFont, "Avenir Next", Avenir,
+        "Nimbus Sans L", Roboto, "Noto Sans", "Segoe UI", Arial, Helvetica,
+        "Helvetica Neue", sans-serif;
+      --mono-font: Consolas, Menlo, Monaco, "Andale Mono", "Ubuntu Mono", monospace;
+      --standard-border-radius: 5px;
+      --border-width: 1px;
+
+      /* Default (light) theme */
+      --bg: #fff;
+      --accent-bg: #f5f7ff;
+      --text: #212121;
+      --text-light: #585858;
+      --border: #898EA4;
+      --accent: var(--text);
+      --accent-hover: var(--text);
+      --accent-text: var(--bg);
+      --code: #d81b60;
+      --preformatted: #444;
+      --marked: #e2e2e2;
+      --disabled: #efefef;
+      --content-width: 80rem;
+      --sidebar-width: 300px;
+      --sidenav-width: 220px;
+      --gap: 4rem;
+    }
+
+    /* Dark theme */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        color-scheme: dark;
+        --bg: #212121;
+        --accent-bg: #2b2b2b;
+        --text: #dcdcdc;
+        --text-light: #ababab;
+        --accent: var(--text);
+        --accent-hover: var(--text);
+        --accent-text: var(--bg);
+        --code: #f06292;
+        --preformatted: #ccc;
+        --disabled: #111;
+      }
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+  </style>
+  <title>Lesson 8: Scene Transitions &amp; Game States</title>
+</head>
+
+<body>
+  <button id="menu-toggle" class="menu-toggle" aria-label="Toggle navigation">
+    <span></span>
+    <span></span>
+  </button>
+  <div id="sidebar-overlay" class="sidebar-overlay"></div>
+  <div class="main-grid" id="main-grid">
+    <aside class="site-sidebar" id="site-sidebar">
+      <div class="site-nav-title" id="site-nav-title">Site</div>
+      <nav id="site-nav"></nav>
+    </aside>
+
+    <main class="article">
+      <h1 id="lesson-8-scene-transitions--game-states">Lesson 8: Scene Transitions &#x26; Game States<a aria-hidden="true" tabindex="-1" href="#lesson-8-scene-transitions--game-states"><span class="icon icon-link"></span></a></h1>
+<p><strong>Time:</strong> 45-60 minutes<br>
+<strong>Target:</strong> Ages 12-15<br>
+<strong>Prerequisites:</strong> Lessons 1-7 (Complete platformer with player, enemies, collectibles, UI, audio)</p>
+<hr>
+<h2 id="lesson-overview">Lesson Overview<a aria-hidden="true" tabindex="-1" href="#lesson-overview"><span class="icon icon-link"></span></a></h2>
+<p>Welcome to the final lesson! In this chapter, you'll transform your single-scene game into a complete, polished experience with multiple scenes, smooth transitions, and proper game states. By the end, you'll have a professional game with:</p>
+<ul>
+<li>A Main Menu with Play and Quit buttons</li>
+<li>Multiple levels you can progress through</li>
+<li>A Pause menu to take breaks</li>
+<li>A Game Over screen with score display</li>
+<li>Smooth fade transitions between scenes</li>
+</ul>
+<p>Let's make your game feel complete!</p>
+<hr>
+<h2 id="part-1-why-we-need-multiple-scenes">Part 1: Why We Need Multiple Scenes<a aria-hidden="true" tabindex="-1" href="#part-1-why-we-need-multiple-scenes"><span class="icon icon-link"></span></a></h2>
+<h3 id="the-problem-everything-in-one-scene">The Problem: Everything in One Scene<a aria-hidden="true" tabindex="-1" href="#the-problem-everything-in-one-scene"><span class="icon icon-link"></span></a></h3>
+<p>Right now, your game starts immediately when you press Play. There's no menu, no way to restart, and no way to pause. If you die, the game just... stops. Not very user-friendly!</p>
+<h3 id="the-solution-scene-separation">The Solution: Scene Separation<a aria-hidden="true" tabindex="-1" href="#the-solution-scene-separation"><span class="icon icon-link"></span></a></h3>
+<p>Professional games split different parts into separate scenes:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Scene</th><th>Purpose</th></tr></thead><tbody><tr><td><strong>Main Menu</strong></td><td>First screen players see - has Play, Options, Quit buttons</td></tr><tr><td><strong>Level 1</strong></td><td>Your main game scene</td></tr><tr><td><strong>Level 2+</strong></td><td>Additional levels with increasing difficulty</td></tr><tr><td><strong>Pause Menu</strong></td><td>Overlay that pauses the game</td></tr><tr><td><strong>Game Over</strong></td><td>Shows when player dies - Retry/Menu options</td></tr><tr><td><strong>Victory Screen</strong></td><td>Shows when player beats all levels</td></tr></tbody></table>
+<h3 id="benefits-of-multiple-scenes">Benefits of Multiple Scenes<a aria-hidden="true" tabindex="-1" href="#benefits-of-multiple-scenes"><span class="icon icon-link"></span></a></h3>
+<ol>
+<li><strong>Organization</strong>: Each scene has one job</li>
+<li><strong>Memory Management</strong>: Only load what's needed</li>
+<li><strong>Teamwork</strong>: Different people can work on different scenes</li>
+<li><strong>Modularity</strong>: Add/remove levels easily</li>
+</ol>
+<hr>
+<h2 id="part-2-creating-game-scenes">Part 2: Creating Game Scenes<a aria-hidden="true" tabindex="-1" href="#part-2-creating-game-scenes"><span class="icon icon-link"></span></a></h2>
+<p>Let's build the scenes you need. Open your Godot project from Lesson 7.</p>
+<h3 id="step-1-create-a-main-menu-scene">Step 1: Create a Main Menu Scene<a aria-hidden="true" tabindex="-1" href="#step-1-create-a-main-menu-scene"><span class="icon icon-link"></span></a></h3>
+<p><strong>Why first?</strong> When players open your game, they should see a menu, not immediately start playing.</p>
+<ol>
+<li>Click <strong>Scene > New Scene</strong></li>
+<li>Choose <strong>User Interface</strong> (Control node) as root</li>
+<li>Rename root node to "MainMenu"</li>
+<li>Save as <code>res://scenes/ui/main_menu.tscn</code></li>
+</ol>
+<h4 id="designing-the-main-menu">Designing the Main Menu<a aria-hidden="true" tabindex="-1" href="#designing-the-main-menu"><span class="icon icon-link"></span></a></h4>
+<p>Add these child nodes to MainMenu:</p>
+<pre><code>MainMenu (Control)
+├── Background (ColorRect)
+│   ├── Color: #1a1a2e (dark blue)
+│   └── Anchors: Full Rect
+├── TitleLabel (Label)
+│   ├── Text: "SUPER PLATFORMER"
+│   ├── Theme Overrides > Font Size: 64
+│   ├── Horizontal Alignment: Center
+│   └── Position: Top center
+├── PlayButton (Button)
+│   ├── Text: "PLAY"
+│   ├── Size: (200, 60)
+│   ├── Position: Center
+│   └── Theme Overrides > Font Size: 32
+├── OptionsButton (Button)
+│   ├── Text: "OPTIONS"
+│   ├── Size: (200, 60)
+│   └── Position: Below Play
+└── QuitButton (Button)
+    ├── Text: "QUIT"
+    ├── Size: (200, 60)
+    └── Position: Below Options
+</code></pre>
+<h4 id="styling-your-buttons">Styling Your Buttons<a aria-hidden="true" tabindex="-1" href="#styling-your-buttons"><span class="icon icon-link"></span></a></h4>
+<p>Make your buttons look good:</p>
+<ol>
+<li>Select a Button</li>
+<li>In Inspector, find <strong>Theme Overrides > Styles</strong></li>
+<li>Add a <strong>Normal</strong> style box:
+<ul>
+<li>Create new StyleBoxFlat</li>
+<li>BG Color: #4a4e69</li>
+<li>Corner Radius: All 8</li>
+</ul>
+</li>
+<li>Add a <strong>Hover</strong> style box:
+<ul>
+<li>Create new StyleBoxFlat</li>
+<li>BG Color: #6d7085 (lighter)</li>
+<li>Corner Radius: All 8</li>
+</ul>
+</li>
+</ol>
+<p><strong>Copy this style</strong> to all three buttons!</p>
+<h3 id="step-2-create-level-2-scene">Step 2: Create Level 2 Scene<a aria-hidden="true" tabindex="-1" href="#step-2-create-level-2-scene"><span class="icon icon-link"></span></a></h3>
+<p>Time to make a second level! This shows players their progress.</p>
+<ol>
+<li>Click <strong>Scene > New Scene</strong></li>
+<li>Choose <strong>2D Scene</strong> (Node2D) as root</li>
+<li>Rename to "Level2"</li>
+<li>Save as <code>res://scenes/levels/level2.tscn</code></li>
+</ol>
+<h4 id="building-level-2">Building Level 2<a aria-hidden="true" tabindex="-1" href="#building-level-2"><span class="icon icon-link"></span></a></h4>
+<p>Add these nodes to Level2:</p>
+<pre><code>Level2 (Node2D)
+├── TileMapLayer (ground)
+├── TileMapLayer (background)
+├── Player (CharacterBody2D)
+│   └── [Instance your player scene from Lesson 4]
+├── Enemies (Node2D)
+│   ├── Slime1
+│   └── [Add more enemies than Level 1!]
+├── Collectibles (Node2D)
+│   ├── Coin1
+│   └── [Add coins in tricky places]
+├── LevelEnd (Area2D)
+│   └── [Signals level completion]
+├── CanvasLayer (UI)
+│   └── [Instance your HUD from Lesson 6]
+└── AudioStreamPlayer2D
+    └── [Instance your background music]
+</code></pre>
+<h4 id="make-level-2-different">Make Level 2 Different<a aria-hidden="true" tabindex="-1" href="#make-level-2-different"><span class="icon icon-link"></span></a></h4>
+<ul>
+<li><strong>Harder platforming</strong>: Add bigger gaps between platforms</li>
+<li><strong>More enemies</strong>: Place them strategically</li>
+<li><strong>Collectible challenges</strong>: Hide coins in tricky spots</li>
+<li><strong>Theme change</strong>: Use different TileMap colors</li>
+</ul>
+<h3 id="step-3-create-game-over-scene">Step 3: Create Game Over Scene<a aria-hidden="true" tabindex="-1" href="#step-3-create-game-over-scene"><span class="icon icon-link"></span></a></h3>
+<ol>
+<li>Click <strong>Scene > New Scene</strong></li>
+<li>Choose <strong>User Interface</strong> (Control) as root</li>
+<li>Rename to "GameOver"</li>
+<li>Save as <code>res://scenes/ui/game_over.tscn</code></li>
+</ol>
+<h4 id="game-over-layout">Game Over Layout<a aria-hidden="true" tabindex="-1" href="#game-over-layout"><span class="icon icon-link"></span></a></h4>
+<pre><code>GameOver (Control)
+├── Background (ColorRect)
+│   ├── Color: #000000
+│   └── Modulate: Alpha 0.8 (transparent black)
+├── TitleLabel (Label)
+│   ├── Text: "GAME OVER"
+│   ├── Theme Overrides > Font Size: 72
+│   └── Theme Overrides > Font Color: #ff0000
+├── ScoreLabel (Label)
+│   ├── Text: "Score: 0"
+│   ├── Theme Overrides > Font Size: 48
+│   └── Name: "ScoreLabel" (important for code!)
+├── RetryButton (Button)
+│   ├── Text: "TRY AGAIN"
+│   └── Size: (200, 60)
+└── MenuButton (Button)
+    ├── Text: "MAIN MENU"
+    └── Size: (200, 60)
+</code></pre>
+<hr>
+<h2 id="part-3-scene-changing-basics">Part 3: Scene Changing Basics<a aria-hidden="true" tabindex="-1" href="#part-3-scene-changing-basics"><span class="icon icon-link"></span></a></h2>
+<p>Now let's write code to switch between scenes.</p>
+<h3 id="understanding-scene-paths">Understanding Scene Paths<a aria-hidden="true" tabindex="-1" href="#understanding-scene-paths"><span class="icon icon-link"></span></a></h3>
+<p>Godot uses <code>res://</code> to mean "project folder":</p>
+<pre><code class="language-gdscript"># These paths point to your scenes:
+"res://scenes/ui/main_menu.tscn"
+"res://scenes/levels/level1.tscn"  
+"res://scenes/levels/level2.tscn"
+"res://scenes/ui/game_over.tscn"
+</code></pre>
+<h3 id="basic-scene-change">Basic Scene Change<a aria-hidden="true" tabindex="-1" href="#basic-scene-change"><span class="icon icon-link"></span></a></h3>
+<p>Add this script to your <strong>Main Menu</strong>:</p>
+<pre><code class="language-gdscript"># main_menu.gd - Attach to MainMenu root node
+extends Control
+
+@onready var play_button = $PlayButton
+@onready var quit_button = $QuitButton
+
+func _ready():
+    play_button.pressed.connect(_on_play_pressed)
+    quit_button.pressed.connect(_on_quit_pressed)
+    
+    # Optional: Add sound effects
+    play_button.mouse_entered.connect(_on_button_hover)
+
+func _on_play_pressed():
+    # Change to Level 1
+    get_tree().change_scene_to_file("res://scenes/levels/level1.tscn")
+
+func _on_quit_pressed():
+    # Close the game
+    get_tree().quit()
+
+func _on_button_hover():
+    # You could play a hover sound here
+    pass
+</code></pre>
+<p><strong>Test it now!</strong> Run the Main Menu scene and click Play. You should see your level!</p>
+<h3 id="how-change_scene_to_file-works">How <code>change_scene_to_file()</code> Works<a aria-hidden="true" tabindex="-1" href="#how-change_scene_to_file-works"><span class="icon icon-link"></span></a></h3>
+<pre><code class="language-gdscript">get_tree().change_scene_to_file("path/to/scene.tscn")
+</code></pre>
+<p>What happens:</p>
+<ol>
+<li>Current scene is freed from memory</li>
+<li>New scene is loaded</li>
+<li>New scene becomes the active scene</li>
+<li><code>_ready()</code> runs on the new scene</li>
+</ol>
+<p>⚠️ <strong>Important</strong>: The old scene is completely gone! All scores, variables, etc. are lost.</p>
+<hr>
+<h2 id="part-4-creating-smooth-transitions">Part 4: Creating Smooth Transitions<a aria-hidden="true" tabindex="-1" href="#part-4-creating-smooth-transitions"><span class="icon icon-link"></span></a></h2>
+<p>Sudden scene changes feel jarring. Let's add fade transitions!</p>
+<h3 id="step-1-create-a-transition-scene">Step 1: Create a Transition Scene<a aria-hidden="true" tabindex="-1" href="#step-1-create-a-transition-scene"><span class="icon icon-link"></span></a></h3>
+<p>This scene will fade in/out between scene changes.</p>
+<ol>
+<li><strong>Scene > New Scene</strong> > User Interface</li>
+<li>Rename root to "Transition"</li>
+<li>Save as <code>res://scenes/ui/transition.tscn</code></li>
+</ol>
+<h4 id="transition-scene-structure">Transition Scene Structure<a aria-hidden="true" tabindex="-1" href="#transition-scene-structure"><span class="icon icon-link"></span></a></h4>
+<pre><code>Transition (CanvasLayer)
+├── ColorRect (full screen black overlay)
+│   ├── Anchors: Full Rect
+│   ├── Color: #000000 (black)
+│   └── Initial Alpha: 0 (fully transparent)
+└── AnimationPlayer
+    └── [We'll add animations next]
+</code></pre>
+<h3 id="step-2-create-fade-animations">Step 2: Create Fade Animations<a aria-hidden="true" tabindex="-1" href="#step-2-create-fade-animations"><span class="icon icon-link"></span></a></h3>
+<p>Select the AnimationPlayer and create two animations:</p>
+<h4 id="animation-1-fade_to_black">Animation 1: "fade_to_black"<a aria-hidden="true" tabindex="-1" href="#animation-1-fade_to_black"><span class="icon icon-link"></span></a></h4>
+<ul>
+<li>Length: 0.5 seconds</li>
+<li>Keyframes:
+<ul>
+<li>0.0s: ColorRect modulate Alpha = 0</li>
+<li>0.5s: ColorRect modulate Alpha = 1</li>
+</ul>
+</li>
+</ul>
+<h4 id="animation-2-fade_from_black">Animation 2: "fade_from_black"<a aria-hidden="true" tabindex="-1" href="#animation-2-fade_from_black"><span class="icon icon-link"></span></a></h4>
+<ul>
+<li>Length: 0.5 seconds</li>
+<li>Keyframes:
+<ul>
+<li>0.0s: ColorRect modulate Alpha = 1</li>
+<li>0.5s: ColorRect modulate Alpha = 0</li>
+</ul>
+</li>
+</ul>
+<h3 id="step-3-transition-script">Step 3: Transition Script<a aria-hidden="true" tabindex="-1" href="#step-3-transition-script"><span class="icon icon-link"></span></a></h3>
+<p>Add this script to the Transition node:</p>
+<pre><code class="language-gdscript"># transition.gd
+extends CanvasLayer
+
+signal transition_finished
+
+@onready var anim_player = $AnimationPlayer
+
+# Keep this scene alive when changing scenes!
+func _ready():
+    process_mode = Node.PROCESS_MODE_ALWAYS
+
+func fade_to_black():
+    anim_player.play("fade_to_black")
+    await anim_player.animation_finished
+    transition_finished.emit()
+
+func fade_from_black():
+    anim_player.play("fade_from_black")
+</code></pre>
+<h3 id="step-4-autoload-the-transition">Step 4: Autoload the Transition<a aria-hidden="true" tabindex="-1" href="#step-4-autoload-the-transition"><span class="icon icon-link"></span></a></h3>
+<p>We want the transition available everywhere:</p>
+<ol>
+<li>Go to <strong>Project > Project Settings > Autoload</strong></li>
+<li>Click folder icon, select <code>transition.tscn</code></li>
+<li>Name it "Transition"</li>
+<li>Click <strong>Add</strong></li>
+</ol>
+<p>Now you can use <code>Transition.fade_to_black()</code> from any script!</p>
+<h3 id="step-5-using-transitions">Step 5: Using Transitions<a aria-hidden="true" tabindex="-1" href="#step-5-using-transitions"><span class="icon icon-link"></span></a></h3>
+<p>Update your Main Menu to use transitions:</p>
+<pre><code class="language-gdscript"># main_menu.gd
+extends Control
+
+func _on_play_pressed():
+    # Fade to black
+    await Transition.fade_to_black()
+    
+    # Change scene while black
+    get_tree().change_scene_to_file("res://scenes/levels/level1.tscn")
+    
+    # Fade back in
+    Transition.fade_from_black()
+</code></pre>
+<hr>
+<h2 id="part-5-game-state-management">Part 5: Game State Management<a aria-hidden="true" tabindex="-1" href="#part-5-game-state-management"><span class="icon icon-link"></span></a></h2>
+<p>Games have different "states" - Menu, Playing, Paused, Game Over. Let's organize this!</p>
+<h3 id="creating-a-game-manager">Creating a Game Manager<a aria-hidden="true" tabindex="-1" href="#creating-a-game-manager"><span class="icon icon-link"></span></a></h3>
+<ol>
+<li>Create a new script: <code>res://scripts/autoload/game_manager.gd</code></li>
+<li>Go to <strong>Project > Project Settings > Autoload</strong></li>
+<li>Add this script as "GameManager"</li>
+</ol>
+<pre><code class="language-gdscript"># game_manager.gd
+extends Node
+
+# Game states as an enum (predefined list of values)
+enum GameState {
+    MENU,
+    PLAYING,
+    PAUSED,
+    GAME_OVER
+}
+
+# Current state
+var current_state: GameState = GameState.MENU
+
+# Player data that persists between scenes
+var current_level: int = 1
+var total_score: int = 0
+var lives: int = 3
+
+func change_state(new_state: GameState):
+    current_state = new_state
+    
+    match new_state:
+        GameState.MENU:
+            print("State: Menu")
+            get_tree().paused = false
+            
+        GameState.PLAYING:
+            print("State: Playing")
+            get_tree().paused = false
+            
+        GameState.PAUSED:
+            print("State: Paused")
+            get_tree().paused = true
+            
+        GameState.GAME_OVER:
+            print("State: Game Over")
+            get_tree().paused = false
+
+func reset_game():
+    current_level = 1
+    total_score = 0
+    lives = 3
+</code></pre>
+<h3 id="using-game-states">Using Game States<a aria-hidden="true" tabindex="-1" href="#using-game-states"><span class="icon icon-link"></span></a></h3>
+<p>In your Level script:</p>
+<pre><code class="language-gdscript"># level.gd
+extends Node2D
+
+func _ready():
+    # Tell game manager we're playing
+    GameManager.change_state(GameManager.GameState.PLAYING)
+    
+    # Setup level based on game state
+    print("Starting level ", GameManager.current_level)
+
+func _input(event):
+    # Press ESC to pause
+    if event.is_action_pressed("ui_cancel"):  # ESC key
+        if GameManager.current_state == GameManager.GameState.PLAYING:
+            pause_game()
+        elif GameManager.current_state == GameManager.GameState.PAUSED:
+            resume_game()
+
+func pause_game():
+    GameManager.change_state(GameManager.GameState.PAUSED)
+    # Show pause menu (we'll create this next)
+    $CanvasLayer/PauseMenu.show()
+
+func resume_game():
+    GameManager.change_state(GameManager.GameState.PLAYING)
+    $CanvasLayer/PauseMenu.hide()
+</code></pre>
+<hr>
+<h2 id="part-6-main-menu-implementation">Part 6: Main Menu Implementation<a aria-hidden="true" tabindex="-1" href="#part-6-main-menu-implementation"><span class="icon icon-link"></span></a></h2>
+<p>Let's complete the Main Menu with all functionality.</p>
+<h3 id="full-main-menu-script">Full Main Menu Script<a aria-hidden="true" tabindex="-1" href="#full-main-menu-script"><span class="icon icon-link"></span></a></h3>
+<pre><code class="language-gdscript"># main_menu.gd
+extends Control
+
+@onready var play_button = $PlayButton
+@onready var options_button = $OptionsButton
+@onready var quit_button = $QuitButton
+
+func _ready():
+    # Set initial game state
+    GameManager.change_state(GameManager.GameState.MENU)
+    
+    # Connect buttons
+    play_button.pressed.connect(_on_play_pressed)
+    options_button.pressed.connect(_on_options_pressed)
+    quit_button.pressed.connect(_on_quit_pressed)
+    
+    # Focus the play button (for keyboard/controller)
+    play_button.grab_focus()
+
+func _on_play_pressed():
+    # Reset game data for a fresh start
+    GameManager.reset_game()
+    
+    # Transition to level 1
+    await Transition.fade_to_black()
+    get_tree().change_scene_to_file("res://scenes/levels/level1.tscn")
+    Transition.fade_from_black()
+
+func _on_options_pressed():
+    # We'll create this in Practice Activities
+    print("Options menu coming soon!")
+
+func _on_quit_pressed():
+    # Confirm quit (optional polish)
+    var confirm = await show_quit_confirmation()
+    if confirm:
+        get_tree().quit()
+
+func show_quit_confirmation() -> bool:
+    # Simple confirmation - could be a popup dialog
+    return true  # For now, just quit
+
+func _input(event):
+    # Allow ESC to quit from menu
+    if event.is_action_pressed("ui_cancel"):
+        _on_quit_pressed()
+</code></pre>
+<hr>
+<h2 id="part-7-pause-menu">Part 7: Pause Menu<a aria-hidden="true" tabindex="-1" href="#part-7-pause-menu"><span class="icon icon-link"></span></a></h2>
+<p>A pause menu lets players take a break without quitting.</p>
+<h3 id="step-1-create-pause-menu-scene">Step 1: Create Pause Menu Scene<a aria-hidden="true" tabindex="-1" href="#step-1-create-pause-menu-scene"><span class="icon icon-link"></span></a></h3>
+<ol>
+<li><strong>Scene > New Scene</strong> > User Interface</li>
+<li>Rename to "PauseMenu"</li>
+<li>Save as <code>res://scenes/ui/pause_menu.tscn</code></li>
+</ol>
+<h4 id="pause-menu-structure">Pause Menu Structure<a aria-hidden="true" tabindex="-1" href="#pause-menu-structure"><span class="icon icon-link"></span></a></h4>
+<pre><code>PauseMenu (CanvasLayer)
+├── Background (ColorRect)
+│   ├── Anchors: Full Rect
+│   ├── Color: #000000
+│   └── Modulate: Alpha 0.5 (semi-transparent)
+├── MenuPanel (Panel)
+│   ├── Size: (400, 300)
+│   ├── Position: Center
+│   └── Style: Create StyleBoxFlat, dark color
+├── TitleLabel (Label)
+│   ├── Parent: MenuPanel
+│   ├── Text: "PAUSED"
+│   └── Theme Overrides > Font Size: 48
+├── ResumeButton (Button)
+│   ├── Parent: MenuPanel
+│   ├── Text: "RESUME"
+│   └── Size: (200, 50)
+├── OptionsButton (Button)
+│   ├── Parent: MenuPanel
+│   ├── Text: "OPTIONS"
+│   └── Size: (200, 50)
+└── QuitToMenuButton (Button)
+    ├── Parent: MenuPanel
+    ├── Text: "QUIT TO MENU"
+    └── Size: (200, 50)
+</code></pre>
+<h3 id="step-2-pause-menu-script">Step 2: Pause Menu Script<a aria-hidden="true" tabindex="-1" href="#step-2-pause-menu-script"><span class="icon icon-link"></span></a></h3>
+<pre><code class="language-gdscript"># pause_menu.gd
+extends CanvasLayer
+
+@onready var resume_button = $MenuPanel/ResumeButton
+@onready var options_button = $MenuPanel/OptionsButton
+@onready var quit_button = $MenuPanel/QuitToMenuButton
+
+func _ready():
+    # Connect buttons
+    resume_button.pressed.connect(_on_resume_pressed)
+    options_button.pressed.connect(_on_options_pressed)
+    quit_button.pressed.connect(_on_quit_pressed)
+    
+    # Hide by default
+    hide()
+
+func _on_resume_pressed():
+    # Hide menu
+    hide()
+    
+    # Unpause the game
+    GameManager.change_state(GameManager.GameState.PLAYING)
+
+func _on_options_pressed():
+    print("Options menu coming soon!")
+
+func _on_quit_pressed():
+    # Confirm before quitting
+    hide()
+    GameManager.change_state(GameManager.GameState.PLAYING)
+    
+    await Transition.fade_to_black()
+    get_tree().change_scene_to_file("res://scenes/ui/main_menu.tscn")
+    Transition.fade_from_black()
+    
+    GameManager.change_state(GameManager.GameState.MENU)
+</code></pre>
+<h3 id="step-3-add-pause-menu-to-level">Step 3: Add Pause Menu to Level<a aria-hidden="true" tabindex="-1" href="#step-3-add-pause-menu-to-level"><span class="icon icon-link"></span></a></h3>
+<p>In your Level scene:</p>
+<pre><code>Level1 (Node2D)
+├── ...
+└── CanvasLayer (UI)
+    ├── HUD (instance)
+    └── PauseMenu (instance pause_menu.tscn)
+</code></pre>
+<p>Make sure PauseMenu is hidden by default in the editor!</p>
+<hr>
+<h2 id="part-8-game-over-screen">Part 8: Game Over Screen<a aria-hidden="true" tabindex="-1" href="#part-8-game-over-screen"><span class="icon icon-link"></span></a></h2>
+<p>When the player dies, show a nice Game Over screen with their score.</p>
+<h3 id="game-over-script">Game Over Script<a aria-hidden="true" tabindex="-1" href="#game-over-script"><span class="icon icon-link"></span></a></h3>
+<pre><code class="language-gdscript"># game_over.gd
+extends Control
+
+@onready var score_label = $ScoreLabel
+@onready var retry_button = $RetryButton
+@onready var menu_button = $MenuButton
+
+func _ready():
+    GameManager.change_state(GameManager.GameState.GAME_OVER)
+    
+    # Display the final score
+    score_label.text = "Final Score: " + str(GameManager.total_score)
+    
+    # Connect buttons
+    retry_button.pressed.connect(_on_retry_pressed)
+    menu_button.pressed.connect(_on_menu_pressed)
+    
+    # Focus retry button
+    retry_button.grab_focus()
+
+func _on_retry_pressed():
+    # Retry current level
+    await Transition.fade_to_black()
+    
+    var level_path = "res://scenes/levels/level" + str(GameManager.current_level) + ".tscn"
+    get_tree().change_scene_to_file(level_path)
+    
+    Transition.fade_from_black()
+    GameManager.change_state(GameManager.GameState.PLAYING)
+
+func _on_menu_pressed():
+    await Transition.fade_to_black()
+    get_tree().change_scene_to_file("res://scenes/ui/main_menu.tscn")
+    Transition.fade_from_black()
+    GameManager.change_state(GameManager.GameState.MENU)
+</code></pre>
+<h3 id="triggering-game-over">Triggering Game Over<a aria-hidden="true" tabindex="-1" href="#triggering-game-over"><span class="icon icon-link"></span></a></h3>
+<p>In your Player script (from Lesson 4), update the death handling:</p>
+<pre><code class="language-gdscript"># player.gd - modify the _on_death() function
+
+func _on_death():
+    # Play death animation/sound
+    animation_player.play("death")
+    
+    # Wait a moment
+    await get_tree().create_timer(1.0).timeout
+    
+    # Lose a life
+    GameManager.lives -= 1
+    
+    if GameManager.lives &#x3C;= 0:
+        # Game over - show game over screen
+        await Transition.fade_to_black()
+        get_tree().change_scene_to_file("res://scenes/ui/game_over.tscn")
+        Transition.fade_from_black()
+    else:
+        # Retry current level
+        await Transition.fade_to_black()
+        var level_path = "res://scenes/levels/level" + str(GameManager.current_level) + ".tscn"
+        get_tree().change_scene_to_file(level_path)
+        Transition.fade_from_black()
+</code></pre>
+<hr>
+<h2 id="part-9-level-progression">Part 9: Level Progression<a aria-hidden="true" tabindex="-1" href="#part-9-level-progression"><span class="icon icon-link"></span></a></h2>
+<p>Let's add a way to complete levels and move to the next one!</p>
+<h3 id="step-1-create-level-end-area">Step 1: Create Level End Area<a aria-hidden="true" tabindex="-1" href="#step-1-create-level-end-area"><span class="icon icon-link"></span></a></h3>
+<p>In your TileMap, create a special tile or object that marks the end of the level.</p>
+<p>Or add an Area2D:</p>
+<pre><code>LevelEnd (Area2D)
+├── CollisionShape2D
+│   └── Shape: RectangleShape2D (size 32x64)
+└── Sprite2D (optional visual)
+    └── Texture: Flag or portal image
+</code></pre>
+<h3 id="step-2-level-end-script">Step 2: Level End Script<a aria-hidden="true" tabindex="-1" href="#step-2-level-end-script"><span class="icon icon-link"></span></a></h3>
+<pre><code class="language-gdscript"># level_end.gd
+extends Area2D
+
+@export var next_level_path: String = ""
+
+func _ready():
+    body_entered.connect(_on_body_entered)
+
+func _on_body_entered(body):
+    if body.is_in_group("player"):
+        level_complete()
+
+func level_complete():
+    print("Level Complete!")
+    
+    # Save current score
+    # (It's already in GameManager!)
+    
+    # Increment level
+    GameManager.current_level += 1
+    
+    # Check if there's a next level
+    if next_level_path.is_empty():
+        # No more levels - victory!
+        await Transition.fade_to_black()
+        get_tree().change_scene_to_file("res://scenes/ui/victory_screen.tscn")
+        Transition.fade_from_black()
+    else:
+        # Go to next level
+        await Transition.fade_to_black()
+        get_tree().change_scene_to_file(next_level_path)
+        Transition.fade_from_black()
+</code></pre>
+<h3 id="step-3-set-up-level-progression">Step 3: Set Up Level Progression<a aria-hidden="true" tabindex="-1" href="#step-3-set-up-level-progression"><span class="icon icon-link"></span></a></h3>
+<p>In Level 1 scene:</p>
+<ul>
+<li>Select LevelEnd node</li>
+<li>In Inspector, set <strong>Next Level Path</strong> to: <code>res://scenes/levels/level2.tscn</code></li>
+</ul>
+<p>In Level 2 scene:</p>
+<ul>
+<li>Select LevelEnd node</li>
+<li>Leave <strong>Next Level Path</strong> empty (triggers victory)</li>
+</ul>
+<hr>
+<h2 id="part-10-practice-activities">Part 10: Practice Activities<a aria-hidden="true" tabindex="-1" href="#part-10-practice-activities"><span class="icon icon-link"></span></a></h2>
+<p>You've learned the basics! Now extend your game with these challenges.</p>
+<h3 id="activity-1-loading-screen">Activity 1: Loading Screen<a aria-hidden="true" tabindex="-1" href="#activity-1-loading-screen"><span class="icon icon-link"></span></a></h3>
+<p>Create a loading screen for slower computers:</p>
+<pre><code class="language-gdscript"># loading_screen.gd
+extends Control
+
+@onready var progress_bar = $ProgressBar
+@onready var status_label = $StatusLabel
+
+var scene_to_load: String = ""
+
+func load_scene(path: String):
+    scene_to_load = path
+    show()
+    
+    # Start loading in background
+    ResourceLoader.load_threaded_request(path)
+    
+    # Poll loading progress
+    while ResourceLoader.load_threaded_get_status(path) == ResourceLoader.THREAD_LOAD_IN_PROGRESS:
+        var progress = ResourceLoader.load_threaded_get_stage(path)
+        progress_bar.value = progress * 100
+        await get_tree().process_frame
+    
+    # Loading complete
+    var resource = ResourceLoader.load_threaded_get(path)
+    get_tree().change_scene_to_packed(resource)
+    hide()
+</code></pre>
+<p><strong>Challenge</strong>: Add fun loading tips that rotate while waiting!</p>
+<h3 id="activity-2-options-menu">Activity 2: Options Menu<a aria-hidden="true" tabindex="-1" href="#activity-2-options-menu"><span class="icon icon-link"></span></a></h3>
+<p>Create an options menu with:</p>
+<ul>
+<li><strong>Music Volume slider</strong> (0-100%)</li>
+<li><strong>SFX Volume slider</strong> (0-100%)</li>
+<li><strong>Fullscreen toggle</strong> checkbox</li>
+<li><strong>Back button</strong></li>
+</ul>
+<pre><code class="language-gdscript"># options_menu.gd
+extends Control
+
+@onready var music_slider = $MusicSlider
+@onready var sfx_slider = $SFXSlider
+@onready var fullscreen_check = $FullscreenCheck
+
+func _ready():
+    music_slider.value_changed.connect(_on_music_changed)
+    sfx_slider.value_changed.connect(_on_sfx_changed)
+    fullscreen_check.toggled.connect(_on_fullscreen_toggled)
+
+func _on_music_changed(value):
+    AudioServer.set_bus_volume_db(AudioServer.get_bus_index("Music"), linear_to_db(value / 100.0))
+
+func _on_sfx_changed(value):
+    AudioServer.set_bus_volume_db(AudioServer.get_bus_index("SFX"), linear_to_db(value / 100.0))
+
+func _on_fullscreen_toggled(button_pressed):
+    if button_pressed:
+        DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
+    else:
+        DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
+</code></pre>
+<h3 id="activity-3-victory-screen">Activity 3: Victory Screen<a aria-hidden="true" tabindex="-1" href="#activity-3-victory-screen"><span class="icon icon-link"></span></a></h3>
+<p>Create a victory screen that shows:</p>
+<ul>
+<li>"YOU WIN!" message</li>
+<li>Final score</li>
+<li>Time taken (if you track it)</li>
+<li>Return to menu button</li>
+<li>"Play Again" button (restarts from level 1)</li>
+</ul>
+<p>Add some confetti particles for extra celebration!</p>
+<h3 id="activity-4-saveload-system-advanced">Activity 4: Save/Load System (Advanced)<a aria-hidden="true" tabindex="-1" href="#activity-4-saveload-system-advanced"><span class="icon icon-link"></span></a></h3>
+<p>Save player progress so they can quit and come back later:</p>
+<pre><code class="language-gdscript"># save_manager.gd (Autoload)
+extends Node
+
+const SAVE_FILE = "user://savegame.save"
+
+func save_game():
+    var save_data = {
+        "current_level": GameManager.current_level,
+        "total_score": GameManager.total_score,
+        "lives": GameManager.lives
+    }
+    
+    var file = FileAccess.open(SAVE_FILE, FileAccess.WRITE)
+    file.store_var(save_data)
+    file.close()
+    
+    print("Game saved!")
+
+func load_game() -> bool:
+    if not FileAccess.file_exists(SAVE_FILE):
+        return false
+    
+    var file = FileAccess.open(SAVE_FILE, FileAccess.READ)
+    var save_data = file.get_var()
+    file.close()
+    
+    GameManager.current_level = save_data.get("current_level", 1)
+    GameManager.total_score = save_data.get("total_score", 0)
+    GameManager.lives = save_data.get("lives", 3)
+    
+    print("Game loaded!")
+    return true
+
+func has_save() -> bool:
+    return FileAccess.file_exists(SAVE_FILE)
+</code></pre>
+<p>Use this in your Main Menu:</p>
+<ul>
+<li>Add "Continue" button if <code>SaveManager.has_save()</code></li>
+<li>Call <code>SaveManager.save_game()</code> after completing each level</li>
+<li>Call <code>SaveManager.load_game()</code> when clicking Continue</li>
+</ul>
+<hr>
+<h2 id="part-11-troubleshooting">Part 11: Troubleshooting<a aria-hidden="true" tabindex="-1" href="#part-11-troubleshooting"><span class="icon icon-link"></span></a></h2>
+<h3 id="common-issues">Common Issues<a aria-hidden="true" tabindex="-1" href="#common-issues"><span class="icon icon-link"></span></a></h3>
+<p><strong>Problem</strong>: Scene changes but screen stays black</p>
+<p><strong>Solution</strong>:</p>
+<ul>
+<li>Check that Transition.fade_from_black() is being called</li>
+<li>Make sure the new scene has a visible background or Camera2D</li>
+<li>Verify the scene path is correct</li>
+</ul>
+<p><strong>Problem</strong>: Buttons don't work</p>
+<p><strong>Solution</strong>:</p>
+<ul>
+<li>Check that signals are properly connected</li>
+<li>Verify the button isn't covered by another Control node</li>
+<li>Make sure process_mode isn't set to DISABLED</li>
+</ul>
+<p><strong>Problem</strong>: Pause menu doesn't pause the game</p>
+<p><strong>Solution</strong>:</p>
+<ul>
+<li>Ensure <code>get_tree().paused = true</code> is being called</li>
+<li>Check that your PauseMenu has <code>process_mode = PROCESS_MODE_ALWAYS</code> or <code>PROCESS_MODE_WHEN_PAUSED</code></li>
+<li>Verify GameState is being set to PAUSED</li>
+</ul>
+<p><strong>Problem</strong>: Score resets between levels</p>
+<p><strong>Solution</strong>:</p>
+<ul>
+<li>Use GameManager.total_score instead of local variables</li>
+<li>Don't call GameManager.reset_game() between levels</li>
+<li>Only reset on "New Game", not on "Retry"</li>
+</ul>
+<p><strong>Problem</strong>: Game crashes when changing scenes</p>
+<p><strong>Solution</strong>:</p>
+<ul>
+<li>Check for null reference errors</li>
+<li>Make sure all nodes exist before accessing them</li>
+<li>Use <code>await</code> properly with transitions</li>
+<li>Check Output panel for error messages</li>
+</ul>
+<h3 id="debug-checklist">Debug Checklist<a aria-hidden="true" tabindex="-1" href="#debug-checklist"><span class="icon icon-link"></span></a></h3>
+<p>Before asking for help, check:</p>
+<ul class="contains-task-list">
+<li class="task-list-item"><input type="checkbox" disabled> All scene paths are correct (use FileSystem dock to verify)</li>
+<li class="task-list-item"><input type="checkbox" disabled> Signals are connected (check Node tab)</li>
+<li class="task-list-item"><input type="checkbox" disabled> Autoloads are properly set up in Project Settings</li>
+<li class="task-list-item"><input type="checkbox" disabled> No error messages in Output panel</li>
+<li class="task-list-item"><input type="checkbox" disabled> Scene runs without errors when played individually</li>
+</ul>
+<hr>
+<h2 id="part-12-course-wrap-up-and-next-steps">Part 12: Course Wrap-Up and Next Steps<a aria-hidden="true" tabindex="-1" href="#part-12-course-wrap-up-and-next-steps"><span class="icon icon-link"></span></a></h2>
+<h3 id="congratulations-">Congratulations! 🎉<a aria-hidden="true" tabindex="-1" href="#congratulations-"><span class="icon icon-link"></span></a></h3>
+<p>You've completed the entire course! Let's review what you built:</p>
+<h4 id="what-youve-learned">What You've Learned<a aria-hidden="true" tabindex="-1" href="#what-youve-learned"><span class="icon icon-link"></span></a></h4>
+<ol>
+<li><strong>Godot Basics</strong> - Nodes, scenes, and the editor</li>
+<li><strong>Player Movement</strong> - Physics, input, animation</li>
+<li><strong>Level Design</strong> - TileMaps, platforms, hazards</li>
+<li><strong>Enemies</strong> - AI, collisions, combat</li>
+<li><strong>Collectibles</strong> - Coins, scoring, UI</li>
+<li><strong>Audio</strong> - Music, SFX, mixing</li>
+<li><strong>Scene Transitions</strong> - Multiple scenes, smooth fades</li>
+<li><strong>Game States</strong> - Menus, pause, game over, victory</li>
+</ol>
+<h4 id="your-complete-game-includes">Your Complete Game Includes<a aria-hidden="true" tabindex="-1" href="#your-complete-game-includes"><span class="icon icon-link"></span></a></h4>
+<p>✅ Main Menu with Play/Quit<br>
+✅ Multiple playable levels<br>
+✅ Smooth scene transitions<br>
+✅ Pause functionality<br>
+✅ Game Over screen<br>
+✅ Level progression system<br>
+✅ Persistent score tracking<br>
+✅ Professional polish</p>
+<h3 id="share-your-game">Share Your Game!<a aria-hidden="true" tabindex="-1" href="#share-your-game"><span class="icon icon-link"></span></a></h3>
+<p>Export your game and share it:</p>
+<ol>
+<li><strong>Project > Export</strong></li>
+<li>Add preset for your platform (Windows, Mac, Linux, Web)</li>
+<li>Click <strong>Export Project</strong></li>
+<li>Share the exported file with friends!</li>
+</ol>
+<h3 id="next-steps">Next Steps<a aria-hidden="true" tabindex="-1" href="#next-steps"><span class="icon icon-link"></span></a></h3>
+<p>Keep improving your game:</p>
+<p><strong>Immediate Extensions:</strong></p>
+<ul>
+<li>Add more levels (Level 3, 4, 5...)</li>
+<li>Create different enemy types</li>
+<li>Add power-ups (invincibility, speed boost)</li>
+<li>Implement boss battles</li>
+</ul>
+<p><strong>Polish Ideas:</strong></p>
+<ul>
+<li>Add particle effects everywhere</li>
+<li>Create a proper Options menu</li>
+<li>Add more sound effects</li>
+<li>Design better UI graphics</li>
+</ul>
+<p><strong>Advanced Features:</strong></p>
+<ul>
+<li>Level select screen</li>
+<li>High score table</li>
+<li>Achievement system</li>
+<li>Cutscenes between levels</li>
+</ul>
+<p><strong>Learn More:</strong></p>
+<ul>
+<li><strong>Godot Documentation</strong>: docs.godotengine.org</li>
+<li><strong>GDQuest YouTube</strong>: Excellent Godot tutorials</li>
+<li><strong>GameDev.tv</strong>: Complete Godot courses</li>
+<li><strong>itch.io</strong>: Share your game and play others</li>
+</ul>
+<h3 id="remember">Remember<a aria-hidden="true" tabindex="-1" href="#remember"><span class="icon icon-link"></span></a></h3>
+<p>Game development is a journey. Every professional started where you are now. Keep making games, keep learning, and most importantly - <strong>have fun!</strong></p>
+<p>The skills you've learned in this course apply to:</p>
+<ul>
+<li>2D platformers (like you built!)</li>
+<li>Top-down RPGs</li>
+<li>Puzzle games</li>
+<li>Shooters</li>
+<li>And much more!</li>
+</ul>
+<h3 id="final-challenge">Final Challenge<a aria-hidden="true" tabindex="-1" href="#final-challenge"><span class="icon icon-link"></span></a></h3>
+<p>Take your game from this course and make it truly yours:</p>
+<ol>
+<li>Design 5 unique levels</li>
+<li>Create your own art style</li>
+<li>Write your own music or find free assets</li>
+<li>Add a unique mechanic (wall-jump, double-jump, etc.)</li>
+<li>Share it online!</li>
+</ol>
+<p>You now have all the tools you need to create amazing games. Go build something awesome! 🚀</p>
+<hr>
+<h2 id="quick-reference-card">Quick Reference Card<a aria-hidden="true" tabindex="-1" href="#quick-reference-card"><span class="icon icon-link"></span></a></h2>
+<h3 id="scene-changing">Scene Changing<a aria-hidden="true" tabindex="-1" href="#scene-changing"><span class="icon icon-link"></span></a></h3>
+<pre><code class="language-gdscript"># Basic scene change
+get_tree().change_scene_to_file("res://path/to/scene.tscn")
+
+# With transition
+await Transition.fade_to_black()
+get_tree().change_scene_to_file("res://path/to/scene.tscn")
+Transition.fade_from_black()
+
+# Quit game
+get_tree().quit()
+
+# Pause/Unpause
+get_tree().paused = true   # Pause
+get_tree().paused = false  # Unpause
+</code></pre>
+<h3 id="game-states">Game States<a aria-hidden="true" tabindex="-1" href="#game-states"><span class="icon icon-link"></span></a></h3>
+<pre><code class="language-gdscript"># Change state
+GameManager.change_state(GameManager.GameState.PLAYING)
+GameManager.change_state(GameManager.GameState.PAUSED)
+GameManager.change_state(GameManager.GameState.GAME_OVER)
+
+# Check state
+if GameManager.current_state == GameManager.GameState.PAUSED:
+    pass
+</code></pre>
+<h3 id="persistent-data">Persistent Data<a aria-hidden="true" tabindex="-1" href="#persistent-data"><span class="icon icon-link"></span></a></h3>
+<pre><code class="language-gdscript"># Store data in GameManager (autoload)
+GameManager.total_score += 10
+GameManager.current_level = 2
+GameManager.lives -= 1
+
+# Access from any scene
+print(GameManager.total_score)
+</code></pre>
+<hr>
+<p><strong>End of Lesson 8 - Complete Course</strong></p>
+<p><em>Happy Game Developing!</em> 🎮</p>
+    </main>
+
+    <aside class="toc-sidebar" id="toc-sidebar">
+      <div class="toc-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <line x1="21" y1="10" x2="3" y2="10"></line>
+          <line x1="21" y1="6" x2="3" y2="6"></line>
+          <line x1="21" y1="14" x2="3" y2="14"></line>
+          <line x1="21" y1="18" x2="3" y2="18"></line>
+        </svg>
+        On this page
+      </div>
+      <nav id="toc-nav"></nav>
+    </aside>
+  </div>
+
+  <footer>
+    <p>Powered by <a href="https://www.npmjs.com/package/zenmd">ZenMD</a></p>
+  </footer>
+
+  <script src="/main.js" defer></script>
+</body>
+
+</html>

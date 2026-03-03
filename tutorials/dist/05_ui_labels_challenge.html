@@ -1,0 +1,599 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A page about Lesson 5: UI &amp; HUD Labels Challenge">
+  <meta property="og:title" content="Lesson 5: UI &amp; HUD Labels Challenge">
+  <meta property="og:description" content="A page about Lesson 5: UI &amp; HUD Labels Challenge">
+  <meta property="og:image" content="/og_image.png">
+
+  <link rel="icon" href="/favicon.png">
+  <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
+  <link rel="stylesheet" href="/main.css">
+  <style>
+    /* 
+    To customize the default style, you should try to override the variables in SimpleCSS: 
+    https://github.com/kevquirk/simple.css/wiki/Getting-Started-With-Simple.css#customise-simplecss
+    Here are all the variables that's defined:
+    */
+
+    :root {
+      /* Set sans-serif & mono fonts */
+      --sans-font: -apple-system, BlinkMacSystemFont, "Avenir Next", Avenir,
+        "Nimbus Sans L", Roboto, "Noto Sans", "Segoe UI", Arial, Helvetica,
+        "Helvetica Neue", sans-serif;
+      --mono-font: Consolas, Menlo, Monaco, "Andale Mono", "Ubuntu Mono", monospace;
+      --standard-border-radius: 5px;
+      --border-width: 1px;
+
+      /* Default (light) theme */
+      --bg: #fff;
+      --accent-bg: #f5f7ff;
+      --text: #212121;
+      --text-light: #585858;
+      --border: #898EA4;
+      --accent: var(--text);
+      --accent-hover: var(--text);
+      --accent-text: var(--bg);
+      --code: #d81b60;
+      --preformatted: #444;
+      --marked: #e2e2e2;
+      --disabled: #efefef;
+      --content-width: 80rem;
+      --sidebar-width: 300px;
+      --sidenav-width: 220px;
+      --gap: 4rem;
+    }
+
+    /* Dark theme */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        color-scheme: dark;
+        --bg: #212121;
+        --accent-bg: #2b2b2b;
+        --text: #dcdcdc;
+        --text-light: #ababab;
+        --accent: var(--text);
+        --accent-hover: var(--text);
+        --accent-text: var(--bg);
+        --code: #f06292;
+        --preformatted: #ccc;
+        --disabled: #111;
+      }
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+  </style>
+  <title>Lesson 5: UI &amp; HUD Labels Challenge</title>
+</head>
+
+<body>
+  <button id="menu-toggle" class="menu-toggle" aria-label="Toggle navigation">
+    <span></span>
+    <span></span>
+  </button>
+  <div id="sidebar-overlay" class="sidebar-overlay"></div>
+  <div class="main-grid" id="main-grid">
+    <aside class="site-sidebar" id="site-sidebar">
+      <div class="site-nav-title" id="site-nav-title">Site</div>
+      <nav id="site-nav"></nav>
+    </aside>
+
+    <main class="article">
+      <h1 id="lesson-5-ui--hud-labels-challenge">Lesson 5: UI &#x26; HUD Labels Challenge<a aria-hidden="true" tabindex="-1" href="#lesson-5-ui--hud-labels-challenge"><span class="icon icon-link"></span></a></h1>
+<h2 id="level-up-your-game-">Level Up Your Game! 🎮<a aria-hidden="true" tabindex="-1" href="#level-up-your-game-"><span class="icon icon-link"></span></a></h2>
+<p><strong>Target:</strong> Ages 12-15 | <strong>Time:</strong> 45-60 minutes | <strong>Prerequisites:</strong> Lessons 1-4</p>
+<hr>
+<h2 id="what-youll-build-today">What You'll Build Today<a aria-hidden="true" tabindex="-1" href="#what-youll-build-today"><span class="icon icon-link"></span></a></h2>
+<p>A heads-up display (HUD) that shows your player's health, mana, and score—just like in professional games! Your HUD will automatically update when values change, so players always know their stats.</p>
+<p><strong>Success Criteria:</strong></p>
+<ul class="contains-task-list">
+<li class="task-list-item"><input type="checkbox" disabled> HUD displays Health, Mana, and Score labels</li>
+<li class="task-list-item"><input type="checkbox" disabled> Labels update automatically when game values change</li>
+<li class="task-list-item"><input type="checkbox" disabled> UI stays in the corner during gameplay</li>
+<li class="task-list-item"><input type="checkbox" disabled> Labels have good visibility (size, color, position)</li>
+</ul>
+<hr>
+<h2 id="part-1-understanding-canvaslayer">Part 1: Understanding CanvasLayer<a aria-hidden="true" tabindex="-1" href="#part-1-understanding-canvaslayer"><span class="icon icon-link"></span></a></h2>
+<h3 id="what-is-canvaslayer">What is CanvasLayer?<a aria-hidden="true" tabindex="-1" href="#what-is-canvaslayer"><span class="icon icon-link"></span></a></h3>
+<p>Think of your game world as a movie set. Your player, enemies, and platforms are all actors on the set. But your health bar and score? Those are like the camera lens info overlay—they should stay on screen no matter where the camera moves.</p>
+<p><strong>CanvasLayer</strong> is Godot's way of creating UI that stays fixed on screen, ignoring the camera's position. It's perfect for:</p>
+<ul>
+<li>Health bars</li>
+<li>Score displays</li>
+<li>Pause menus</li>
+<li>Mini-maps</li>
+</ul>
+<h3 id="how-canvaslayer-works">How CanvasLayer Works<a aria-hidden="true" tabindex="-1" href="#how-canvaslayer-works"><span class="icon icon-link"></span></a></h3>
+<pre><code>CanvasLayer (stays fixed on screen)
+└── Control (container for UI elements)
+    ├── Label (Health: 100/100)
+    ├── Label (Mana: 50/100)
+    └── Label (Score: 1250)
+</code></pre>
+<p>The <strong>CanvasLayer</strong> sits on top of everything and doesn't move. The <strong>Control</strong> node helps with layout and positioning.</p>
+<hr>
+<h2 id="part-2-creating-your-hud-scene">Part 2: Creating Your HUD Scene<a aria-hidden="true" tabindex="-1" href="#part-2-creating-your-hud-scene"><span class="icon icon-link"></span></a></h2>
+<h3 id="step-by-step-setup">Step-by-Step Setup<a aria-hidden="true" tabindex="-1" href="#step-by-step-setup"><span class="icon icon-link"></span></a></h3>
+<ol>
+<li>
+<p><strong>Create a new scene</strong></p>
+<ul>
+<li>Right-click in FileSystem → New Scene</li>
+<li>Name it <code>hud.tscn</code></li>
+</ul>
+</li>
+<li>
+<p><strong>Add CanvasLayer as root</strong></p>
+<ul>
+<li>Click "Other Node"</li>
+<li>Search for <code>CanvasLayer</code></li>
+<li>This is your HUD's foundation</li>
+</ul>
+</li>
+<li>
+<p><strong>Add a Control node for layout</strong></p>
+<ul>
+<li>Right-click CanvasLayer → Add Child Node</li>
+<li>Search for <code>Control</code></li>
+<li>Name it <code>HUDContainer</code></li>
+<li>This will hold all your UI elements</li>
+</ul>
+</li>
+<li>
+<p><strong>Set up the Control layout</strong></p>
+<ul>
+<li>Select HUDContainer</li>
+<li>In the Inspector, set <strong>Layout Mode</strong> to "Anchors"</li>
+<li>Set <strong>Anchor Preset</strong> to "Top Left"</li>
+<li>This keeps your HUD in the top-left corner</li>
+</ul>
+</li>
+<li>
+<p><strong>Add Label nodes</strong></p>
+<ul>
+<li>Right-click HUDContainer → Add Child Node</li>
+<li>Search for <code>Label</code></li>
+<li>Name it <code>HealthLabel</code></li>
+<li>Repeat for <code>ManaLabel</code> and <code>ScoreLabel</code></li>
+</ul>
+</li>
+</ol>
+<h3 id="your-scene-tree-should-look-like">Your Scene Tree Should Look Like:<a aria-hidden="true" tabindex="-1" href="#your-scene-tree-should-look-like"><span class="icon icon-link"></span></a></h3>
+<pre><code>CanvasLayer
+└── HUDContainer (Control)
+    ├── HealthLabel (Label)
+    ├── ManaLabel (Label)
+    └── ScoreLabel (Label)
+</code></pre>
+<hr>
+<h2 id="part-3-configuring-your-labels">Part 3: Configuring Your Labels<a aria-hidden="true" tabindex="-1" href="#part-3-configuring-your-labels"><span class="icon icon-link"></span></a></h2>
+<h3 id="healthlabel-setup">HealthLabel Setup<a aria-hidden="true" tabindex="-1" href="#healthlabel-setup"><span class="icon icon-link"></span></a></h3>
+<p>Select HealthLabel and configure these properties in the Inspector:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Property</th><th>Value</th><th>What It Does</th></tr></thead><tbody><tr><td>Text</td><td>"Health: 100/100"</td><td>Default text (we'll update this in code)</td></tr><tr><td>Layout/Anchor</td><td>Left, Top</td><td>Stays in top-left</td></tr><tr><td>Position</td><td>X: 20, Y: 20</td><td>Slight padding from corner</td></tr><tr><td>Custom Minimum Size</td><td>X: 200, Y: 30</td><td>Ensures label has room</td></tr></tbody></table>
+<h3 id="theme-customization-optional-but-cool">Theme Customization (Optional but Cool!)<a aria-hidden="true" tabindex="-1" href="#theme-customization-optional-but-cool"><span class="icon icon-link"></span></a></h3>
+<p>Let's make your text bigger and more readable:</p>
+<ol>
+<li>Select a Label</li>
+<li>In Inspector, look for <strong>Theme Overrides</strong></li>
+<li>Expand <strong>Font Sizes</strong></li>
+<li>Set <strong>Font Size</strong> to <code>24</code></li>
+<li>Expand <strong>Colors</strong></li>
+<li>Set <strong>Font Color</strong> to white (#FFFFFF)</li>
+</ol>
+<p><strong>Pro Tip:</strong> To make text visible over any background, add a <strong>Font Outline</strong>:</p>
+<ul>
+<li>In Theme Overrides, expand <strong>Constants</strong></li>
+<li>Set <strong>Outline Size</strong> to <code>2</code></li>
+<li>Set <strong>Font Outline Color</strong> to black (#000000)</li>
+</ul>
+<h3 id="repeat-for-all-labels">Repeat for All Labels<a aria-hidden="true" tabindex="-1" href="#repeat-for-all-labels"><span class="icon icon-link"></span></a></h3>
+<p>Set up ManaLabel and ScoreLabel the same way, but position them below each other:</p>
+<ul>
+<li>ManaLabel: Position Y: 50</li>
+<li>ScoreLabel: Position Y: 80</li>
+</ul>
+<p>Or try a horizontal layout:</p>
+<ul>
+<li>ManaLabel: Position X: 240, Y: 20</li>
+<li>ScoreLabel: Position X: 460, Y: 20</li>
+</ul>
+<hr>
+<h2 id="part-4-the-challenge---wiring-labels-to-variables">Part 4: The Challenge - Wiring Labels to Variables<a aria-hidden="true" tabindex="-1" href="#part-4-the-challenge---wiring-labels-to-variables"><span class="icon icon-link"></span></a></h2>
+<h3 id="what-you-need-to-do">What You Need to Do<a aria-hidden="true" tabindex="-1" href="#what-you-need-to-do"><span class="icon icon-link"></span></a></h3>
+<p>You have labels on screen, but they're just showing static text. The challenge is to make them display live values from your <code>GameFlow</code> autoload.</p>
+<h3 id="understanding-the-problem">Understanding the Problem<a aria-hidden="true" tabindex="-1" href="#understanding-the-problem"><span class="icon icon-link"></span></a></h3>
+<p>Your <code>game_flow.gd</code> (from Lesson 4) has variables like:</p>
+<pre><code class="language-gdscript">var current_health = 100
+var max_health = 100
+var current_mana = 50
+var max_mana = 100
+var score = 0
+</code></pre>
+<p>When these change, your labels should automatically update. But how?</p>
+<h3 id="the-solution-the-_process-function">The Solution: The _process() Function<a aria-hidden="true" tabindex="-1" href="#the-solution-the-_process-function"><span class="icon icon-link"></span></a></h3>
+<p>Godot calls <code>_process(delta)</code> every single frame (60+ times per second). This is perfect for updating UI!</p>
+<p><strong>Here's your mission:</strong></p>
+<ol>
+<li>Create a script for your HUD</li>
+<li>Get references to your labels</li>
+<li>In <code>_process()</code>, read GameFlow variables and update label text</li>
+</ol>
+<hr>
+<h2 id="part-5-step-by-step-solution">Part 5: Step-by-Step Solution<a aria-hidden="true" tabindex="-1" href="#part-5-step-by-step-solution"><span class="icon icon-link"></span></a></h2>
+<h3 id="step-1-create-the-hud-script">Step 1: Create the HUD Script<a aria-hidden="true" tabindex="-1" href="#step-1-create-the-hud-script"><span class="icon icon-link"></span></a></h3>
+<ol>
+<li>Select your CanvasLayer root node</li>
+<li>Click the script icon (paper with green "+")</li>
+<li>Name it <code>hud.gd</code></li>
+<li>Click Create</li>
+</ol>
+<h3 id="step-2-access-your-labels">Step 2: Access Your Labels<a aria-hidden="true" tabindex="-1" href="#step-2-access-your-labels"><span class="icon icon-link"></span></a></h3>
+<p>Add these at the top of your script:</p>
+<pre><code class="language-gdscript">extends CanvasLayer
+
+@onready var health_label = $HUDContainer/HealthLabel
+@onready var mana_label = $HUDContainer/ManaLabel
+@onready var score_label = $HUDContainer/ScoreLabel
+</code></pre>
+<p><strong>What does @onready do?</strong> It waits until the scene is fully loaded before getting the nodes. This prevents errors!</p>
+<h3 id="step-3-update-labels-every-frame">Step 3: Update Labels Every Frame<a aria-hidden="true" tabindex="-1" href="#step-3-update-labels-every-frame"><span class="icon icon-link"></span></a></h3>
+<p>Add the <code>_process()</code> function:</p>
+<pre><code class="language-gdscript">func _process(delta):
+    health_label.text = "Health: %d/%d" % [GameFlow.current_health, GameFlow.max_health]
+    mana_label.text = "Mana: %d/%d" % [GameFlow.current_mana, GameFlow.max_mana]
+    score_label.text = "Score: %d" % GameFlow.score
+</code></pre>
+<h3 id="understanding-string-formatting">Understanding String Formatting<a aria-hidden="true" tabindex="-1" href="#understanding-string-formatting"><span class="icon icon-link"></span></a></h3>
+<p>The <code>%</code> symbol is string formatting in GDScript:</p>
+<ul>
+<li><code>%d</code> = insert a number (integer)</li>
+<li><code>%s</code> = insert text (string)</li>
+<li><code>%f</code> = insert a decimal number (float)</li>
+</ul>
+<p><code>% [value1, value2]</code> puts the values into the <code>%d</code> placeholders in order.</p>
+<h3 id="complete-hud-script">Complete HUD Script<a aria-hidden="true" tabindex="-1" href="#complete-hud-script"><span class="icon icon-link"></span></a></h3>
+<pre><code class="language-gdscript">extends CanvasLayer
+
+@onready var health_label = $HUDContainer/HealthLabel
+@onready var mana_label = $HUDContainer/ManaLabel
+@onready var score_label = $HUDContainer/ScoreLabel
+
+func _process(delta):
+    health_label.text = "Health: %d/%d" % [GameFlow.current_health, GameFlow.max_health]
+    mana_label.text = "Mana: %d/%d" % [GameFlow.current_mana, GameFlow.max_mana]
+    score_label.text = "Score: %d" % GameFlow.score
+</code></pre>
+<h3 id="step-4-add-hud-to-your-main-scene">Step 4: Add HUD to Your Main Scene<a aria-hidden="true" tabindex="-1" href="#step-4-add-hud-to-your-main-scene"><span class="icon icon-link"></span></a></h3>
+<ol>
+<li>Open your main game scene (or create <code>main.tscn</code>)</li>
+<li>Right-click the root node → Instance Child Scene</li>
+<li>Select <code>hud.tscn</code></li>
+<li>The HUD will appear in your game!</li>
+</ol>
+<hr>
+<h2 id="part-6-testing-your-hud">Part 6: Testing Your HUD<a aria-hidden="true" tabindex="-1" href="#part-6-testing-your-hud"><span class="icon icon-link"></span></a></h2>
+<h3 id="method-1-test-buttons-easiest">Method 1: Test Buttons (Easiest)<a aria-hidden="true" tabindex="-1" href="#method-1-test-buttons-easiest"><span class="icon icon-link"></span></a></h3>
+<p>Add temporary buttons to change values:</p>
+<ol>
+<li>In your main scene, add three Button nodes</li>
+<li>Name them: <code>DamageButton</code>, <code>HealButton</code>, <code>AddScoreButton</code></li>
+<li>Add this script to your main scene:</li>
+</ol>
+<pre><code class="language-gdscript">extends Node2D
+
+func _on_damage_button_pressed():
+    GameFlow.current_health -= 10
+    if GameFlow.current_health &#x3C; 0:
+        GameFlow.current_health = 0
+
+func _on_heal_button_pressed():
+    GameFlow.current_health += 10
+    if GameFlow.current_health > GameFlow.max_health:
+        GameFlow.current_health = GameFlow.max_health
+
+func _on_add_score_button_pressed():
+    GameFlow.score += 100
+</code></pre>
+<ol start="4">
+<li>Connect the button signals to these functions</li>
+</ol>
+<h3 id="method-2-automatic-test-for-debugging">Method 2: Automatic Test (For Debugging)<a aria-hidden="true" tabindex="-1" href="#method-2-automatic-test-for-debugging"><span class="icon icon-link"></span></a></h3>
+<p>Add this to your HUD script temporarily:</p>
+<pre><code class="language-gdscript">func _ready():
+    # Set up test values
+    GameFlow.current_health = 100
+    GameFlow.max_health = 100
+    GameFlow.current_mana = 50
+    GameFlow.max_mana = 100
+    GameFlow.score = 0
+
+func _process(delta):
+    # ... your label updates ...
+    
+    # Auto-change values for testing
+    if Input.is_action_just_pressed("ui_accept"):  # Spacebar
+        GameFlow.current_health -= 5
+        GameFlow.score += 50
+</code></pre>
+<p>Press Spacebar to see the HUD update!</p>
+<h3 id="what-you-should-see">What You Should See<a aria-hidden="true" tabindex="-1" href="#what-you-should-see"><span class="icon icon-link"></span></a></h3>
+<ul>
+<li>Health label updates when you press buttons</li>
+<li>Score increases when you earn points</li>
+<li>Numbers never go below 0 (add that check!)</li>
+<li>UI stays in corner even when player moves</li>
+</ul>
+<hr>
+<h2 id="part-7-making-it-look-good">Part 7: Making It Look Good<a aria-hidden="true" tabindex="-1" href="#part-7-making-it-look-good"><span class="icon icon-link"></span></a></h2>
+<h3 id="using-themes-for-consistency">Using Themes for Consistency<a aria-hidden="true" tabindex="-1" href="#using-themes-for-consistency"><span class="icon icon-link"></span></a></h3>
+<p>Instead of styling each label individually, create a Theme:</p>
+<ol>
+<li>
+<p>In FileSystem, right-click → New Resource</p>
+</li>
+<li>
+<p>Select <code>Theme</code></p>
+</li>
+<li>
+<p>Name it <code>hud_theme.tres</code></p>
+</li>
+<li>
+<p>Double-click to edit</p>
+</li>
+<li>
+<p>Add Label type overrides:</p>
+<ul>
+<li>Font Size: 24</li>
+<li>Font Color: White</li>
+<li>Outline Size: 2</li>
+<li>Outline Color: Black</li>
+</ul>
+</li>
+<li>
+<p>Save the theme</p>
+</li>
+<li>
+<p>Select your CanvasLayer</p>
+</li>
+<li>
+<p>In Inspector, drag <code>hud_theme.tres</code> into the <strong>Theme</strong> property</p>
+</li>
+</ol>
+<p>Now all labels automatically use these settings!</p>
+<h3 id="adding-backgrounds-bonus">Adding Backgrounds (Bonus)<a aria-hidden="true" tabindex="-1" href="#adding-backgrounds-bonus"><span class="icon icon-link"></span></a></h3>
+<p>Make a backdrop for your stats:</p>
+<ol>
+<li>Add a <code>ColorRect</code> node as a child of HUDContainer</li>
+<li>Position it behind your labels</li>
+<li>Set Color to semi-transparent black (e.g., #000000 with Alpha: 0.7)</li>
+<li>Resize to cover all your labels</li>
+<li>Right-click ColorRect → Move Up (to put it behind labels)</li>
+</ol>
+<h3 id="progress-bars-super-bonus">Progress Bars (Super Bonus)<a aria-hidden="true" tabindex="-1" href="#progress-bars-super-bonus"><span class="icon icon-link"></span></a></h3>
+<p>Instead of just numbers, add visual bars:</p>
+<ol>
+<li>Add <code>ProgressBar</code> nodes for health and mana</li>
+<li>In your HUD script:</li>
+</ol>
+<pre><code class="language-gdscript">@onready var health_bar = $HUDContainer/HealthBar
+
+func _process(delta):
+    # ... label updates ...
+    health_bar.value = GameFlow.current_health
+    health_bar.max_value = GameFlow.max_health
+</code></pre>
+<hr>
+<h2 id="part-8-challenge-variations">Part 8: Challenge Variations<a aria-hidden="true" tabindex="-1" href="#part-8-challenge-variations"><span class="icon icon-link"></span></a></h2>
+<p>Pick at least one to try:</p>
+<h3 id="variation-a-animated-changes">Variation A: Animated Changes<a aria-hidden="true" tabindex="-1" href="#variation-a-animated-changes"><span class="icon icon-link"></span></a></h3>
+<p>Make numbers count up/down instead of jumping:</p>
+<pre><code class="language-gdscript">var display_health = 100
+
+func _process(delta):
+    # Smoothly animate to actual health
+    display_health = lerp(display_health, GameFlow.current_health, delta * 5)
+    health_label.text = "Health: %d/%d" % [int(display_health), GameFlow.max_health]
+</code></pre>
+<h3 id="variation-b-color-warnings">Variation B: Color Warnings<a aria-hidden="true" tabindex="-1" href="#variation-b-color-warnings"><span class="icon icon-link"></span></a></h3>
+<p>Change color when health is low:</p>
+<pre><code class="language-gdscript">func _process(delta):
+    health_label.text = "Health: %d/%d" % [GameFlow.current_health, GameFlow.max_health]
+    
+    # Change color based on health percentage
+    var health_percent = float(GameFlow.current_health) / GameFlow.max_health
+    if health_percent &#x3C; 0.3:
+        health_label.add_theme_color_override("font_color", Color.RED)
+    else:
+        health_label.add_theme_color_override("font_color", Color.WHITE)
+</code></pre>
+<h3 id="variation-c-different-layouts">Variation C: Different Layouts<a aria-hidden="true" tabindex="-1" href="#variation-c-different-layouts"><span class="icon icon-link"></span></a></h3>
+<p>Try these arrangements:</p>
+<p><strong>Vertical Stack:</strong></p>
+<pre><code>Health: 100/100
+Mana: 50/100
+Score: 1250
+</code></pre>
+<p><strong>Horizontal Bar:</strong></p>
+<pre><code>HP: 100 | MP: 50 | Score: 1250
+</code></pre>
+<p><strong>Corner Display:</strong></p>
+<pre><code>Score: 1250
+
+Health: ████████░░
+Mana:   █████░░░░░
+</code></pre>
+<h3 id="variation-d-damage-feedback">Variation D: Damage Feedback<a aria-hidden="true" tabindex="-1" href="#variation-d-damage-feedback"><span class="icon icon-link"></span></a></h3>
+<p>Show damage numbers floating up:</p>
+<ol>
+<li>Create a scene <code>damage_number.tscn</code> with a Label</li>
+<li>When health decreases, instance it and animate upward</li>
+<li>Delete after animation finishes</li>
+</ol>
+<hr>
+<h2 id="part-9-troubleshooting">Part 9: Troubleshooting<a aria-hidden="true" tabindex="-1" href="#part-9-troubleshooting"><span class="icon icon-link"></span></a></h2>
+<h3 id="problem-labels-show-null-or-empty">Problem: Labels show "null" or empty<a aria-hidden="true" tabindex="-1" href="#problem-labels-show-null-or-empty"><span class="icon icon-link"></span></a></h3>
+<p><strong>Solution:</strong> Check that:</p>
+<ul>
+<li><code>@onready</code> variables match your node names exactly</li>
+<li>GameFlow is set as an autoload (Project → Project Settings → Autoload)</li>
+<li>GameFlow variables are initialized (not null)</li>
+</ul>
+<h3 id="problem-labels-dont-update">Problem: Labels don't update<a aria-hidden="true" tabindex="-1" href="#problem-labels-dont-update"><span class="icon icon-link"></span></a></h3>
+<p><strong>Solution:</strong> Check that:</p>
+<ul>
+<li>The <code>_process()</code> function exists in your HUD script</li>
+<li>GameFlow variables are actually changing (add print statements to check)</li>
+<li>The HUD scene is added to your main scene</li>
+</ul>
+<h3 id="problem-text-is-cut-off-or-overlapping">Problem: Text is cut off or overlapping<a aria-hidden="true" tabindex="-1" href="#problem-text-is-cut-off-or-overlapping"><span class="icon icon-link"></span></a></h3>
+<p><strong>Solution:</strong></p>
+<ul>
+<li>Increase Custom Minimum Size on labels</li>
+<li>Check font size isn't too large</li>
+<li>Use outline to make text readable on any background</li>
+</ul>
+<h3 id="problem-ui-moves-with-camera">Problem: UI moves with camera<a aria-hidden="true" tabindex="-1" href="#problem-ui-moves-with-camera"><span class="icon icon-link"></span></a></h3>
+<p><strong>Solution:</strong></p>
+<ul>
+<li>Make sure root node is CanvasLayer, not Node2D</li>
+<li>CanvasLayer should NOT be a child of anything that moves</li>
+</ul>
+<h3 id="problem-invalid-get-index-current_health-error">Problem: "Invalid get index 'current_health'" error<a aria-hidden="true" tabindex="-1" href="#problem-invalid-get-index-current_health-error"><span class="icon icon-link"></span></a></h3>
+<p><strong>Solution:</strong></p>
+<ul>
+<li>GameFlow might not be loaded. Check Project Settings → Autoload</li>
+<li>Variable name might have a typo</li>
+<li>Make sure you're using <code>GameFlow.</code> (capital G, capital F)</li>
+</ul>
+<hr>
+<h2 id="part-10-next-lesson-preview">Part 10: Next Lesson Preview<a aria-hidden="true" tabindex="-1" href="#part-10-next-lesson-preview"><span class="icon icon-link"></span></a></h2>
+<p><strong>Lesson 6: Signals &#x26; Event System</strong></p>
+<p>You'll learn:</p>
+<ul>
+<li>How to use Godot's signal system for cleaner code</li>
+<li>Connecting buttons to actions the right way</li>
+<li>Broadcasting events ("Player died!", "Level completed!")</li>
+<li>Decoupling your HUD from GameFlow using signals</li>
+</ul>
+<p><strong>Why it matters:</strong> Instead of checking every frame, signals let your code react only when things actually happen—more efficient and organized!</p>
+<hr>
+<h2 id="quick-reference">Quick Reference<a aria-hidden="true" tabindex="-1" href="#quick-reference"><span class="icon icon-link"></span></a></h2>
+<h3 id="common-label-properties">Common Label Properties<a aria-hidden="true" tabindex="-1" href="#common-label-properties"><span class="icon icon-link"></span></a></h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Property</th><th>Description</th></tr></thead><tbody><tr><td>text</td><td>The text displayed</td></tr><tr><td>horizontal_alignment</td><td>LEFT, CENTER, RIGHT</td></tr><tr><td>vertical_alignment</td><td>TOP, CENTER, BOTTOM</td></tr><tr><td>autowrap_mode</td><td>Wrap long text to multiple lines</td></tr><tr><td>clip_text</td><td>Cut off text that doesn't fit</td></tr></tbody></table>
+<h3 id="string-formatting">String Formatting<a aria-hidden="true" tabindex="-1" href="#string-formatting"><span class="icon icon-link"></span></a></h3>
+<pre><code class="language-gdscript">"Health: %d/%d" % [current, max]      # Numbers
+"Score: %d, Time: %.1f" % [score, time]  # Integer and decimal
+"Player: %s" % player_name              # Text
+</code></pre>
+<h3 id="node-paths">Node Paths<a aria-hidden="true" tabindex="-1" href="#node-paths"><span class="icon icon-link"></span></a></h3>
+<pre><code class="language-gdscript">$NodeName                    # Direct child
+$Parent/Child/Grandchild     # Path through hierarchy
+%UniqueNodeName              # Using unique names (Godot 4)
+</code></pre>
+<hr>
+<h2 id="check-your-understanding">Check Your Understanding<a aria-hidden="true" tabindex="-1" href="#check-your-understanding"><span class="icon icon-link"></span></a></h2>
+<p>Before moving on, make sure you can answer:</p>
+<ol>
+<li>Why do we use CanvasLayer instead of Node2D for UI?</li>
+<li>What does <code>@onready</code> do?</li>
+<li>When does <code>_process()</code> run?</li>
+<li>How do you format a string with multiple numbers?</li>
+<li>Why might we use a Theme instead of styling each label?</li>
+</ol>
+<hr>
+<p><strong>Congratulations!</strong> You now have a working HUD that displays live game data. This is a fundamental skill for any game developer. Keep experimenting with different layouts and styles to make your game unique! 🎉</p>
+<p><em>Remember: Great UI is invisible—it just works without players thinking about it.</em></p>
+    </main>
+
+    <aside class="toc-sidebar" id="toc-sidebar">
+      <div class="toc-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <line x1="21" y1="10" x2="3" y2="10"></line>
+          <line x1="21" y1="6" x2="3" y2="6"></line>
+          <line x1="21" y1="14" x2="3" y2="14"></line>
+          <line x1="21" y1="18" x2="3" y2="18"></line>
+        </svg>
+        On this page
+      </div>
+      <nav id="toc-nav"></nav>
+    </aside>
+  </div>
+
+  <footer>
+    <p>Powered by <a href="https://www.npmjs.com/package/zenmd">ZenMD</a></p>
+  </footer>
+
+  <script src="/main.js" defer></script>
+</body>
+
+</html>

@@ -1,0 +1,661 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A page about Lesson 6: Enemies &amp; Basic Combat">
+  <meta property="og:title" content="Lesson 6: Enemies &amp; Basic Combat">
+  <meta property="og:description" content="A page about Lesson 6: Enemies &amp; Basic Combat">
+  <meta property="og:image" content="/og_image.png">
+
+  <link rel="icon" href="/favicon.png">
+  <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
+  <link rel="stylesheet" href="/main.css">
+  <style>
+    /* 
+    To customize the default style, you should try to override the variables in SimpleCSS: 
+    https://github.com/kevquirk/simple.css/wiki/Getting-Started-With-Simple.css#customise-simplecss
+    Here are all the variables that's defined:
+    */
+
+    :root {
+      /* Set sans-serif & mono fonts */
+      --sans-font: -apple-system, BlinkMacSystemFont, "Avenir Next", Avenir,
+        "Nimbus Sans L", Roboto, "Noto Sans", "Segoe UI", Arial, Helvetica,
+        "Helvetica Neue", sans-serif;
+      --mono-font: Consolas, Menlo, Monaco, "Andale Mono", "Ubuntu Mono", monospace;
+      --standard-border-radius: 5px;
+      --border-width: 1px;
+
+      /* Default (light) theme */
+      --bg: #fff;
+      --accent-bg: #f5f7ff;
+      --text: #212121;
+      --text-light: #585858;
+      --border: #898EA4;
+      --accent: var(--text);
+      --accent-hover: var(--text);
+      --accent-text: var(--bg);
+      --code: #d81b60;
+      --preformatted: #444;
+      --marked: #e2e2e2;
+      --disabled: #efefef;
+      --content-width: 80rem;
+      --sidebar-width: 300px;
+      --sidenav-width: 220px;
+      --gap: 4rem;
+    }
+
+    /* Dark theme */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        color-scheme: dark;
+        --bg: #212121;
+        --accent-bg: #2b2b2b;
+        --text: #dcdcdc;
+        --text-light: #ababab;
+        --accent: var(--text);
+        --accent-hover: var(--text);
+        --accent-text: var(--bg);
+        --code: #f06292;
+        --preformatted: #ccc;
+        --disabled: #111;
+      }
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+  </style>
+  <title>Lesson 6: Enemies &amp; Basic Combat</title>
+</head>
+
+<body>
+  <button id="menu-toggle" class="menu-toggle" aria-label="Toggle navigation">
+    <span></span>
+    <span></span>
+  </button>
+  <div id="sidebar-overlay" class="sidebar-overlay"></div>
+  <div class="main-grid" id="main-grid">
+    <aside class="site-sidebar" id="site-sidebar">
+      <div class="site-nav-title" id="site-nav-title">Site</div>
+      <nav id="site-nav"></nav>
+    </aside>
+
+    <main class="article">
+      <h1 id="lesson-6-enemies--basic-combat">Lesson 6: Enemies &#x26; Basic Combat<a aria-hidden="true" tabindex="-1" href="#lesson-6-enemies--basic-combat"><span class="icon icon-link"></span></a></h1>
+<p><strong>Time:</strong> 45-60 minutes<br>
+<strong>Prerequisites:</strong> Lessons 1-5 (Player movement, animations, game flow)<br>
+<strong>Goal:</strong> Create enemies that chase the player and implement basic combat with health and damage</p>
+<hr>
+<h2 id="-what-youll-learn">🎯 What You'll Learn<a aria-hidden="true" tabindex="-1" href="#-what-youll-learn"><span class="icon icon-link"></span></a></h2>
+<p>By the end of this lesson, you'll have:</p>
+<ul>
+<li>Enemies that chase the player around the level</li>
+<li>A working health and damage system</li>
+<li>Invulnerability frames (so you don't die instantly!)</li>
+<li>Knockback when taking damage</li>
+<li>Enemies that can be defeated</li>
+<li>A spawner system for endless action</li>
+</ul>
+<hr>
+<h2 id="-planning-our-enemy">🧠 Planning Our Enemy<a aria-hidden="true" tabindex="-1" href="#-planning-our-enemy"><span class="icon icon-link"></span></a></h2>
+<p>Before we start coding, let's think about what our enemy should do:</p>
+<ol>
+<li><strong>See the player</strong> - The enemy needs to know where the player is</li>
+<li><strong>Chase the player</strong> - Move toward the player's position</li>
+<li><strong>Attack on contact</strong> - Deal damage when touching the player</li>
+<li><strong>Take damage</strong> - Die when hit enough times (optional: player attacks)</li>
+<li><strong>Spawn randomly</strong> - Appear at different locations</li>
+</ol>
+<p>We'll use a simple <strong>state machine</strong> - think of it like the enemy's brain switching between "idle" and "chase" modes!</p>
+<hr>
+<h2 id="️-creating-the-enemy-scene">🏗️ Creating the Enemy Scene<a aria-hidden="true" tabindex="-1" href="#️-creating-the-enemy-scene"><span class="icon icon-link"></span></a></h2>
+<h3 id="step-1-create-the-scene-file">Step 1: Create the Scene File<a aria-hidden="true" tabindex="-1" href="#step-1-create-the-scene-file"><span class="icon icon-link"></span></a></h3>
+<ol>
+<li>Right-click in the <strong>FileSystem</strong> dock</li>
+<li>Select <strong>Create Folder</strong> and name it <code>enemies</code></li>
+<li>Right-click the <code>enemies</code> folder → <strong>New Scene</strong></li>
+<li>Save it as <code>enemies/enemy.tscn</code></li>
+</ol>
+<h3 id="step-2-set-up-the-scene-tree">Step 2: Set Up the Scene Tree<a aria-hidden="true" tabindex="-1" href="#step-2-set-up-the-scene-tree"><span class="icon icon-link"></span></a></h3>
+<p>Build this node structure:</p>
+<pre><code>Enemy (CharacterBody2D)
+├── Sprite2D
+├── CollisionShape2D
+└── AttackArea (Area2D)
+    └── CollisionShape2D
+</code></pre>
+<p><strong>Why these nodes?</strong></p>
+<ul>
+<li><strong>CharacterBody2D</strong>: Handles movement and physics</li>
+<li><strong>Sprite2D</strong>: Shows the enemy's appearance</li>
+<li><strong>CollisionShape2D</strong> (under Enemy): For physics collision with walls/player</li>
+<li><strong>Area2D</strong> (AttackArea): Detects when enemy touches player to deal damage</li>
+</ul>
+<h3 id="step-3-configure-each-node">Step 3: Configure Each Node<a aria-hidden="true" tabindex="-1" href="#step-3-configure-each-node"><span class="icon icon-link"></span></a></h3>
+<p><strong>Enemy (CharacterBody2D):</strong></p>
+<ul>
+<li>In the Inspector, add a new script: <code>enemies/enemy.gd</code></li>
+</ul>
+<p><strong>Sprite2D:</strong></p>
+<ul>
+<li>Drag a texture to the <strong>Texture</strong> property, OR</li>
+<li>Use a simple colored rectangle:
+<ul>
+<li>Click the Sprite2D</li>
+<li>In the toolbar, click <strong>2D</strong> → <strong>Create</strong> → <strong>Rectangle</strong></li>
+<li>Set color to red (classic enemy color!)</li>
+</ul>
+</li>
+</ul>
+<p><strong>CollisionShape2D (physics):</strong></p>
+<ul>
+<li>Click it</li>
+<li>In the toolbar, click <strong>2D</strong> → <strong>Create</strong> → <strong>RectangleShape2D</strong></li>
+<li>Resize to match your sprite</li>
+</ul>
+<p><strong>AttackArea (Area2D):</strong></p>
+<ul>
+<li>Add a CollisionShape2D child</li>
+<li>Create a shape slightly LARGER than the enemy sprite</li>
+<li>This creates the "attack zone"</li>
+</ul>
+<h3 id="step-4-add-to-groups">Step 4: Add to Groups<a aria-hidden="true" tabindex="-1" href="#step-4-add-to-groups"><span class="icon icon-link"></span></a></h3>
+<p>Click the <strong>Enemy</strong> node, go to the <strong>Node</strong> tab (next to Inspector), click <strong>Groups</strong>, and add:</p>
+<ul>
+<li><code>enemy</code> - So we can find all enemies easily</li>
+</ul>
+<hr>
+<h2 id="-writing-the-enemy-ai-script">💻 Writing the Enemy AI Script<a aria-hidden="true" tabindex="-1" href="#-writing-the-enemy-ai-script"><span class="icon icon-link"></span></a></h2>
+<p>Open <code>enemies/enemy.gd</code> and let's code!</p>
+<h3 id="basic-setup">Basic Setup<a aria-hidden="true" tabindex="-1" href="#basic-setup"><span class="icon icon-link"></span></a></h3>
+<pre><code class="language-gdscript">extends CharacterBody2D
+
+@export var speed: float = 100.0
+@export var health: int = 3
+
+var player: Node2D = null
+var is_chasing: bool = false
+
+func _ready():
+    # Find the player in the scene
+    player = get_tree().get_first_node_in_group("player")
+</code></pre>
+<p><strong>What this does:</strong></p>
+<ul>
+<li><code>@export</code> lets us change values in the editor</li>
+<li>We look for the player using the group we created in earlier lessons</li>
+<li><code>is_chasing</code> tracks if the enemy should move</li>
+</ul>
+<h3 id="the-chase-logic">The Chase Logic<a aria-hidden="true" tabindex="-1" href="#the-chase-logic"><span class="icon icon-link"></span></a></h3>
+<pre><code class="language-gdscript">func _physics_process(delta):
+    if player == null:
+        return
+    
+    # Get direction to player
+    var direction = (player.global_position - global_position).normalized()
+    
+    # Set velocity toward player
+    velocity = direction * speed
+    
+    # Flip sprite based on direction
+    if direction.x != 0:
+        $Sprite2D.flip_h = direction.x &#x3C; 0
+    
+    move_and_slide()
+</code></pre>
+<p><strong>How it works:</strong></p>
+<ol>
+<li>Calculate direction vector (player position minus our position)</li>
+<li><code>normalized()</code> makes it a length of 1 (just direction, no distance)</li>
+<li>Multiply by speed to get velocity</li>
+<li><code>flip_h</code> makes enemy face left or right</li>
+</ol>
+<h3 id="adding-a-state-machine">Adding a State Machine<a aria-hidden="true" tabindex="-1" href="#adding-a-state-machine"><span class="icon icon-link"></span></a></h3>
+<p>Let's make the enemy smarter with states:</p>
+<pre><code class="language-gdscript">enum State { IDLE, CHASE }
+var current_state = State.IDLE
+
+@export var detection_range: float = 300.0
+
+func _physics_process(delta):
+    if player == null:
+        return
+    
+    match current_state:
+        State.IDLE:
+            velocity = Vector2.ZERO
+            check_detection()
+        State.CHASE:
+            chase_player()
+    
+    move_and_slide()
+
+func check_detection():
+    var distance = global_position.distance_to(player.global_position)
+    if distance &#x3C; detection_range:
+        current_state = State.CHASE
+
+func chase_player():
+    var direction = (player.global_position - global_position).normalized()
+    velocity = direction * speed
+    
+    if direction.x != 0:
+        $Sprite2D.flip_h = direction.x &#x3C; 0
+</code></pre>
+<p><strong>What's happening:</strong></p>
+<ul>
+<li><code>enum</code> creates named states (like IDLE = 0, CHASE = 1)</li>
+<li><code>match</code> statement is like multiple if-else checks</li>
+<li>Enemy only chases when player is close enough</li>
+</ul>
+<hr>
+<h2 id="️-implementing-combat">⚔️ Implementing Combat<a aria-hidden="true" tabindex="-1" href="#️-implementing-combat"><span class="icon icon-link"></span></a></h2>
+<h3 id="making-the-enemy-deal-damage">Making the Enemy Deal Damage<a aria-hidden="true" tabindex="-1" href="#making-the-enemy-deal-damage"><span class="icon icon-link"></span></a></h3>
+<p>Add this to the enemy script:</p>
+<pre><code class="language-gdscript">func _ready():
+    player = get_tree().get_first_node_in_group("player")
+    
+    # Connect the Area2D signal
+    $AttackArea.body_entered.connect(_on_attack_area_body_entered)
+
+func _on_attack_area_body_entered(body):
+    if body.is_in_group("player"):
+        # Tell the player to take damage
+        if body.has_method("take_damage"):
+            body.take_damage(1)
+            
+            # Optional: knockback the player
+            var knockback_dir = (body.global_position - global_position).normalized()
+            body.apply_knockback(knockback_dir * 200)
+</code></pre>
+<h3 id="creating-the-players-health-system">Creating the Player's Health System<a aria-hidden="true" tabindex="-1" href="#creating-the-players-health-system"><span class="icon icon-link"></span></a></h3>
+<p>Open your player script (probably <code>player/player.gd</code>) and add:</p>
+<pre><code class="language-gdscript">@export var max_health: int = 3
+var current_health: int
+var is_invulnerable: bool = false
+
+func _ready():
+    current_health = max_health
+
+func take_damage(amount: int):
+    if is_invulnerable:
+        return  # Can't take damage while invulnerable
+    
+    current_health -= amount
+    print("Player health: ", current_health)
+    
+    # Visual feedback
+    $Sprite2D.modulate = Color.RED
+    
+    # Start invulnerability
+    is_invulnerable = true
+    
+    # Flash red for 0.5 seconds
+    var timer = get_tree().create_timer(0.5)
+    timer.timeout.connect(_on_invulnerability_end)
+    
+    # Check for death
+    if current_health &#x3C;= 0:
+        die()
+
+func _on_invulnerability_end():
+    is_invulnerable = false
+    $Sprite2D.modulate = Color.WHITE  # Return to normal color
+
+func apply_knockback(force: Vector2):
+    velocity += force
+
+func die():
+    print("Game Over!")
+    # We'll handle game over in GameFlow
+    get_tree().reload_current_scene()
+</code></pre>
+<p><strong>Key concepts:</strong></p>
+<ul>
+<li><strong>Invulnerability frames</strong>: Brief period where you can't take damage again</li>
+<li><strong>Visual feedback</strong>: Sprite turns red when hit</li>
+<li><strong>Knockback</strong>: Pushes player away from enemy</li>
+</ul>
+<h3 id="testing-combat">Testing Combat<a aria-hidden="true" tabindex="-1" href="#testing-combat"><span class="icon icon-link"></span></a></h3>
+<ol>
+<li>Add your enemy to the main scene</li>
+<li>Run the game</li>
+<li>Walk into the enemy - you should see:
+<ul>
+<li>Health goes down</li>
+<li>Sprite flashes red</li>
+<li>Player gets knocked back</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 id="-updating-gameflow">🎮 Updating GameFlow<a aria-hidden="true" tabindex="-1" href="#-updating-gameflow"><span class="icon icon-link"></span></a></h2>
+<p>Let's make GameFlow handle player damage better. Open <code>autoloads/game_flow.gd</code>:</p>
+<pre><code class="language-gdscript">extends Node
+
+var score: int = 0
+var player_health: int = 3
+var max_health: int = 3
+
+signal health_changed(new_health)
+signal score_changed(new_score)
+signal game_over
+
+func _ready():
+    reset_game()
+
+func reset_game():
+    score = 0
+    player_health = max_health
+    health_changed.emit(player_health)
+
+func damage_player(amount: int = 1):
+    player_health -= amount
+    health_changed.emit(player_health)
+    
+    if player_health &#x3C;= 0:
+        game_over.emit()
+        # Optional: show game over screen instead of immediate restart
+
+func add_score(points: int):
+    score += points
+    score_changed.emit(score)
+</code></pre>
+<p>Update your player to use GameFlow:</p>
+<pre><code class="language-gdscript">func take_damage(amount: int):
+    if is_invulnerable:
+        return
+    
+    GameFlow.damage_player(amount)
+    
+    # Visual effects and invulnerability...
+    is_invulnerable = true
+    $Sprite2D.modulate = Color.RED
+    
+    var timer = get_tree().create_timer(0.5)
+    timer.timeout.connect(_on_invulnerability_end)
+
+func _on_invulnerability_end():
+    is_invulnerable = false
+    $Sprite2D.modulate = Color.WHITE
+</code></pre>
+<hr>
+<h2 id="-enemy-health-and-death">💀 Enemy Health and Death<a aria-hidden="true" tabindex="-1" href="#-enemy-health-and-death"><span class="icon icon-link"></span></a></h2>
+<h3 id="making-enemies-take-damage">Making Enemies Take Damage<a aria-hidden="true" tabindex="-1" href="#making-enemies-take-damage"><span class="icon icon-link"></span></a></h3>
+<p>Add to <code>enemy.gd</code>:</p>
+<pre><code class="language-gdscript">func take_damage(amount: int):
+    health -= amount
+    print("Enemy health: ", health)
+    
+    # Flash white when hit
+    $Sprite2D.modulate = Color.WHITE
+    var timer = get_tree().create_timer(0.1)
+    timer.timeout.connect(func(): $Sprite2D.modulate = Color.RED)
+    
+    if health &#x3C;= 0:
+        die()
+
+func die():
+    # Optional: death animation
+    # $AnimationPlayer.play("death")
+    # await $AnimationPlayer.animation_finished
+    
+    queue_free()  # Remove from scene
+</code></pre>
+<h3 id="optional-player-attack">Optional: Player Attack<a aria-hidden="true" tabindex="-1" href="#optional-player-attack"><span class="icon icon-link"></span></a></h3>
+<p>If you want the player to attack enemies, add this to player script:</p>
+<pre><code class="language-gdscript">func _input(event):
+    if event.is_action_pressed("attack"):
+        attack()
+
+func attack():
+    # Create a hitbox (you'd add this to your player scene)
+    # This is a simple example using raycast or area
+    var attack_area = $AttackArea
+    for body in attack_area.get_overlapping_bodies():
+        if body.is_in_group("enemy") and body.has_method("take_damage"):
+            body.take_damage(1)
+</code></pre>
+<hr>
+<h2 id="-spawning-enemies">🏭 Spawning Enemies<a aria-hidden="true" tabindex="-1" href="#-spawning-enemies"><span class="icon icon-link"></span></a></h2>
+<h3 id="creating-an-enemy-spawner">Creating an Enemy Spawner<a aria-hidden="true" tabindex="-1" href="#creating-an-enemy-spawner"><span class="icon icon-link"></span></a></h3>
+<ol>
+<li>Create a new scene: <code>enemies/enemy_spawner.tscn</code></li>
+<li>Root node: <strong>Node2D</strong></li>
+<li>Add script: <code>enemies/enemy_spawner.gd</code></li>
+</ol>
+<pre><code class="language-gdscript">extends Node2D
+
+@export var enemy_scene: PackedScene
+@export var spawn_interval: float = 3.0
+@export var max_enemies: int = 5
+
+var spawned_enemies: int = 0
+
+func _ready():
+    # Start spawning
+    spawn_enemy()
+    
+    # Set up timer for continuous spawning
+    var timer = Timer.new()
+    timer.wait_time = spawn_interval
+    timer.timeout.connect(_on_spawn_timer)
+    add_child(timer)
+    timer.start()
+
+func _on_spawn_timer():
+    if spawned_enemies &#x3C; max_enemies:
+        spawn_enemy()
+
+func spawn_enemy():
+    var enemy = enemy_scene.instantiate()
+    
+    # Spawn at random offset from spawner
+    var random_offset = Vector2(
+        randf_range(-50, 50),
+        randf_range(-50, 50)
+    )
+    enemy.global_position = global_position + random_offset
+    
+    get_parent().add_child(enemy)
+    spawned_enemies += 1
+    
+    # Connect to enemy death to track count
+    enemy.tree_exited.connect(_on_enemy_died)
+
+func _on_enemy_died():
+    spawned_enemies -= 1
+</code></pre>
+<h3 id="using-the-spawner">Using the Spawner<a aria-hidden="true" tabindex="-1" href="#using-the-spawner"><span class="icon icon-link"></span></a></h3>
+<ol>
+<li>
+<p>Add the spawner to your main level scene</p>
+</li>
+<li>
+<p>In the Inspector:</p>
+<ul>
+<li>Set <strong>Enemy Scene</strong> to your <code>enemy.tscn</code> file</li>
+<li>Adjust <strong>Spawn Interval</strong> (seconds between spawns)</li>
+<li>Set <strong>Max Enemies</strong> (limit how many exist at once)</li>
+</ul>
+</li>
+<li>
+<p><strong>Optional: Multiple Spawn Points</strong></p>
+<ul>
+<li>Create several spawners at different locations</li>
+<li>Or use a single spawner that moves to random positions</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 id="-practice-activities">🎨 Practice Activities<a aria-hidden="true" tabindex="-1" href="#-practice-activities"><span class="icon icon-link"></span></a></h2>
+<h3 id="activity-1-create-different-enemy-types">Activity 1: Create Different Enemy Types<a aria-hidden="true" tabindex="-1" href="#activity-1-create-different-enemy-types"><span class="icon icon-link"></span></a></h3>
+<p>Make two variants by duplicating <code>enemy.tscn</code>:</p>
+<p><strong>Fast but Weak (FastEnemy):</strong></p>
+<pre><code class="language-gdscript">@export var speed: float = 200.0
+@export var health: int = 1
+@export var damage: int = 1
+</code></pre>
+<p><strong>Slow but Strong (TankEnemy):</strong></p>
+<pre><code class="language-gdscript">@export var speed: float = 50.0
+@export var health: int = 5
+@export var damage: int = 2
+</code></pre>
+<h3 id="activity-2-add-attack-cooldown">Activity 2: Add Attack Cooldown<a aria-hidden="true" tabindex="-1" href="#activity-2-add-attack-cooldown"><span class="icon icon-link"></span></a></h3>
+<p>Prevent enemies from dealing damage every frame:</p>
+<pre><code class="language-gdscript">var can_attack: bool = true
+@export var attack_cooldown: float = 1.0
+
+func _on_attack_area_body_entered(body):
+    if body.is_in_group("player") and can_attack:
+        if body.has_method("take_damage"):
+            body.take_damage(1)
+            can_attack = false
+            
+            # Start cooldown
+            var timer = get_tree().create_timer(attack_cooldown)
+            timer.timeout.connect(func(): can_attack = true)
+</code></pre>
+<h3 id="activity-3-enemy-health-bar">Activity 3: Enemy Health Bar<a aria-hidden="true" tabindex="-1" href="#activity-3-enemy-health-bar"><span class="icon icon-link"></span></a></h3>
+<p>Add a simple health bar above enemies:</p>
+<ol>
+<li>Add to enemy scene:</li>
+</ol>
+<pre><code>Enemy
+├── Sprite2D
+├── CollisionShape2D
+├── AttackArea
+└── HealthBar (ProgressBar)
+</code></pre>
+<ol start="2">
+<li>Update <code>enemy.gd</code>:</li>
+</ol>
+<pre><code class="language-gdscript">@onready var health_bar = $HealthBar
+
+func _ready():
+    health_bar.max_value = health
+    health_bar.value = health
+    # Hide when full for cleaner look
+    health_bar.visible = false
+
+func take_damage(amount):
+    health -= amount
+    health_bar.visible = true
+    health_bar.value = health
+    # ... rest of damage code
+</code></pre>
+<h3 id="activity-4-score-on-kill">Activity 4: Score on Kill<a aria-hidden="true" tabindex="-1" href="#activity-4-score-on-kill"><span class="icon icon-link"></span></a></h3>
+<p>Update the enemy's die function:</p>
+<pre><code class="language-gdscript">func die():
+    GameFlow.add_score(10)  # Give 10 points
+    queue_free()
+</code></pre>
+<hr>
+<h2 id="-troubleshooting">🔧 Troubleshooting<a aria-hidden="true" tabindex="-1" href="#-troubleshooting"><span class="icon icon-link"></span></a></h2>
+<h3 id="enemy-doesnt-move">Enemy doesn't move<a aria-hidden="true" tabindex="-1" href="#enemy-doesnt-move"><span class="icon icon-link"></span></a></h3>
+<ul>
+<li>Check: Is the player in the "player" group?</li>
+<li>Check: Did you call <code>move_and_slide()</code>?</li>
+<li>Check: Is <code>speed</code> set to a value greater than 0?</li>
+</ul>
+<h3 id="enemy-doesnt-deal-damage">Enemy doesn't deal damage<a aria-hidden="true" tabindex="-1" href="#enemy-doesnt-deal-damage"><span class="icon icon-link"></span></a></h3>
+<ul>
+<li>Check: Is the AttackArea's collision layer/mask correct?</li>
+<li>Check: Is the player body entering the Area2D?</li>
+<li>Add debug print: <code>print("Hit player!")</code> in the collision function</li>
+</ul>
+<h3 id="player-takes-damage-too-fast">Player takes damage too fast<a aria-hidden="true" tabindex="-1" href="#player-takes-damage-too-fast"><span class="icon icon-link"></span></a></h3>
+<ul>
+<li>Make sure invulnerability frames are working</li>
+<li>Check that <code>is_invulnerable</code> is set to true</li>
+<li>Verify the timer is connected properly</li>
+</ul>
+<h3 id="enemies-spawn-inside-walls">Enemies spawn inside walls<a aria-hidden="true" tabindex="-1" href="#enemies-spawn-inside-walls"><span class="icon icon-link"></span></a></h3>
+<ul>
+<li>Adjust the random offset range</li>
+<li>Use a <code>RayCast2D</code> to check for walls before spawning</li>
+<li>Or manually place spawn points away from obstacles</li>
+</ul>
+<h3 id="enemy-flips-constantly-when-directly-abovebelow-player">Enemy flips constantly when directly above/below player<a aria-hidden="true" tabindex="-1" href="#enemy-flips-constantly-when-directly-abovebelow-player"><span class="icon icon-link"></span></a></h3>
+<ul>
+<li>Add a minimum distance check before flipping:</li>
+</ul>
+<pre><code class="language-gdscript">if abs(direction.x) > 0.1:
+    $Sprite2D.flip_h = direction.x &#x3C; 0
+</code></pre>
+<hr>
+<h2 id="-lesson-checklist">✅ Lesson Checklist<a aria-hidden="true" tabindex="-1" href="#-lesson-checklist"><span class="icon icon-link"></span></a></h2>
+<p>You've completed this lesson when:</p>
+<ul class="contains-task-list">
+<li class="task-list-item"><input type="checkbox" disabled> Enemy chases the player around the level</li>
+<li class="task-list-item"><input type="checkbox" disabled> Player takes damage on contact</li>
+<li class="task-list-item"><input type="checkbox" disabled> Invulnerability frames prevent instant death</li>
+<li class="task-list-item"><input type="checkbox" disabled> Visual feedback (flashing) shows damage taken</li>
+<li class="task-list-item"><input type="checkbox" disabled> Enemy can be defeated (dies when health reaches 0)</li>
+<li class="task-list-item"><input type="checkbox" disabled> Enemies spawn using the spawner system</li>
+<li class="task-list-item"><input type="checkbox" disabled> GameFlow tracks player health</li>
+</ul>
+<hr>
+<h2 id="-next-lesson-preview-collectibles">🚀 Next Lesson Preview: Collectibles<a aria-hidden="true" tabindex="-1" href="#-next-lesson-preview-collectibles"><span class="icon icon-link"></span></a></h2>
+<p>In <strong>Lesson 7</strong>, we'll add:</p>
+<ul>
+<li>Coins, power-ups, and health pickups</li>
+<li>Collection animations and effects</li>
+<li>Score multipliers</li>
+<li>Inventory system basics</li>
+</ul>
+<p>You'll make your game more rewarding and give players goals to achieve!</p>
+<hr>
+<h2 id="-pro-tips">💡 Pro Tips<a aria-hidden="true" tabindex="-1" href="#-pro-tips"><span class="icon icon-link"></span></a></h2>
+<ol>
+<li><strong>Balance is key</strong>: Don't make enemies too fast or too strong at first</li>
+<li><strong>Visual clarity</strong>: Use different colors for different enemy types</li>
+<li><strong>Playtest often</strong>: Try your combat immediately after coding</li>
+<li><strong>Keep it fair</strong>: Give the player enough time to react (invulnerability frames!)</li>
+<li><strong>Have fun</strong>: Add silly enemy designs - maybe a grumpy square or an angry circle!</li>
+</ol>
+<hr>
+<h2 id="-key-terms">📝 Key Terms<a aria-hidden="true" tabindex="-1" href="#-key-terms"><span class="icon icon-link"></span></a></h2>
+<ul>
+<li><strong>State Machine</strong>: A system where an object switches between different behaviors (states)</li>
+<li><strong>Normalized Vector</strong>: A direction vector with length 1 (pure direction, no distance)</li>
+<li><strong>Invulnerability Frames</strong>: Brief period where a character can't take damage</li>
+<li><strong>Knockback</strong>: Force that pushes a character away from impact</li>
+<li><strong>Collision Layer/Mask</strong>: Determines what objects can collide with each other</li>
+<li><strong>PackedScene</strong>: A saved scene file that can be instantiated multiple times</li>
+</ul>
+<hr>
+<p>Happy coding! May your enemies be challenging but fair! 🎮</p>
+    </main>
+
+    <aside class="toc-sidebar" id="toc-sidebar">
+      <div class="toc-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <line x1="21" y1="10" x2="3" y2="10"></line>
+          <line x1="21" y1="6" x2="3" y2="6"></line>
+          <line x1="21" y1="14" x2="3" y2="14"></line>
+          <line x1="21" y1="18" x2="3" y2="18"></line>
+        </svg>
+        On this page
+      </div>
+      <nav id="toc-nav"></nav>
+    </aside>
+  </div>
+
+  <footer>
+    <p>Powered by <a href="https://www.npmjs.com/package/zenmd">ZenMD</a></p>
+  </footer>
+
+  <script src="/main.js" defer></script>
+</body>
+
+</html>

@@ -1,0 +1,852 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A page about Lesson 3: TileMaps &amp; World Building">
+  <meta property="og:title" content="Lesson 3: TileMaps &amp; World Building">
+  <meta property="og:description" content="A page about Lesson 3: TileMaps &amp; World Building">
+  <meta property="og:image" content="/og_image.png">
+
+  <link rel="icon" href="/favicon.png">
+  <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
+  <link rel="stylesheet" href="/main.css">
+  <style>
+    /* 
+    To customize the default style, you should try to override the variables in SimpleCSS: 
+    https://github.com/kevquirk/simple.css/wiki/Getting-Started-With-Simple.css#customise-simplecss
+    Here are all the variables that's defined:
+    */
+
+    :root {
+      /* Set sans-serif & mono fonts */
+      --sans-font: -apple-system, BlinkMacSystemFont, "Avenir Next", Avenir,
+        "Nimbus Sans L", Roboto, "Noto Sans", "Segoe UI", Arial, Helvetica,
+        "Helvetica Neue", sans-serif;
+      --mono-font: Consolas, Menlo, Monaco, "Andale Mono", "Ubuntu Mono", monospace;
+      --standard-border-radius: 5px;
+      --border-width: 1px;
+
+      /* Default (light) theme */
+      --bg: #fff;
+      --accent-bg: #f5f7ff;
+      --text: #212121;
+      --text-light: #585858;
+      --border: #898EA4;
+      --accent: var(--text);
+      --accent-hover: var(--text);
+      --accent-text: var(--bg);
+      --code: #d81b60;
+      --preformatted: #444;
+      --marked: #e2e2e2;
+      --disabled: #efefef;
+      --content-width: 80rem;
+      --sidebar-width: 300px;
+      --sidenav-width: 220px;
+      --gap: 4rem;
+    }
+
+    /* Dark theme */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        color-scheme: dark;
+        --bg: #212121;
+        --accent-bg: #2b2b2b;
+        --text: #dcdcdc;
+        --text-light: #ababab;
+        --accent: var(--text);
+        --accent-hover: var(--text);
+        --accent-text: var(--bg);
+        --code: #f06292;
+        --preformatted: #ccc;
+        --disabled: #111;
+      }
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+  </style>
+  <title>Lesson 3: TileMaps &amp; World Building</title>
+</head>
+
+<body>
+  <button id="menu-toggle" class="menu-toggle" aria-label="Toggle navigation">
+    <span></span>
+    <span></span>
+  </button>
+  <div id="sidebar-overlay" class="sidebar-overlay"></div>
+  <div class="main-grid" id="main-grid">
+    <aside class="site-sidebar" id="site-sidebar">
+      <div class="site-nav-title" id="site-nav-title">Site</div>
+      <nav id="site-nav"></nav>
+    </aside>
+
+    <main class="article">
+      <h1 id="lesson-3-tilemaps--world-building">Lesson 3: TileMaps &#x26; World Building<a aria-hidden="true" tabindex="-1" href="#lesson-3-tilemaps--world-building"><span class="icon icon-link"></span></a></h1>
+<p><strong>Goal:</strong> Build beautiful game worlds using Godot's TileMap system</p>
+<h2 id="welcome-to-world-building-">Welcome to World Building! 🎮<a aria-hidden="true" tabindex="-1" href="#welcome-to-world-building-"><span class="icon icon-link"></span></a></h2>
+<p>In the last two lessons, you learned how to make a player move around. But so far, your player has been walking on... nothing! Just empty space.</p>
+<p>Today, we're going to become <strong>world architects</strong>! You'll learn how to build entire levels, landscapes, and game worlds using something called <strong>TileMaps</strong>. By the end of this lesson, you'll have created a complete level with grass, walls, and decorations that your player can explore!</p>
+<h2 id="1-what-is-a-tilemap-and-why-use-it">1. What is a TileMap and Why Use It?<a aria-hidden="true" tabindex="-1" href="#1-what-is-a-tilemap-and-why-use-it"><span class="icon icon-link"></span></a></h2>
+<p>Imagine you're building a house with LEGO bricks. Each LEGO piece is the same size, and you snap them together to create walls, floors, and buildings. <strong>TileMaps work the same way!</strong></p>
+<p>A <strong>TileMap</strong> is a grid system where each square (called a "tile") can display an image. You arrange these tiles to build your game world.</p>
+<h3 id="why-tilemaps-are-awesome">Why TileMaps Are Awesome:<a aria-hidden="true" tabindex="-1" href="#why-tilemaps-are-awesome"><span class="icon icon-link"></span></a></h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Without TileMaps</th><th>With TileMaps</th></tr></thead><tbody><tr><td>Place 1000 individual sprites manually</td><td>Paint tiles in seconds</td></tr><tr><td>Each sprite uses memory</td><td>One image file, reused many times</td></tr><tr><td>Walls don't have collision automatically</td><td>Built-in physics support</td></tr><tr><td>Hard to edit later</td><td>Easy to change anytime</td></tr></tbody></table>
+<p><strong>Real games that use tiles:</strong></p>
+<ul>
+<li>Stardew Valley (farming fields)</li>
+<li>Hollow Knight (cave rooms)</li>
+<li>Terraria (dirt and stone)</li>
+<li>Pokémon (routes and cities)</li>
+</ul>
+<h3 id="the-tilemap-family">The TileMap Family:<a aria-hidden="true" tabindex="-1" href="#the-tilemap-family"><span class="icon icon-link"></span></a></h3>
+<pre><code>TileMap (the main container)
+├── TileMapLayer (floor/grass layer)
+├── TileMapLayer (walls layer)
+├── TileMapLayer (decorations layer)
+└── TileMapLayer (foreground layer)
+</code></pre>
+<p>Each layer is like a transparent sheet you can draw on. You can have grass on one layer, walls on another, and they stack together!</p>
+<h2 id="2-creating-a-tilemap-node">2. Creating a TileMap Node<a aria-hidden="true" tabindex="-1" href="#2-creating-a-tilemap-node"><span class="icon icon-link"></span></a></h2>
+<p>Let's start building! First, we need to add a TileMap to our scene.</p>
+<h3 id="step-by-step">Step-by-Step:<a aria-hidden="true" tabindex="-1" href="#step-by-step"><span class="icon icon-link"></span></a></h3>
+<ol>
+<li>
+<p><strong>Open your player scene</strong> from Lesson 2 (or create a new scene)</p>
+</li>
+<li>
+<p><strong>Add a TileMap node:</strong>
+2. Right-click on the root node
+3. Select "Add Child Node"
+4. Search for "TileMap"
+5. Click "Create"</p>
+</li>
+<li>
+<p><strong>Rename it</strong> to something meaningful like "World" or "Level"</p>
+</li>
+<li>
+<p><strong>Save your scene</strong> (Ctrl+S)</p>
+</li>
+</ol>
+<p>You should now see a TileMap node in your scene tree, and the editor view will show a grid overlay.</p>
+<h3 id="understanding-the-grid">Understanding the Grid:<a aria-hidden="true" tabindex="-1" href="#understanding-the-grid"><span class="icon icon-link"></span></a></h3>
+<p>The grid you see represents where tiles will go. Each square in the grid is one "tile cell." By default, tiles are 16x16 pixels, but you can change this to any size you want!</p>
+<p><strong>Try it:</strong> Look at the grid overlay. Can you count how many squares fit across your screen?</p>
+<h2 id="3-understanding-tilesets">3. Understanding TileSets<a aria-hidden="true" tabindex="-1" href="#3-understanding-tilesets"><span class="icon icon-link"></span></a></h2>
+<p>Now we have a TileMap, but it's empty! We need to tell it what images to use. This is where <strong>TileSets</strong> come in.</p>
+<p>A <strong>TileSet</strong> is like a paint palette - it's a collection of all the tiles you can use in your world.</p>
+<h3 id="creating-your-first-tileset">Creating Your First TileSet:<a aria-hidden="true" tabindex="-1" href="#creating-your-first-tileset"><span class="icon icon-link"></span></a></h3>
+<ol>
+<li>
+<p><strong>With the TileMap selected</strong>, look at the Inspector panel on the right</p>
+</li>
+<li>
+<p>Find the property called <strong>"Tile Set"</strong></p>
+</li>
+<li>
+<p>Click where it says "[empty]" and select <strong>"New TileSet"</strong></p>
+</li>
+<li>
+<p>You'll see a TileSet panel appear at the bottom of the screen!</p>
+</li>
+</ol>
+<h3 id="the-tileset-panel">The TileSet Panel:<a aria-hidden="true" tabindex="-1" href="#the-tileset-panel"><span class="icon icon-link"></span></a></h3>
+<p>The TileSet panel has three main sections:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Section</th><th>What It Does</th></tr></thead><tbody><tr><td><strong>Sources</strong></td><td>Add your image files here</td></tr><tr><td><strong>Tiles</strong></td><td>Configure individual tiles</td></tr><tr><td><strong>Layers</strong></td><td>Set up collision and other properties</td></tr></tbody></table>
+<h3 id="31-atlas-textures">3.1 Atlas Textures<a aria-hidden="true" tabindex="-1" href="#31-atlas-textures"><span class="icon icon-link"></span></a></h3>
+<p>An <strong>Atlas</strong> is a single image file that contains many tiles arranged in a grid. It's like a sprite sheet!</p>
+<p><strong>Why use atlases?</strong></p>
+<ul>
+<li>One file instead of hundreds</li>
+<li>Easier to manage</li>
+<li>Better for game performance</li>
+</ul>
+<p><strong>Example atlas layout:</strong>
+┌─────┬─────┬─────┬─────┐
+│grass│grass│grass│grass│  &#x3C;- Row 0: Different grass variations
+├─────┼─────┼─────┼─────┤
+│dirt │dirt │dirt │dirt │  &#x3C;- Row 1: Different dirt variations
+├─────┼─────┼─────┼─────┤
+│wall │wall │wall │wall │  &#x3C;- Row 2: Different wall styles
+└─────┴─────┴─────┴─────┘</p>
+<h3 id="adding-an-atlas-to-your-tileset">Adding an Atlas to Your TileSet:<a aria-hidden="true" tabindex="-1" href="#adding-an-atlas-to-your-tileset"><span class="icon icon-link"></span></a></h3>
+<ol>
+<li>
+<p>In the <strong>TileSet panel</strong>, click the "Atlas" button (or drag and drop an image)</p>
+</li>
+<li>
+<p><strong>Select an image file</strong> to use as your atlas. You can:
+2. Use Godot's built-in default tiles
+3. Download free tilesets from sites like OpenGameArt
+4. Create your own in any image editor</p>
+</li>
+<li>
+<p><strong>Configure the atlas:</strong>
+2. Set "Tile Size" to match your tile dimensions (usually 16x16 or 32x32)
+3. Set "Separation" if there's space between tiles in your image
+4. Set "Margins" if the first tile doesn't start at the edge</p>
+</li>
+<li>
+<p><strong>Click "Create Tiles"</strong> - Godot will automatically detect all the individual tiles!</p>
+</li>
+</ol>
+<p><strong>Tip:</strong> Most free tilesets online are 16x16 or 32x32 pixels per tile. If you're not sure, try 16x16 first!</p>
+<h3 id="32-physics-layers-for-collision">3.2 Physics Layers for Collision<a aria-hidden="true" tabindex="-1" href="#32-physics-layers-for-collision"><span class="icon icon-link"></span></a></h3>
+<p>We need walls to stop the player from walking through them! This is where <strong>Physics Layers</strong> come in.</p>
+<p><strong>Think of it this way:</strong></p>
+<ul>
+<li>Visual tiles = what you see (art)</li>
+<li>Physics layers = what you can touch (collision)</li>
+</ul>
+<h3 id="adding-collision-to-tiles">Adding Collision to Tiles:<a aria-hidden="true" tabindex="-1" href="#adding-collision-to-tiles"><span class="icon icon-link"></span></a></h3>
+<ol>
+<li>
+<p>In the TileSet panel, click on the <strong>"Physics Layers"</strong> tab</p>
+</li>
+<li>
+<p>Click <strong>"Add Element"</strong> to create a new physics layer</p>
+</li>
+<li>
+<p>Give it a name like "Solid" or "Walls"</p>
+</li>
+<li>
+<p><strong>Now select a tile</strong> in the atlas that should be solid (like a wall)</p>
+</li>
+<li>
+<p>In the "Paint Properties" section, make sure "Physics Layer" is selected</p>
+</li>
+<li>
+<p><strong>Draw a collision shape</strong> over the tile:
+2. Click and drag to create a rectangle
+3. This rectangle is where the player will collide
+4. Usually, you want the collision to cover the entire tile</p>
+</li>
+<li>
+<p><strong>Repeat for all wall tiles!</strong></p>
+</li>
+</ol>
+<p><strong>Visual example:</strong>
+Tile with collision:          Tile without collision:
+┌─────────────┐              ┌─────────────┐
+│  ████████   │              │             │
+│  █ wall █   │  &#x3C;- solid    │   grass     │  &#x3C;- walkable
+│  ████████   │              │             │
+└─────────────┘              └─────────────┘</p>
+<p><strong>Important:</strong> Floor tiles (grass, dirt, water) usually DON'T need collision. Only walls, obstacles, and things that should block movement need collision shapes.</p>
+<h3 id="33-creating-tile-sources">3.3 Creating Tile Sources<a aria-hidden="true" tabindex="-1" href="#33-creating-tile-sources"><span class="icon icon-link"></span></a></h3>
+<p>You can have multiple sources in one TileSet! This is great for organizing different types of tiles.</p>
+<p><strong>Example setup:</strong>
+TileSet
+├── Atlas: "Nature" (grass, dirt, flowers)
+├── Atlas: "Buildings" (walls, roofs, doors)
+├── Atlas: "Decorations" (rocks, trees, signs)
+└── Single Tile: "Water animated"</p>
+<h3 id="adding-multiple-sources">Adding Multiple Sources:<a aria-hidden="true" tabindex="-1" href="#adding-multiple-sources"><span class="icon icon-link"></span></a></h3>
+<ol>
+<li>
+<p>In the TileSet panel, click <strong>"Atlas"</strong> again</p>
+</li>
+<li>
+<p>Add another image</p>
+</li>
+<li>
+<p>Configure it the same way</p>
+</li>
+<li>
+<p>You can now switch between sources when painting!</p>
+</li>
+</ol>
+<p><strong>Pro tip:</strong> Keep related tiles together in one atlas for easier management.</p>
+<h2 id="4-setting-up-a-basic-tileset">4. Setting Up a Basic Tileset<a aria-hidden="true" tabindex="-1" href="#4-setting-up-a-basic-tileset"><span class="icon icon-link"></span></a></h2>
+<p>Let's create a practical example with floor tiles and wall tiles with collision.</p>
+<h3 id="what-youll-need">What You'll Need:<a aria-hidden="true" tabindex="-1" href="#what-youll-need"><span class="icon icon-link"></span></a></h3>
+<p><strong>Option 1: Use Godot's built-in tiles</strong></p>
+<ul>
+<li>Godot 4 includes a default tileset you can use for testing</li>
+</ul>
+<p><strong>Option 2: Download free tiles</strong></p>
+<ul>
+<li>Visit <a href="https://opengameart.org">OpenGameArt.org</a></li>
+<li>Search for "16x16 tileset" or "32x32 tileset"</li>
+<li>Download a simple set with grass and walls</li>
+</ul>
+<p><strong>Option 3: Make your own (super easy!)</strong></p>
+<ul>
+<li>Open any image editor (Paint, GIMP, Photoshop)</li>
+<li>Create a new image that's 64x32 pixels</li>
+<li>Draw 4 grass tiles (16x16 each) in the top row</li>
+<li>Draw 4 wall tiles (16x16 each) in the bottom row</li>
+<li>Save as PNG</li>
+</ul>
+<h3 id="setting-up-grassfloor-tiles">Setting Up Grass/Floor Tiles:<a aria-hidden="true" tabindex="-1" href="#setting-up-grassfloor-tiles"><span class="icon icon-link"></span></a></h3>
+<ol>
+<li>
+<p>Add your atlas to the TileSet</p>
+</li>
+<li>
+<p><strong>Select all the grass/dirt tiles</strong></p>
+</li>
+<li>
+<p>Check that they DON'T have collision (no physics layer)</p>
+</li>
+<li>
+<p>These are your walkable floor tiles!</p>
+</li>
+</ol>
+<h3 id="setting-up-wall-tiles">Setting Up Wall Tiles:<a aria-hidden="true" tabindex="-1" href="#setting-up-wall-tiles"><span class="icon icon-link"></span></a></h3>
+<ol>
+<li>
+<p><strong>Select a wall tile</strong> from your atlas</p>
+</li>
+<li>
+<p>Go to the Physics Layers tab</p>
+</li>
+<li>
+<p>Make sure your collision layer is active</p>
+</li>
+<li>
+<p><strong>Paint collision</strong> over the entire tile
+2. Click and drag to draw a rectangle
+3. It should fill most of the tile</p>
+</li>
+<li>
+<p><strong>Test it:</strong> The tile should now show a red outline when selected (that's the collision!)</p>
+</li>
+</ol>
+<h3 id="configuring-tile-properties">Configuring Tile Properties:<a aria-hidden="true" tabindex="-1" href="#configuring-tile-properties"><span class="icon icon-link"></span></a></h3>
+<p>You can also set other properties:</p>
+<ul>
+<li><strong>Z Index:</strong> Makes tiles appear above or below others (good for bridges)</li>
+<li><strong>Occlusion:</strong> Creates shadows/lighting (advanced)</li>
+<li><strong>Navigation:</strong> For pathfinding (if you add AI later)</li>
+</ul>
+<p>For now, just focus on collision for walls!</p>
+<h2 id="5-painting-tiles-in-the-editor">5. Painting Tiles in the Editor<a aria-hidden="true" tabindex="-1" href="#5-painting-tiles-in-the-editor"><span class="icon icon-link"></span></a></h2>
+<p>Now for the fun part - actually building your world!</p>
+<h3 id="switching-to-tilemap-mode">Switching to TileMap Mode:<a aria-hidden="true" tabindex="-1" href="#switching-to-tilemap-mode"><span class="icon icon-link"></span></a></h3>
+<ol>
+<li>
+<p><strong>Select your TileMap node</strong> in the scene tree</p>
+</li>
+<li>
+<p>Look at the <strong>toolbar at the top</strong> of the 2D editor</p>
+</li>
+<li>
+<p>You'll see tilemap painting tools appear:
+2. <strong>Paint Tool</strong> (brush icon) - Place tiles
+3. <strong>Line Tool</strong> - Draw straight lines
+4. <strong>Rectangle Tool</strong> - Draw filled rectangles
+5. <strong>Bucket Fill</strong> - Fill an area
+6. <strong>Eraser</strong> - Remove tiles</p>
+</li>
+</ol>
+<h3 id="basic-painting">Basic Painting:<a aria-hidden="true" tabindex="-1" href="#basic-painting"><span class="icon icon-link"></span></a></h3>
+<ol>
+<li>
+<p><strong>Select a tile</strong> from the TileSet panel at the bottom</p>
+</li>
+<li>
+<p><strong>Click in the editor</strong> to place it!</p>
+</li>
+<li>
+<p><strong>Hold click and drag</strong> to paint multiple tiles</p>
+</li>
+<li>
+<p><strong>Use the eraser</strong> to fix mistakes</p>
+</li>
+</ol>
+<h3 id="painting-tips">Painting Tips:<a aria-hidden="true" tabindex="-1" href="#painting-tips"><span class="icon icon-link"></span></a></h3>
+<p><strong>Tip 1: Right-click to pick tiles</strong></p>
+<ul>
+<li>Right-click on any tile in the world to select that tile type</li>
+<li>Super fast way to switch between tiles!</li>
+</ul>
+<p><strong>Tip 2: Use the grid</strong></p>
+<ul>
+<li>Tiles snap to the grid automatically</li>
+<li>Make sure your grid is visible (View menu → Show Grid)</li>
+</ul>
+<p><strong>Tip 3: Zoom in/out</strong></p>
+<ul>
+<li>Use Ctrl+Mouse wheel to zoom</li>
+<li>See individual tiles up close or view the whole level</li>
+</ul>
+<p><strong>Tip 4: Undo is your friend</strong></p>
+<ul>
+<li>Ctrl+Z to undo mistakes</li>
+<li>Ctrl+Shift+Z to redo</li>
+</ul>
+<h2 id="6-using-tilemaplayer-nodes">6. Using TileMapLayer Nodes<a aria-hidden="true" tabindex="-1" href="#6-using-tilemaplayer-nodes"><span class="icon icon-link"></span></a></h2>
+<p>Remember how I mentioned layers earlier? Let's use them!</p>
+<h3 id="why-use-layers">Why Use Layers?<a aria-hidden="true" tabindex="-1" href="#why-use-layers"><span class="icon icon-link"></span></a></h3>
+<p>Layers let you organize your world like this:
+Layer 4: Foreground (things in front of player)
+Layer 3: Player and enemies
+Layer 2: Decorations (flowers, rocks)
+Layer 1: Walls (solid collision)
+Layer 0: Ground (grass, dirt)</p>
+<h3 id="creating-layers">Creating Layers:<a aria-hidden="true" tabindex="-1" href="#creating-layers"><span class="icon icon-link"></span></a></h3>
+<ol>
+<li>
+<p><strong>Select your TileMap</strong></p>
+</li>
+<li>
+<p>In the Inspector, find <strong>"Layers"</strong></p>
+</li>
+<li>
+<p>Click to add layers:
+2. Layer 0: "Ground"
+3. Layer 1: "Walls"
+4. Layer 2: "Decorations"</p>
+</li>
+</ol>
+<h3 id="painting-on-different-layers">Painting on Different Layers:<a aria-hidden="true" tabindex="-1" href="#painting-on-different-layers"><span class="icon icon-link"></span></a></h3>
+<p>In the TileSet panel at the bottom, you'll see a <strong>layer selector</strong> dropdown.</p>
+<ol>
+<li><strong>Select "Ground" layer</strong> - Paint all your floor tiles</li>
+<li><strong>Select "Walls" layer</strong> - Paint walls on top</li>
+<li><strong>Select "Decorations" layer</strong> - Add flowers, rocks, etc.</li>
+</ol>
+<h3 id="z-index-and-ordering">Z-Index and Ordering:<a aria-hidden="true" tabindex="-1" href="#z-index-and-ordering"><span class="icon icon-link"></span></a></h3>
+<p>Each layer can have a different <strong>Z-Index</strong>:</p>
+<ul>
+<li><strong>Ground layer:</strong> Z-Index 0 (bottom)</li>
+<li><strong>Walls layer:</strong> Z-Index 1</li>
+<li><strong>Decorations layer:</strong> Z-Index 2</li>
+<li><strong>Foreground layer:</strong> Z-Index 10 (above player)</li>
+</ul>
+<p><strong>Why this matters:</strong> If the player walks "behind" a tree, you want the tree to be on a higher layer so it covers the player!</p>
+<h3 id="organizing-your-scene">Organizing Your Scene:<a aria-hidden="true" tabindex="-1" href="#organizing-your-scene"><span class="icon icon-link"></span></a></h3>
+<p>Good practice:
+MainScene
+├── Player (your character)
+├── TileMap (world)
+│   ├── Layer 0: Ground
+│   ├── Layer 1: Walls
+│   └── Layer 2: Decorations
+└── Camera2D (follows player)</p>
+<h2 id="7-setting-up-autotiling-optional-but-cool">7. Setting Up Autotiling (Optional but Cool!)<a aria-hidden="true" tabindex="-1" href="#7-setting-up-autotiling-optional-but-cool"><span class="icon icon-link"></span></a></h2>
+<p>Autotiling is like <strong>magic for level building!</strong> It automatically chooses the right tile variation based on what's around it.</p>
+<h3 id="what-is-autotiling">What is Autotiling?<a aria-hidden="true" tabindex="-1" href="#what-is-autotiling"><span class="icon icon-link"></span></a></h3>
+<p>Imagine you're building a path. Without autotiling:
+grass grass grass grass
+grass PATH  PATH  grass
+grass PATH  PATH  grass
+grass grass grass grass</p>
+<p>With autotiling:
+grass grass grass grass
+grass ┌───┐ ┌───┐ grass
+grass │path│ │path│ grass  &#x3C;- Corners, edges, centers all different!
+grass └───┘ └───┘ grass
+grass grass grass grass</p>
+<p>Autotiling automatically picks the right tile so paths connect smoothly!</p>
+<h3 id="setting-up-autotiling-in-godot-4">Setting Up Autotiling in Godot 4:<a aria-hidden="true" tabindex="-1" href="#setting-up-autotiling-in-godot-4"><span class="icon icon-link"></span></a></h3>
+<ol>
+<li>
+<p><strong>In your TileSet</strong>, select the tiles you want to autotile</p>
+</li>
+<li>
+<p><strong>Create a "Terrain Set"</strong> (new in Godot 4):
+2. Go to the "Terrains" tab
+3. Click "Add Terrain Set"
+4. Give it a name like "Ground"
+5. Choose the mode: "Connect" is best for most cases</p>
+</li>
+<li>
+<p><strong>Paint terrain bits on each tile</strong>:
+2. Each tile can have different "terrain bits" (corners, edges, centers)
+3. This tells Godot how tiles connect to each other
+4. It's like giving each tile instructions: "I'm a corner piece" or "I'm an edge piece"</p>
+</li>
+<li>
+<p><strong>Enable terrain painting</strong>:
+2. In the editor toolbar, switch to "Terrain" mode
+3. Select your terrain set
+4. Start painting!</p>
+</li>
+</ol>
+<h3 id="autotiling-tips">Autotiling Tips:<a aria-hidden="true" tabindex="-1" href="#autotiling-tips"><span class="icon icon-link"></span></a></h3>
+<p><strong>You need special tilesets</strong> for autotiling to work well. The tileset must include:</p>
+<ul>
+<li>Corner pieces</li>
+<li>Edge pieces</li>
+<li>Center pieces</li>
+<li>All the variations!</li>
+</ul>
+<p><strong>Where to find autotile-ready tilesets:</strong></p>
+<ul>
+<li>Search for "autotile" or "terrain" on OpenGameArt</li>
+<li>Many modern tilesets include autotile layouts</li>
+<li>Godot's built-in tilesets often support autotiling</li>
+</ul>
+<p><strong>Don't worry if this seems complex!</strong> It's an advanced feature. You can build great levels without it. Come back to autotiling once you're comfortable with basic tile painting.</p>
+<h2 id="8-creating-a-simple-level">8. Creating a Simple Level<a aria-hidden="true" tabindex="-1" href="#8-creating-a-simple-level"><span class="icon icon-link"></span></a></h2>
+<p>Let's put it all together and build a complete small level!</p>
+<h3 id="step-1-plan-your-level">Step 1: Plan Your Level<a aria-hidden="true" tabindex="-1" href="#step-1-plan-your-level"><span class="icon icon-link"></span></a></h3>
+<p>Sketch out a simple design on paper first:</p>
+<pre><code>####################
+#..................#
+#..........######..#
+#..........#....#..#
+#..######..#....#..#
+#..#....#..#....#..#
+#..#....#..######..#
+#..######..........#
+#..................#
+####################
+
+# = walls
+. = floor/empty
+</code></pre>
+<h3 id="step-2-paint-the-ground">Step 2: Paint the Ground<a aria-hidden="true" tabindex="-1" href="#step-2-paint-the-ground"><span class="icon icon-link"></span></a></h3>
+<ol>
+<li>
+<p><strong>Select your Ground layer</strong></p>
+</li>
+<li>
+<p>Choose a grass or floor tile</p>
+</li>
+<li>
+<p><strong>Paint the entire area</strong> where you want the player to walk</p>
+</li>
+<li>
+<p><strong>Use the rectangle tool</strong> for large areas - much faster!</p>
+</li>
+</ol>
+<h3 id="step-3-add-walls">Step 3: Add Walls<a aria-hidden="true" tabindex="-1" href="#step-3-add-walls"><span class="icon icon-link"></span></a></h3>
+<ol>
+<li>
+<p><strong>Switch to Walls layer</strong></p>
+</li>
+<li>
+<p>Select a wall tile (with collision!)</p>
+</li>
+<li>
+<p><strong>Paint walls around the edges</strong> and any internal rooms</p>
+</li>
+<li>
+<p>Leave openings for doorways</p>
+</li>
+</ol>
+<h3 id="step-4-add-decorations">Step 4: Add Decorations<a aria-hidden="true" tabindex="-1" href="#step-4-add-decorations"><span class="icon icon-link"></span></a></h3>
+<ol>
+<li>
+<p><strong>Switch to Decorations layer</strong></p>
+</li>
+<li>
+<p>Add variety:
+2. Some flowers on the grass
+3. A rock or two
+4. Maybe a signpost</p>
+</li>
+<li>
+<p><strong>Don't overdo it</strong> - leave space for the player to move!</p>
+</li>
+</ol>
+<h3 id="step-5-test-your-level">Step 5: Test Your Level<a aria-hidden="true" tabindex="-1" href="#step-5-test-your-level"><span class="icon icon-link"></span></a></h3>
+<ol>
+<li>
+<p><strong>Press F6</strong> (or the play button) to run the game</p>
+</li>
+<li>
+<p><strong>Move your player around</strong></p>
+</li>
+<li>
+<p><strong>Check that:</strong>
+2. Walls block movement
+3. You can walk on grass/floor
+4. The level feels fun to explore</p>
+</li>
+</ol>
+<h3 id="level-building-tips">Level Building Tips:<a aria-hidden="true" tabindex="-1" href="#level-building-tips"><span class="icon icon-link"></span></a></h3>
+<p><strong>Start small:</strong> Build one room first, get it working, then expand</p>
+<p><strong>Test often:</strong> Run the game every few minutes to check collision</p>
+<p><strong>Use variety:</strong> Mix 2-3 different grass tiles to make it look natural</p>
+<p><strong>Guide the player:</strong> Use walls to create paths and guide where players go</p>
+<h2 id="9-connecting-walls-to-player-collision">9. Connecting Walls to Player Collision<a aria-hidden="true" tabindex="-1" href="#9-connecting-walls-to-player-collision"><span class="icon icon-link"></span></a></h2>
+<p>Your walls are set up, but we need to make sure the player actually collides with them!</p>
+<h3 id="step-1-check-your-player-setup">Step 1: Check Your Player Setup<a aria-hidden="true" tabindex="-1" href="#step-1-check-your-player-setup"><span class="icon icon-link"></span></a></h3>
+<p>Your player from Lesson 2 should have:</p>
+<ul>
+<li>A CharacterBody2D node (or similar)</li>
+<li>A Sprite2D for the visual</li>
+<li>A CollisionShape2D for physics</li>
+</ul>
+<h3 id="step-2-verify-collision-layers">Step 2: Verify Collision Layers<a aria-hidden="true" tabindex="-1" href="#step-2-verify-collision-layers"><span class="icon icon-link"></span></a></h3>
+<ol>
+<li>
+<p><strong>Select your player</strong></p>
+</li>
+<li>
+<p>Look at the Inspector → "Collision" section</p>
+</li>
+<li>
+<p>Check the <strong>Collision Layer</strong> and <strong>Collision Mask</strong>:
+2. Layer 1 should be on (this is the player)
+3. Mask should include Layer 1 (so player detects walls)</p>
+</li>
+</ol>
+<h3 id="step-3-check-tilemap-collision">Step 3: Check TileMap Collision<a aria-hidden="true" tabindex="-1" href="#step-3-check-tilemap-collision"><span class="icon icon-link"></span></a></h3>
+<ol>
+<li>
+<p><strong>Select your TileMap</strong></p>
+</li>
+<li>
+<p>Check that wall tiles have collision shapes (red outline)</p>
+</li>
+<li>
+<p>Verify they're on the correct physics layer</p>
+</li>
+</ol>
+<h3 id="step-4-test-collision">Step 4: Test Collision<a aria-hidden="true" tabindex="-1" href="#step-4-test-collision"><span class="icon icon-link"></span></a></h3>
+<p>Run the game and try walking into walls:</p>
+<ul>
+<li><strong>Player should stop</strong> when hitting walls</li>
+<li><strong>No jittering or glitching</strong> through walls</li>
+<li><strong>Feels solid and responsive</strong></li>
+</ul>
+<h3 id="troubleshooting-collision">Troubleshooting Collision:<a aria-hidden="true" tabindex="-1" href="#troubleshooting-collision"><span class="icon icon-link"></span></a></h3>
+<p><strong>Problem:</strong> Player walks through walls<br>
+<strong>Solution:</strong> Check that wall tiles have collision shapes in the TileSet</p>
+<p><strong>Problem:</strong> Player gets stuck<br>
+<strong>Solution:</strong> Make sure collision shapes aren't too large. Leave a tiny gap.</p>
+<p><strong>Problem:</strong> Collision feels "mushy"<br>
+<strong>Solution:</strong> Check that both player and walls are using the same collision layer/mask</p>
+<h2 id="10-practice-activities">10. Practice Activities<a aria-hidden="true" tabindex="-1" href="#10-practice-activities"><span class="icon icon-link"></span></a></h2>
+<p>Now it's your turn! Try these challenges:</p>
+<h3 id="activity-1-create-different-biomes-15-minutes">Activity 1: Create Different Biomes (15 minutes)<a aria-hidden="true" tabindex="-1" href="#activity-1-create-different-biomes-15-minutes"><span class="icon icon-link"></span></a></h3>
+<p>Create three different 10x10 tile areas:</p>
+<p><strong>Forest Biome:</strong></p>
+<ul>
+<li>Dark green grass</li>
+<li>Tree wall tiles</li>
+<li>Flower decorations</li>
+<li>A path through the middle</li>
+</ul>
+<p><strong>Desert Biome:</strong></p>
+<ul>
+<li>Sand-colored ground</li>
+<li>Cactus decorations</li>
+<li>Rocky walls</li>
+<li>Maybe some bones or ruins</li>
+</ul>
+<p><strong>Cave Biome:</strong></p>
+<ul>
+<li>Dark gray stone floors</li>
+<li>Cave walls</li>
+<li>Crystal decorations</li>
+<li>Torches on the walls</li>
+</ul>
+<h3 id="activity-2-build-a-simple-dungeon-20-minutes">Activity 2: Build a Simple Dungeon (20 minutes)<a aria-hidden="true" tabindex="-1" href="#activity-2-build-a-simple-dungeon-20-minutes"><span class="icon icon-link"></span></a></h3>
+<p>Create a small dungeon with:</p>
+<ul>
+<li>An entrance room</li>
+<li>A hallway</li>
+<li>A treasure room</li>
+<li>A monster room</li>
+<li>Connect them all with corridors</li>
+</ul>
+<p><strong>Requirements:</strong></p>
+<ul>
+<li>All walls must have collision</li>
+<li>Player must be able to walk through all rooms</li>
+<li>Use at least 2 different floor tiles</li>
+<li>Add decorations to at least 50% of rooms</li>
+</ul>
+<h3 id="activity-3-design-a-mini-adventure-20-minutes">Activity 3: Design a Mini Adventure (20+ minutes)<a aria-hidden="true" tabindex="-1" href="#activity-3-design-a-mini-adventure-20-minutes"><span class="icon icon-link"></span></a></h3>
+<p>Create a level that tells a story:</p>
+<ul>
+<li>Start area with a sign saying "Enter the Cave"</li>
+<li>A winding path through the woods</li>
+<li>A cave entrance</li>
+<li>Inside: treasure, danger, mystery!</li>
+</ul>
+<p><strong>Challenge:</strong> Can you guide the player using just walls and floor layouts? Make the path obvious without any text except the starting sign.</p>
+<h3 id="activity-4-multi-level-building-advanced">Activity 4: Multi-Level Building (Advanced)<a aria-hidden="true" tabindex="-1" href="#activity-4-multi-level-building-advanced"><span class="icon icon-link"></span></a></h3>
+<p>Try using different Z-Indexes:</p>
+<ul>
+<li>Ground floor (Z-Index 0)</li>
+<li>Upper floor/bridge (Z-Index 5)</li>
+<li>Make the player go "under" a bridge and "over" a different part</li>
+</ul>
+<p>This requires understanding how Godot's Y-sort works with TileMaps!</p>
+<h3 id="bonus-find-a-custom-tileset">Bonus: Find a Custom Tileset<a aria-hidden="true" tabindex="-1" href="#bonus-find-a-custom-tileset"><span class="icon icon-link"></span></a></h3>
+<ol>
+<li>Go to <a href="https://opengameart.org">OpenGameArt.org</a></li>
+<li>Download a free tileset that looks cool</li>
+<li>Import it into Godot</li>
+<li>Build a level with it</li>
+<li>Share with your classmates!</li>
+</ol>
+<h2 id="11-troubleshooting">11. Troubleshooting<a aria-hidden="true" tabindex="-1" href="#11-troubleshooting"><span class="icon icon-link"></span></a></h2>
+<h3 id="common-problems-and-solutions">Common Problems and Solutions:<a aria-hidden="true" tabindex="-1" href="#common-problems-and-solutions"><span class="icon icon-link"></span></a></h3>
+<p><strong>Problem:</strong> Tiles look blurry or stretched<br>
+<strong>Solution:</strong> Check "Filter" in the import settings. Turn it OFF for pixel art.</p>
+<p><strong>Problem:</strong> Tiles don't line up with the grid<br>
+<strong>Solution:</strong> Check your tile size in the TileSet. It must match your image.</p>
+<p><strong>Problem:</strong> Can't see the grid<br>
+<strong>Solution:</strong> Go to View menu → Show Grid, or press the grid icon in the toolbar.</p>
+<p><strong>Problem:</strong> Player falls through the floor<br>
+<strong>Solution:</strong> Make sure floor tiles are on a separate layer from walls, and walls have collision.</p>
+<p><strong>Problem:</strong> Can't paint tiles<br>
+<strong>Solution:</strong> Make sure you've selected a tile from the TileSet panel first!</p>
+<p><strong>Problem:</strong> Tiles disappear when running the game<br>
+<strong>Solution:</strong> Check that the TileMap node is visible (eye icon in scene tree).</p>
+<p><strong>Problem:</strong> Collision doesn't work in one direction<br>
+<strong>Solution:</strong> Check that wall collision shapes are centered on the tile, not offset.</p>
+<p><strong>Problem:</strong> Game runs slowly with many tiles<br>
+<strong>Solution:</strong> Use larger tile sizes (32x32 or 64x64), or enable "Quadrant Size" optimization in TileMap settings.</p>
+<h2 id="quick-reference-card">Quick Reference Card<a aria-hidden="true" tabindex="-1" href="#quick-reference-card"><span class="icon icon-link"></span></a></h2>
+<p><strong>TileMap Keyboard Shortcuts:</strong></p>
+<ul>
+<li><code>Ctrl + Z</code> - Undo</li>
+<li><code>Ctrl + Shift + Z</code> - Redo</li>
+<li><code>B</code> - Paint tool</li>
+<li><code>L</code> - Line tool</li>
+<li><code>R</code> - Rectangle tool</li>
+<li><code>F</code> - Bucket fill</li>
+<li><code>Shift + Click</code> - Draw straight lines</li>
+<li><code>Right-click</code> - Pick tile</li>
+<li><code>Ctrl + Scroll</code> - Zoom</li>
+</ul>
+<p><strong>TileMap Concepts:</strong></p>
+<ul>
+<li><strong>Tile:</strong> One square in the grid</li>
+<li><strong>Atlas:</strong> Image with multiple tiles</li>
+<li><strong>TileSet:</strong> Collection of all your tiles</li>
+<li><strong>Physics Layer:</strong> Collision information</li>
+<li><strong>Layer:</strong> Different levels (ground, walls, decorations)</li>
+</ul>
+<p><strong>Important Reminders:</strong></p>
+<ul>
+<li>Always set collision on wall tiles!</li>
+<li>Use layers to organize your world</li>
+<li>Test collision frequently</li>
+<li>Save your work often</li>
+<li>Have fun building!</li>
+</ul>
+<h2 id="glossary">Glossary<a aria-hidden="true" tabindex="-1" href="#glossary"><span class="icon icon-link"></span></a></h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Term</th><th>Definition</th></tr></thead><tbody><tr><td><strong>Tile</strong></td><td>A single square image in a grid</td></tr><tr><td><strong>TileMap</strong></td><td>A node that displays a grid of tiles</td></tr><tr><td><strong>TileSet</strong></td><td>A collection of tiles and their properties</td></tr><tr><td><strong>Atlas</strong></td><td>An image containing multiple tiles</td></tr><tr><td><strong>Collision</strong></td><td>Physics detection that stops movement</td></tr><tr><td><strong>Physics Layer</strong></td><td>A layer that defines collision areas</td></tr><tr><td><strong>Z-Index</strong></td><td>Determines drawing order (higher = on top)</td></tr><tr><td><strong>Autotiling</strong></td><td>Automatic tile selection based on neighbors</td></tr><tr><td><strong>Terrain</strong></td><td>A set of tiles that blend together</td></tr></tbody></table>
+    </main>
+
+    <aside class="toc-sidebar" id="toc-sidebar">
+      <div class="toc-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <line x1="21" y1="10" x2="3" y2="10"></line>
+          <line x1="21" y1="6" x2="3" y2="6"></line>
+          <line x1="21" y1="14" x2="3" y2="14"></line>
+          <line x1="21" y1="18" x2="3" y2="18"></line>
+        </svg>
+        On this page
+      </div>
+      <nav id="toc-nav"></nav>
+    </aside>
+  </div>
+
+  <footer>
+    <p>Powered by <a href="https://www.npmjs.com/package/zenmd">ZenMD</a></p>
+  </footer>
+
+  <script src="/main.js" defer></script>
+</body>
+
+</html>

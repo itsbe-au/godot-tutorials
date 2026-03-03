@@ -1,0 +1,873 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A page about Lesson 1: Project Setup &amp; Godot Basics">
+  <meta property="og:title" content="Lesson 1: Project Setup &amp; Godot Basics">
+  <meta property="og:description" content="A page about Lesson 1: Project Setup &amp; Godot Basics">
+  <meta property="og:image" content="/og_image.png">
+
+  <link rel="icon" href="/favicon.png">
+  <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
+  <link rel="stylesheet" href="/main.css">
+  <style>
+    /* 
+    To customize the default style, you should try to override the variables in SimpleCSS: 
+    https://github.com/kevquirk/simple.css/wiki/Getting-Started-With-Simple.css#customise-simplecss
+    Here are all the variables that's defined:
+    */
+
+    :root {
+      /* Set sans-serif & mono fonts */
+      --sans-font: -apple-system, BlinkMacSystemFont, "Avenir Next", Avenir,
+        "Nimbus Sans L", Roboto, "Noto Sans", "Segoe UI", Arial, Helvetica,
+        "Helvetica Neue", sans-serif;
+      --mono-font: Consolas, Menlo, Monaco, "Andale Mono", "Ubuntu Mono", monospace;
+      --standard-border-radius: 5px;
+      --border-width: 1px;
+
+      /* Default (light) theme */
+      --bg: #fff;
+      --accent-bg: #f5f7ff;
+      --text: #212121;
+      --text-light: #585858;
+      --border: #898EA4;
+      --accent: var(--text);
+      --accent-hover: var(--text);
+      --accent-text: var(--bg);
+      --code: #d81b60;
+      --preformatted: #444;
+      --marked: #e2e2e2;
+      --disabled: #efefef;
+      --content-width: 80rem;
+      --sidebar-width: 300px;
+      --sidenav-width: 220px;
+      --gap: 4rem;
+    }
+
+    /* Dark theme */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        color-scheme: dark;
+        --bg: #212121;
+        --accent-bg: #2b2b2b;
+        --text: #dcdcdc;
+        --text-light: #ababab;
+        --accent: var(--text);
+        --accent-hover: var(--text);
+        --accent-text: var(--bg);
+        --code: #f06292;
+        --preformatted: #ccc;
+        --disabled: #111;
+      }
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+  </style>
+  <title>Lesson 1: Project Setup &amp; Godot Basics</title>
+</head>
+
+<body>
+  <button id="menu-toggle" class="menu-toggle" aria-label="Toggle navigation">
+    <span></span>
+    <span></span>
+  </button>
+  <div id="sidebar-overlay" class="sidebar-overlay"></div>
+  <div class="main-grid" id="main-grid">
+    <aside class="site-sidebar" id="site-sidebar">
+      <div class="site-nav-title" id="site-nav-title">Site</div>
+      <nav id="site-nav"></nav>
+    </aside>
+
+    <main class="article">
+      <h1 id="lesson-1-project-setup--godot-basics">Lesson 1: Project Setup &#x26; Godot Basics<a aria-hidden="true" tabindex="-1" href="#lesson-1-project-setup--godot-basics"><span class="icon icon-link"></span></a></h1>
+<p><strong>Welcome to Game Development!</strong> 🎮</p>
+<p>In this lesson, you'll set up your first Godot 4.6 project and learn the basics of the engine. By the end of this 45-60 minute lesson, you'll have a working game window with your first sprite on screen!</p>
+<hr>
+<h2 id="what-were-building-the-full-rpg-series">What We're Building: The Full RPG Series<a aria-hidden="true" tabindex="-1" href="#what-were-building-the-full-rpg-series"><span class="icon icon-link"></span></a></h2>
+<p>This is the <strong>first lesson</strong> in a series where you'll build a complete 2D RPG game from scratch! Here's what we'll create over the next few lessons:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Lesson</th><th>Topic</th><th>What You'll Build</th></tr></thead><tbody><tr><td><strong>Lesson 1</strong></td><td>Project Setup &#x26; Godot Basics</td><td>Your first project, understanding the editor</td></tr><tr><td><strong>Lesson 2</strong></td><td>Player Character</td><td>A character that moves with keyboard input</td></tr><tr><td><strong>Lesson 3</strong></td><td>Tilemaps &#x26; World Building</td><td>Create game worlds with tiles</td></tr><tr><td><strong>Lesson 4</strong></td><td>Animations</td><td>Smooth character movement animations</td></tr><tr><td><strong>Lesson 5</strong></td><td>Enemies &#x26; Combat</td><td>Simple combat system</td></tr><tr><td><strong>Lesson 6</strong></td><td>UI &#x26; Game States</td><td>Menus, health bars, game over screens</td></tr><tr><td><strong>Lesson 7</strong></td><td>Items &#x26; Inventory</td><td>Collect items and manage inventory</td></tr><tr><td><strong>Lesson 8</strong></td><td>Sound &#x26; Polish</td><td>Add music and sound effects</td></tr><tr><td><strong>Lesson 9</strong></td><td>Exporting &#x26; Sharing</td><td>Build your game for others to play</td></tr></tbody></table>
+<p>By the end of this series, you'll have a fully playable RPG game you can share with friends and family!</p>
+<hr>
+<h2 id="step-1-installing-godot-46">Step 1: Installing Godot 4.6<a aria-hidden="true" tabindex="-1" href="#step-1-installing-godot-46"><span class="icon icon-link"></span></a></h2>
+<h3 id="download-godot">Download Godot<a aria-hidden="true" tabindex="-1" href="#download-godot"><span class="icon icon-link"></span></a></h3>
+<ol>
+<li>Go to the official Godot website: <strong><a href="https://godotengine.org/">https://godotengine.org/</a></strong></li>
+<li>Click the big "Download" button</li>
+<li>Look for <strong>Godot 4.6</strong> (or the latest stable version)</li>
+<li>Download the <strong>Standard version</strong> (NOT the .NET version unless you know C#)</li>
+</ol>
+<h3 id="whats-in-the-download">What's in the Download?<a aria-hidden="true" tabindex="-1" href="#whats-in-the-download"><span class="icon icon-link"></span></a></h3>
+<p>Godot is <strong>portable</strong> - it doesn't need installation! You'll get:</p>
+<ul>
+<li>A single executable file (on Windows: <code>Godot_v4.6.exe</code>, on Mac: <code>Godot.app</code>)</li>
+<li>That's it! No complex installation required</li>
+</ul>
+<h3 id="opening-godot-for-the-first-time">Opening Godot for the First Time<a aria-hidden="true" tabindex="-1" href="#opening-godot-for-the-first-time"><span class="icon icon-link"></span></a></h3>
+<p><strong>Windows:</strong></p>
+<ul>
+<li>Double-click the <code>.exe</code> file</li>
+</ul>
+<p><strong>Mac:</strong></p>
+<ul>
+<li>Right-click the <code>.app</code> file and select "Open"</li>
+<li>If you get a security warning, go to <strong>System Preferences > Security &#x26; Privacy</strong> and click "Open Anyway"</li>
+</ul>
+<p><strong>Linux:</strong></p>
+<ul>
+<li>Make the file executable: <code>chmod +x Godot_v4.6.x86_64</code></li>
+<li>Run it: <code>./Godot_v4.6.x86_64</code></li>
+</ul>
+<hr>
+<h2 id="step-2-creating-your-first-project">Step 2: Creating Your First Project<a aria-hidden="true" tabindex="-1" href="#step-2-creating-your-first-project"><span class="icon icon-link"></span></a></h2>
+<p>When Godot opens, you'll see the <strong>Project Manager</strong>. This is where you create and open projects.</p>
+<h3 id="creating-a-new-project">Creating a New Project<a aria-hidden="true" tabindex="-1" href="#creating-a-new-project"><span class="icon icon-link"></span></a></h3>
+<ol>
+<li>Click the <strong>"New Project"</strong> button</li>
+<li>In the dialog that appears:
+<ul>
+<li><strong>Project Name:</strong> <code>MyFirstRPG</code> (or any name you like!)</li>
+<li><strong>Project Path:</strong> Choose where to save your project (like <code>Documents/GodotProjects/</code>)</li>
+<li><strong>Renderer:</strong> Keep it on "Forward+" (this is for 3D, but works great for 2D too)</li>
+<li><strong>Version Control Metadata:</strong> Check "Git" (we'll use this later!)</li>
+</ul>
+</li>
+<li>Click <strong>"Create &#x26; Edit"</strong></li>
+</ol>
+<h3 id="understanding-the-project-structure">Understanding the Project Structure<a aria-hidden="true" tabindex="-1" href="#understanding-the-project-structure"><span class="icon icon-link"></span></a></h3>
+<p>Godot creates a folder for your project containing:</p>
+<pre><code>MyFirstRPG/
+├── project.godot          # Main project file (don't delete this!)
+├── icon.svg               # Project icon
+├── .godot/                # Internal engine files (don't touch!)
+└── (your files go here)
+</code></pre>
+<hr>
+<h2 id="step-3-understanding-the-godot-editor-interface">Step 3: Understanding the Godot Editor Interface<a aria-hidden="true" tabindex="-1" href="#step-3-understanding-the-godot-editor-interface"><span class="icon icon-link"></span></a></h2>
+<p>Welcome to the <strong>Godot Editor</strong>! Let's break down what you're seeing:</p>
+<h3 id="main-areas">Main Areas<a aria-hidden="true" tabindex="-1" href="#main-areas"><span class="icon icon-link"></span></a></h3>
+<pre><code>┌─────────────────────────────────────────────────────────┐
+│  Scene      Inspector                                   │
+│  ┌─────┐   ┌─────────────────┐                         │
+│  │     │   │                 │                         │
+│  │     │   │    VIEWPORT     │  2D/3D/Script/AssetLib  │
+│  │     │   │   (Your Game)   │                         │
+│  │     │   │                 │                         │
+│  │     │   └─────────────────┘                         │
+│  └─────┘   ┌─────────────────┐                         │
+│            │   FileSystem    │                         │
+│            │   (Your Files)  │                         │
+│            └─────────────────┘                         │
+└─────────────────────────────────────────────────────────┘
+</code></pre>
+<h3 id="panel-breakdown">Panel Breakdown<a aria-hidden="true" tabindex="-1" href="#panel-breakdown"><span class="icon icon-link"></span></a></h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Panel</th><th>Location</th><th>What It Does</th></tr></thead><tbody><tr><td><strong>Scene Dock</strong></td><td>Top-Left</td><td>Shows the node tree of your current scene</td></tr><tr><td><strong>FileSystem Dock</strong></td><td>Bottom-Left</td><td>Browse your project files</td></tr><tr><td><strong>Inspector</strong></td><td>Right Side</td><td>Edit properties of selected nodes</td></tr><tr><td><strong>Viewport</strong></td><td>Center</td><td>See and edit your game</td></tr><tr><td><strong>Bottom Panel</strong></td><td>Bottom</td><td>Output, Debugger, Animation, etc.</td></tr></tbody></table>
+<h3 id="toolbar-buttons">Toolbar Buttons<a aria-hidden="true" tabindex="-1" href="#toolbar-buttons"><span class="icon icon-link"></span></a></h3>
+<ul>
+<li><strong>2D/3D/Script/AssetLib</strong> - Switch between editing modes</li>
+<li><strong>Play Buttons</strong> (top-right) - Run your game
+<ul>
+<li>▶️ Play (F5) - Run the main scene</li>
+<li>▶️ Play Scene (F6) - Run current scene only</li>
+<li>⏹️ Stop (F8) - Stop the game</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="step-4-creating-your-first-scene">Step 4: Creating Your First Scene<a aria-hidden="true" tabindex="-1" href="#step-4-creating-your-first-scene"><span class="icon icon-link"></span></a></h2>
+<p>In Godot, everything is organized into <strong>scenes</strong>. Think of a scene like a level, a menu, or a character.</p>
+<h3 id="creating-a-scene">Creating a Scene<a aria-hidden="true" tabindex="-1" href="#creating-a-scene"><span class="icon icon-link"></span></a></h3>
+<ol>
+<li>Make sure you're in <strong>2D mode</strong> (click the "2D" button in the toolbar)</li>
+<li>Look at the <strong>Scene dock</strong> (top-left)</li>
+<li>Click the <strong>"2D Scene"</strong> button (or go to Scene > New Scene)</li>
+</ol>
+<h3 id="adding-your-first-node">Adding Your First Node<a aria-hidden="true" tabindex="-1" href="#adding-your-first-node"><span class="icon icon-link"></span></a></h3>
+<p>A scene needs at least one <strong>root node</strong>. Let's add a Node2D:</p>
+<ol>
+<li>In the Scene dock, you'll see "Create Root Node:"</li>
+<li>Click <strong>"2D Scene"</strong> (this creates a Node2D)</li>
+<li><strong>Rename it:</strong> Double-click "Node2D" and type "Main"</li>
+</ol>
+<h3 id="understanding-nodes">Understanding Nodes<a aria-hidden="true" tabindex="-1" href="#understanding-nodes"><span class="icon icon-link"></span></a></h3>
+<p>Nodes are the building blocks of your game. Each node has:</p>
+<ul>
+<li>A <strong>type</strong> (what it does)</li>
+<li><strong>Properties</strong> (settings you can change)</li>
+<li><strong>Children</strong> (other nodes attached to it)</li>
+</ul>
+<p>Common node types:</p>
+<ul>
+<li><strong>Node2D</strong> - Basic 2D object (position, rotation, scale)</li>
+<li><strong>Sprite2D</strong> - Displays an image</li>
+<li><strong>CharacterBody2D</strong> - A character that can move and collide</li>
+<li><strong>Camera2D</strong> - Controls what the player sees</li>
+</ul>
+<h3 id="adding-a-sprite">Adding a Sprite<a aria-hidden="true" tabindex="-1" href="#adding-a-sprite"><span class="icon icon-link"></span></a></h3>
+<p>Let's add an image to your scene:</p>
+<ol>
+<li>
+<p><strong>Download a sprite:</strong></p>
+<ul>
+<li>Go to <strong><a href="https://opengameart.org/">https://opengameart.org/</a></strong> or use the provided <code>assets/player.png</code></li>
+<li>Save it to your project folder</li>
+</ul>
+</li>
+<li>
+<p><strong>Add a Sprite2D node:</strong></p>
+<ul>
+<li>With "Main" selected, click the <strong>"+"</strong> button (or Ctrl+A)</li>
+<li>Search for "Sprite2D"</li>
+<li>Click "Create"</li>
+<li>Rename it to "PlayerSprite"</li>
+</ul>
+</li>
+<li>
+<p><strong>Add the texture:</strong></p>
+<ul>
+<li>With PlayerSprite selected, look at the <strong>Inspector</strong> (right side)</li>
+<li>Find the <strong>Texture</strong> property</li>
+<li>Click "<empty>" and select "Load"</empty></li>
+<li>Choose your image file</li>
+</ul>
+</li>
+</ol>
+<h3 id="positioning-your-sprite">Positioning Your Sprite<a aria-hidden="true" tabindex="-1" href="#positioning-your-sprite"><span class="icon icon-link"></span></a></h3>
+<p>In the <strong>Viewport</strong> (center), you can:</p>
+<ul>
+<li><strong>Click and drag</strong> the sprite to move it</li>
+<li><strong>Click the green circle</strong> and drag to rotate</li>
+<li><strong>Hold Shift</strong> while dragging to snap to grid</li>
+</ul>
+<p>The blue cross in the center is the <strong>origin</strong> (0,0 position).</p>
+<hr>
+<h2 id="step-5-running-your-game">Step 5: Running Your Game<a aria-hidden="true" tabindex="-1" href="#step-5-running-your-game"><span class="icon icon-link"></span></a></h2>
+<p>Time to see your creation in action!</p>
+<h3 id="saving-your-scene">Saving Your Scene<a aria-hidden="true" tabindex="-1" href="#saving-your-scene"><span class="icon icon-link"></span></a></h3>
+<ol>
+<li>Press <strong>Ctrl+S</strong> (or Cmd+S on Mac)</li>
+<li>Name it <code>main.tscn</code></li>
+<li>Save it in the project root</li>
+</ol>
+<h3 id="setting-the-main-scene">Setting the Main Scene<a aria-hidden="true" tabindex="-1" href="#setting-the-main-scene"><span class="icon icon-link"></span></a></h3>
+<p>Before running, tell Godot which scene to start with:</p>
+<ol>
+<li>Go to <strong>Project > Project Settings</strong></li>
+<li>Click on <strong>Application > Run</strong></li>
+<li>Next to "Main Scene", click the folder icon</li>
+<li>Select <code>main.tscn</code></li>
+<li>Click "Open"</li>
+<li>Close the settings window</li>
+</ol>
+<h3 id="run-your-game">Run Your Game!<a aria-hidden="true" tabindex="-1" href="#run-your-game"><span class="icon icon-link"></span></a></h3>
+<p>Click the <strong>Play button</strong> (▶️) in the top-right or press <strong>F5</strong></p>
+<p>A new window should open showing your sprite! 🎉</p>
+<h3 id="stopping-the-game">Stopping the Game<a aria-hidden="true" tabindex="-1" href="#stopping-the-game"><span class="icon icon-link"></span></a></h3>
+<ul>
+<li>Click the window's X button, OR</li>
+<li>Press <strong>F8</strong>, OR</li>
+<li>Click the <strong>Stop button</strong> (⏹️) in the editor</li>
+</ul>
+<hr>
+<h2 id="step-6-understanding-the-node-tree">Step 6: Understanding the Node Tree<a aria-hidden="true" tabindex="-1" href="#step-6-understanding-the-node-tree"><span class="icon icon-link"></span></a></h2>
+<p>The <strong>Scene dock</strong> shows your scene's node tree. This is crucial to understand!</p>
+<h3 id="node-tree-basics">Node Tree Basics<a aria-hidden="true" tabindex="-1" href="#node-tree-basics"><span class="icon icon-link"></span></a></h3>
+<pre><code>Main (Node2D)           ← Root node
+└── PlayerSprite (Sprite2D)  ← Child node
+</code></pre>
+<ul>
+<li><strong>Root node:</strong> The top-most node (every scene has one)</li>
+<li><strong>Child nodes:</strong> Attached to other nodes</li>
+<li><strong>Parent-child relationship:</strong> Moving the parent moves all children!</li>
+</ul>
+<h3 id="the-scene-tree-concept">The Scene Tree Concept<a aria-hidden="true" tabindex="-1" href="#the-scene-tree-concept"><span class="icon icon-link"></span></a></h3>
+<p>Think of nodes like folders on your computer:</p>
+<ul>
+<li>A folder can contain other folders</li>
+<li>If you move a folder, everything inside moves too</li>
+<li>Each folder has its own properties</li>
+</ul>
+<h3 id="why-this-matters">Why This Matters<a aria-hidden="true" tabindex="-1" href="#why-this-matters"><span class="icon icon-link"></span></a></h3>
+<p><strong>Parent-child inheritance:</strong></p>
+<ul>
+<li>If you move "Main", "PlayerSprite" moves with it</li>
+<li>If you rotate "Main", "PlayerSprite" rotates too</li>
+<li>This makes organizing complex objects easier!</li>
+</ul>
+<h3 id="try-it-yourself">Try It Yourself<a aria-hidden="true" tabindex="-1" href="#try-it-yourself"><span class="icon icon-link"></span></a></h3>
+<ol>
+<li>Select "Main" in the Scene dock</li>
+<li>In the Inspector, change <strong>Position</strong> to (100, 50)</li>
+<li>Notice how PlayerSprite moves too!</li>
+<li>Undo with <strong>Ctrl+Z</strong></li>
+</ol>
+<hr>
+<h2 id="step-7-project-settings-configuration">Step 7: Project Settings Configuration<a aria-hidden="true" tabindex="-1" href="#step-7-project-settings-configuration"><span class="icon icon-link"></span></a></h2>
+<p>Let's configure some important project settings.</p>
+<h3 id="opening-project-settings">Opening Project Settings<a aria-hidden="true" tabindex="-1" href="#opening-project-settings"><span class="icon icon-link"></span></a></h3>
+<p>Go to <strong>Project > Project Settings</strong></p>
+<h3 id="display-settings">Display Settings<a aria-hidden="true" tabindex="-1" href="#display-settings"><span class="icon icon-link"></span></a></h3>
+<p><strong>Window Size:</strong></p>
+<ol>
+<li>Navigate to <strong>Display > Window</strong></li>
+<li>Under "Size":
+<ul>
+<li><strong>Viewport Width:</strong> <code>1280</code></li>
+<li><strong>Viewport Height:</strong> <code>720</code></li>
+</ul>
+</li>
+<li>This sets your game resolution</li>
+</ol>
+<p><strong>Stretch Mode (Important for pixel art!):</strong></p>
+<ol>
+<li>Under "Stretch":
+<ul>
+<li><strong>Mode:</strong> <code>canvas_items</code> (scales everything nicely)</li>
+<li><strong>Aspect:</strong> <code>expand</code> (fills the screen)</li>
+</ul>
+</li>
+</ol>
+<h3 id="application-settings">Application Settings<a aria-hidden="true" tabindex="-1" href="#application-settings"><span class="icon icon-link"></span></a></h3>
+<p><strong>Game Information:</strong></p>
+<ol>
+<li>Navigate to <strong>Application > Config</strong></li>
+<li>Set:
+<ul>
+<li><strong>Name:</strong> <code>My First RPG</code></li>
+<li><strong>Description:</strong> <code>A learning project</code></li>
+<li><strong>Version:</strong> <code>0.1</code></li>
+</ul>
+</li>
+</ol>
+<h3 id="input-settings">Input Settings<a aria-hidden="true" tabindex="-1" href="#input-settings"><span class="icon icon-link"></span></a></h3>
+<p>We'll set up input actions so your player can move!</p>
+<ol>
+<li>Navigate to <strong>Input Map</strong> (at the top)</li>
+<li>We'll add four actions: <code>move_left</code>, <code>move_right</code>, <code>move_up</code>, <code>move_down</code></li>
+</ol>
+<h3 id="adding-move_left">Adding move_left<a aria-hidden="true" tabindex="-1" href="#adding-move_left"><span class="icon icon-link"></span></a></h3>
+<ol>
+<li>In "Action" field, type: <code>move_left</code></li>
+<li>Click <strong>"Add"</strong></li>
+<li>Click the <strong>"+"</strong> next to move_left</li>
+<li>Select <strong>"Key"</strong></li>
+<li>Press the <strong>Left Arrow</strong> key on your keyboard</li>
+<li>Click "OK"</li>
+</ol>
+<h3 id="adding-move_right">Adding move_right<a aria-hidden="true" tabindex="-1" href="#adding-move_right"><span class="icon icon-link"></span></a></h3>
+<ol>
+<li>Type: <code>move_right</code></li>
+<li>Click "Add"</li>
+<li>Click "+" next to move_right</li>
+<li>Select "Key"</li>
+<li>Press <strong>Right Arrow</strong></li>
+<li>Click "OK"</li>
+</ol>
+<h3 id="adding-move_up">Adding move_up<a aria-hidden="true" tabindex="-1" href="#adding-move_up"><span class="icon icon-link"></span></a></h3>
+<ol>
+<li>Type: <code>move_up</code></li>
+<li>Click "Add"</li>
+<li>Click "+" next to move_up</li>
+<li>Select "Key"</li>
+<li>Press <strong>Up Arrow</strong></li>
+<li>Click "OK"</li>
+</ol>
+<h3 id="adding-move_down">Adding move_down<a aria-hidden="true" tabindex="-1" href="#adding-move_down"><span class="icon icon-link"></span></a></h3>
+<ol>
+<li>Type: <code>move_down</code></li>
+<li>Click "Add"</li>
+<li>Click "+" next to move_down</li>
+<li>Select "Key"</li>
+<li>Press <strong>Down Arrow</strong></li>
+<li>Click "OK"</li>
+</ol>
+<h3 id="alternative-controls-optional">Alternative Controls (Optional)<a aria-hidden="true" tabindex="-1" href="#alternative-controls-optional"><span class="icon icon-link"></span></a></h3>
+<p>You can add multiple keys for each action! Let's add WASD:</p>
+<ol>
+<li>Find <code>move_left</code> in the list</li>
+<li>Click "+" again</li>
+<li>Select "Key"</li>
+<li>Press <strong>A</strong></li>
+<li>Repeat for other directions:
+<ul>
+<li><code>move_right</code>: Add <strong>D</strong></li>
+<li><code>move_up</code>: Add <strong>W</strong></li>
+<li><code>move_down</code>: Add <strong>S</strong></li>
+</ul>
+</li>
+</ol>
+<p>Now players can use arrow keys OR WASD!</p>
+<h3 id="save-settings">Save Settings<a aria-hidden="true" tabindex="-1" href="#save-settings"><span class="icon icon-link"></span></a></h3>
+<p>Just close the Project Settings window - changes are saved automatically.</p>
+<hr>
+<h2 id="step-8-project-folder-organization">Step 8: Project Folder Organization<a aria-hidden="true" tabindex="-1" href="#step-8-project-folder-organization"><span class="icon icon-link"></span></a></h2>
+<p>Keeping your project organized from the start saves headaches later!</p>
+<h3 id="recommended-folder-structure">Recommended Folder Structure<a aria-hidden="true" tabindex="-1" href="#recommended-folder-structure"><span class="icon icon-link"></span></a></h3>
+<p>Create these folders in your project:</p>
+<pre><code>MyFirstRPG/
+├── project.godot          # Main project file
+├── icon.svg               # Project icon
+├── main.tscn              # Your main scene
+│
+├── assets/                # All game art and sounds
+│   ├── sprites/           # Character and object images
+│   ├── tiles/             # Tilemap images
+│   ├── backgrounds/       # Background images
+│   └── audio/             # Music and sound effects
+│
+├── scenes/                # Scene files (.tscn)
+│   ├── player.tscn
+│   ├── enemy.tscn
+│   └── level1.tscn
+│
+├── scripts/               # Code files (.gd)
+│   ├── player.gd
+│   └── enemy.gd
+│
+└── resources/             # Other resources
+    └── materials/
+</code></pre>
+<h3 id="creating-folders">Creating Folders<a aria-hidden="true" tabindex="-1" href="#creating-folders"><span class="icon icon-link"></span></a></h3>
+<ol>
+<li>Look at the <strong>FileSystem dock</strong> (bottom-left)</li>
+<li>Right-click in the empty space</li>
+<li>Select <strong>"New Folder"</strong></li>
+<li>Name it (e.g., "assets")</li>
+<li>Repeat for other folders</li>
+</ol>
+<h3 id="moving-files">Moving Files<a aria-hidden="true" tabindex="-1" href="#moving-files"><span class="icon icon-link"></span></a></h3>
+<p>To move files into folders:</p>
+<ol>
+<li>In FileSystem, drag and drop files</li>
+<li>Or right-click a file > "Move To"</li>
+<li>Godot will ask if you want to update references - say <strong>Yes</strong>!</li>
+</ol>
+<h3 id="pro-tips">Pro Tips<a aria-hidden="true" tabindex="-1" href="#pro-tips"><span class="icon icon-link"></span></a></h3>
+<ul>
+<li><strong>Use lowercase names</strong> for folders (prevents issues on some systems)</li>
+<li><strong>No spaces</strong> in folder/file names (use underscores: <code>my_file.png</code>)</li>
+<li><strong>Group by type</strong> (all sprites together, all scripts together)</li>
+<li><strong>Name descriptively</strong> (<code>player_idle.png</code> not <code>img1.png</code>)</li>
+</ul>
+<hr>
+<h2 id="step-9-practice-activities">Step 9: Practice Activities<a aria-hidden="true" tabindex="-1" href="#step-9-practice-activities"><span class="icon icon-link"></span></a></h2>
+<p>Test your knowledge with these activities!</p>
+<h3 id="activity-1-create-multiple-scenes-15-min">Activity 1: Create Multiple Scenes (15 min)<a aria-hidden="true" tabindex="-1" href="#activity-1-create-multiple-scenes-15-min"><span class="icon icon-link"></span></a></h3>
+<ol>
+<li>Create a new scene called <code>menu.tscn</code></li>
+<li>Add a Node2D root named "MainMenu"</li>
+<li>Add 3 Sprite2D nodes as children</li>
+<li>Position them in different places</li>
+<li>Save and run it</li>
+</ol>
+<h3 id="activity-2-organize-your-project-10-min">Activity 2: Organize Your Project (10 min)<a aria-hidden="true" tabindex="-1" href="#activity-2-organize-your-project-10-min"><span class="icon icon-link"></span></a></h3>
+<ol>
+<li>Create the folder structure from Step 8</li>
+<li>Move your sprite image to <code>assets/sprites/</code></li>
+<li>Godot will ask about updating references - click "Fix Dependencies"</li>
+</ol>
+<h3 id="activity-3-custom-input-10-min">Activity 3: Custom Input (10 min)<a aria-hidden="true" tabindex="-1" href="#activity-3-custom-input-10-min"><span class="icon icon-link"></span></a></h3>
+<ol>
+<li>Open Project Settings > Input Map</li>
+<li>Add a new action called <code>jump</code></li>
+<li>Assign it to the Spacebar</li>
+<li>Assign it to the Up Arrow as well</li>
+<li>Think about: What game could use a jump action?</li>
+</ol>
+<h3 id="activity-4-experiment-with-properties-15-min">Activity 4: Experiment with Properties (15 min)<a aria-hidden="true" tabindex="-1" href="#activity-4-experiment-with-properties-15-min"><span class="icon icon-link"></span></a></h3>
+<ol>
+<li>Select your Sprite2D</li>
+<li>In the Inspector, try changing these:
+<ul>
+<li><strong>Modulate</strong> (color tint)</li>
+<li><strong>Scale</strong> (size - try 2,2 for double size!)</li>
+<li><strong>Rotation</strong> (angle in degrees)</li>
+<li><strong>Z Index</strong> (layer order)</li>
+</ul>
+</li>
+<li>Run the game to see the changes</li>
+</ol>
+<hr>
+<h2 id="troubleshooting">Troubleshooting<a aria-hidden="true" tabindex="-1" href="#troubleshooting"><span class="icon icon-link"></span></a></h2>
+<h3 id="common-problems-and-solutions">Common Problems and Solutions<a aria-hidden="true" tabindex="-1" href="#common-problems-and-solutions"><span class="icon icon-link"></span></a></h3>
+<h4 id="my-game-window-is-blackblank">"My game window is black/blank!"<a aria-hidden="true" tabindex="-1" href="#my-game-window-is-blackblank"><span class="icon icon-link"></span></a></h4>
+<p><strong>Problem:</strong> Nothing appears when you run the game</p>
+<p><strong>Solutions:</strong></p>
+<ul>
+<li>Check that your scene is saved as <code>main.tscn</code></li>
+<li>Verify the Main Scene is set in Project Settings</li>
+<li>Make sure your sprite has a texture assigned</li>
+<li>Check that the sprite's position isn't off-screen</li>
+</ul>
+<h4 id="godot-wont-open-my-project">"Godot won't open my project!"<a aria-hidden="true" tabindex="-1" href="#godot-wont-open-my-project"><span class="icon icon-link"></span></a></h4>
+<p><strong>Problem:</strong> Error when trying to open project</p>
+<p><strong>Solutions:</strong></p>
+<ul>
+<li>Make sure <code>project.godot</code> file exists</li>
+<li>Check that you're using Godot 4.x (not 3.x)</li>
+<li>Try opening the project folder directly</li>
+</ul>
+<h4 id="my-sprite-looks-blurrypixelated">"My sprite looks blurry/pixelated!"<a aria-hidden="true" tabindex="-1" href="#my-sprite-looks-blurrypixelated"><span class="icon icon-link"></span></a></h4>
+<p><strong>Problem:</strong> Pixel art looks bad</p>
+<p><strong>Solutions:</strong></p>
+<ol>
+<li>Select your sprite in the FileSystem</li>
+<li>In Import tab (next to Scene dock), change:
+<ul>
+<li><strong>Filter:</strong> Nearest (for pixel art)</li>
+</ul>
+</li>
+<li>Click "Reimport"</li>
+</ol>
+<h4 id="i-cant-find-my-files">"I can't find my files!"<a aria-hidden="true" tabindex="-1" href="#i-cant-find-my-files"><span class="icon icon-link"></span></a></h4>
+<p><strong>Problem:</strong> Files don't appear in FileSystem</p>
+<p><strong>Solutions:</strong></p>
+<ul>
+<li>Click the <strong>"Refresh"</strong> button (circular arrow) in FileSystem</li>
+<li>Make sure files are in the project folder (not Desktop/Downloads)</li>
+<li>Check that file extensions are correct (.png, .jpg, etc.)</li>
+</ul>
+<h4 id="my-changes-dont-save">"My changes don't save!"<a aria-hidden="true" tabindex="-1" href="#my-changes-dont-save"><span class="icon icon-link"></span></a></h4>
+<p><strong>Problem:</strong> Work is lost when closing Godot</p>
+<p><strong>Solutions:</strong></p>
+<ul>
+<li>Save scenes with <strong>Ctrl+S</strong> frequently!</li>
+<li>Watch for asterisk (*) next to scene name - means unsaved changes</li>
+<li>Enable "Auto Save" in Editor Settings if you want</li>
+</ul>
+<h4 id="the-game-crashes-when-i-run-it">"The game crashes when I run it!"<a aria-hidden="true" tabindex="-1" href="#the-game-crashes-when-i-run-it"><span class="icon icon-link"></span></a></h4>
+<p><strong>Problem:</strong> Game window opens then closes</p>
+<p><strong>Solutions:</strong></p>
+<ul>
+<li>Check the <strong>Output panel</strong> (bottom) for error messages</li>
+<li>Make sure you don't have infinite loops in scripts</li>
+<li>Verify all file paths are correct</li>
+<li>Try running a simpler scene first</li>
+</ul>
+<h3 id="getting-more-help">Getting More Help<a aria-hidden="true" tabindex="-1" href="#getting-more-help"><span class="icon icon-link"></span></a></h3>
+<p>If you're stuck:</p>
+<ol>
+<li><strong>Check the Output panel</strong> - it shows error messages</li>
+<li><strong>Read the error carefully</strong> - Godot errors are usually descriptive</li>
+<li><strong>Search the error message</strong> online</li>
+<li><strong>Ask for help</strong> - teachers, forums, or Discord</li>
+<li><strong>Take a break</strong> - sometimes stepping away helps!</li>
+</ol>
+<hr>
+<h2 id="preview-of-next-lesson">Preview of Next Lesson<a aria-hidden="true" tabindex="-1" href="#preview-of-next-lesson"><span class="icon icon-link"></span></a></h2>
+<p>Great job completing Lesson 1! 🎉</p>
+<h3 id="what-youve-learned">What You've Learned<a aria-hidden="true" tabindex="-1" href="#what-youve-learned"><span class="icon icon-link"></span></a></h3>
+<ul>
+<li>✅ Installed and opened Godot 4.6</li>
+<li>✅ Created a new project</li>
+<li>✅ Navigated the Godot Editor</li>
+<li>✅ Created scenes with nodes</li>
+<li>✅ Added and positioned sprites</li>
+<li>✅ Configured project settings</li>
+<li>✅ Set up input actions</li>
+<li>✅ Organized your project</li>
+</ul>
+<h3 id="whats-next-lesson-2---player-character">What's Next: Lesson 2 - Player Character<a aria-hidden="true" tabindex="-1" href="#whats-next-lesson-2---player-character"><span class="icon icon-link"></span></a></h3>
+<p>In the next lesson, you'll:</p>
+<ol>
+<li><strong>Create a player character</strong> using CharacterBody2D</li>
+<li><strong>Write your first code</strong> in GDScript</li>
+<li><strong>Make the player move</strong> with keyboard input</li>
+<li><strong>Add collision</strong> so the player doesn't go through walls</li>
+<li><strong>Set up a camera</strong> that follows the player</li>
+</ol>
+<h3 id="homework">Homework<a aria-hidden="true" tabindex="-1" href="#homework"><span class="icon icon-link"></span></a></h3>
+<p>Before next class:</p>
+<ol>
+<li><strong>Find or create a player sprite</strong> (32x32 or 64x64 pixels works great)</li>
+<li><strong>Organize your project folders</strong> as shown in this lesson</li>
+<li><strong>Experiment</strong> with different node types in Godot</li>
+<li><strong>Think about</strong> what kind of RPG you want to make (fantasy? sci-fi? modern?)</li>
+</ol>
+<h3 id="resources-to-explore">Resources to Explore<a aria-hidden="true" tabindex="-1" href="#resources-to-explore"><span class="icon icon-link"></span></a></h3>
+<ul>
+<li><strong>Godot Docs:</strong> <a href="https://docs.godotengine.org/">https://docs.godotengine.org/</a></li>
+<li><strong>GDQuest (YouTube):</strong> Great Godot tutorials</li>
+<li><strong>KidsCanCode:</strong> Beginner-friendly Godot content</li>
+<li><strong>OpenGameArt:</strong> Free game assets</li>
+<li><strong>itch.io:</strong> Free assets and inspiration</li>
+</ul>
+<hr>
+<h2 id="quick-reference-card">Quick Reference Card<a aria-hidden="true" tabindex="-1" href="#quick-reference-card"><span class="icon icon-link"></span></a></h2>
+<h3 id="keyboard-shortcuts">Keyboard Shortcuts<a aria-hidden="true" tabindex="-1" href="#keyboard-shortcuts"><span class="icon icon-link"></span></a></h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Shortcut</th><th>Action</th></tr></thead><tbody><tr><td><strong>F5</strong></td><td>Run game</td></tr><tr><td><strong>F6</strong></td><td>Run current scene</td></tr><tr><td><strong>F8</strong></td><td>Stop game</td></tr><tr><td><strong>Ctrl+S</strong></td><td>Save scene</td></tr><tr><td><strong>Ctrl+Shift+S</strong></td><td>Save all scenes</td></tr><tr><td><strong>Ctrl+A</strong></td><td>Add child node</td></tr><tr><td><strong>Ctrl+Z</strong></td><td>Undo</td></tr><tr><td><strong>Ctrl+Shift+Z</strong></td><td>Redo</td></tr><tr><td><strong>Delete</strong></td><td>Delete selected node</td></tr></tbody></table>
+<h3 id="important-file-extensions">Important File Extensions<a aria-hidden="true" tabindex="-1" href="#important-file-extensions"><span class="icon icon-link"></span></a></h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Extension</th><th>Type</th></tr></thead><tbody><tr><td><code>.godot</code></td><td>Project file</td></tr><tr><td><code>.tscn</code></td><td>Scene file</td></tr><tr><td><code>.gd</code></td><td>GDScript file</td></tr><tr><td><code>.tres</code></td><td>Resource file</td></tr></tbody></table>
+<h3 id="key-concepts">Key Concepts<a aria-hidden="true" tabindex="-1" href="#key-concepts"><span class="icon icon-link"></span></a></h3>
+<ul>
+<li><strong>Scene:</strong> A self-contained game object or level</li>
+<li><strong>Node:</strong> Building block of scenes</li>
+<li><strong>Node Tree:</strong> Hierarchical structure of nodes</li>
+<li><strong>Root Node:</strong> Top-most node in a scene</li>
+<li><strong>Script:</strong> Code that controls node behavior</li>
+<li><strong>Viewport:</strong> The game view/camera area</li>
+</ul>
+<hr>
+<h2 id="glossary">Glossary<a aria-hidden="true" tabindex="-1" href="#glossary"><span class="icon icon-link"></span></a></h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Term</th><th>Definition</th></tr></thead><tbody><tr><td><strong>Node</strong></td><td>A building block in Godot. Every object in your game is a node.</td></tr><tr><td><strong>Scene</strong></td><td>A collection of nodes saved as a file. Can be loaded and used multiple times.</td></tr><tr><td><strong>Sprite</strong></td><td>A 2D image displayed in the game.</td></tr><tr><td><strong>Viewport</strong></td><td>The visible area of your game.</td></tr><tr><td><strong>Inspector</strong></td><td>The panel where you edit node properties.</td></tr><tr><td><strong>GDScript</strong></td><td>Godot's programming language (similar to Python).</td></tr><tr><td><strong>Texture</strong></td><td>An image file used by sprites and other nodes.</td></tr><tr><td><strong>Resolution</strong></td><td>The size of your game window in pixels (e.g., 1280x720).</td></tr><tr><td><strong>Input Map</strong></td><td>Where you define what keys/buttons trigger game actions.</td></tr><tr><td><strong>Parent/Child</strong></td><td>Relationship where child nodes follow their parent's transformations.</td></tr></tbody></table>
+<hr>
+<h2 id="congratulations">Congratulations!<a aria-hidden="true" tabindex="-1" href="#congratulations"><span class="icon icon-link"></span></a></h2>
+<p>You've completed <strong>Lesson 1: Project Setup &#x26; Godot Basics</strong>!</p>
+<p>You now have:</p>
+<ul>
+<li>✅ A working Godot 4.6 installation</li>
+<li>✅ Your first project created and configured</li>
+<li>✅ Understanding of the Godot Editor</li>
+<li>✅ A scene with a sprite</li>
+<li>✅ Working input actions</li>
+<li>✅ An organized project structure</li>
+</ul>
+<p><strong>Next up:</strong> Lesson 2 - Player Character (coming soon!)</p>
+<p>Keep practicing, stay curious, and happy game developing! 🎮✨</p>
+<hr>
+<p><em>Last updated: 2024</em>
+<em>For Godot 4.6</em>
+<em>Target audience: Ages 12-15</em></p>
+    </main>
+
+    <aside class="toc-sidebar" id="toc-sidebar">
+      <div class="toc-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <line x1="21" y1="10" x2="3" y2="10"></line>
+          <line x1="21" y1="6" x2="3" y2="6"></line>
+          <line x1="21" y1="14" x2="3" y2="14"></line>
+          <line x1="21" y1="18" x2="3" y2="18"></line>
+        </svg>
+        On this page
+      </div>
+      <nav id="toc-nav"></nav>
+    </aside>
+  </div>
+
+  <footer>
+    <p>Powered by <a href="https://www.npmjs.com/package/zenmd">ZenMD</a></p>
+  </footer>
+
+  <script src="/main.js" defer></script>
+</body>
+
+</html>
